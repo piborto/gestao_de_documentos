@@ -1,11 +1,14 @@
 <?php
+// config/conexao.php
 
-$db_host = "localhost";
+// No Docker, o host é o nome do serviço do banco de dados (db) configurado no docker-compose.yml
+$db_host = "db"; 
 $db_user = "root";
-$db_pass = "";
+$db_pass = "root"; // Senha que definimos no docker-compose
 $db_name = "qualidade_teste"; 
 
 try {
+    // Mantendo a sua lógica perfeita com PDO
     $dsn = "mysql:host=$db_host;dbname=$db_name;charset=latin1"; 
 
     $options = array(
@@ -15,6 +18,7 @@ try {
         PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8" 
     );
 
+    // Salvando na variável $conexao para usarmos nos nossos Models
     $conexao = new PDO($dsn, $db_user, $db_pass, $options);
 
 } catch (PDOException $e) {
