@@ -1,0 +1,282 @@
+Relatório Técnico do Sistema de Qualidade (Versão 3)
+Visão Geral
+Este documento descreve a arquitetura e as funcionalidades do novo Sistema de Qualidade (versão 3), com foco nos módulos que estão sendo reescritos. O objetivo é criar uma documentação clara que sirva como referência para o desenvolvimento contínuo e futuras manutenções.
+
+1. Módulo de Siglas e Definições
+Este módulo foi reescrito seguindo uma arquitetura MVC (Model-View-Controller), separando as responsabilidades de acesso a dados, lógica de negócio e apresentação.
+
+1.1. Arquitetura e Estrutura de Arquivos
+Model (models/SiglasModel.php):
+
+Propósito: Camada de acesso a dados. É a única parte do sistema que interage diretamente com as tabelas do banco de dados (t_sigla, t_historico).
+Funcionalidades:
+listarEmVigor(), listarAgendados(), listarObsoletos(): Métodos para buscar siglas com base em seu status (id_status).
+inserir(), editar(), excluir(): Funções de CRUD (Criar, Ler, Atualizar, Deletar).
+mudarStatus(): Altera o status de uma sigla (ex: para "Obsoleto").
+processarAgendamentos(): Lógica de automação que atualiza o status de siglas agendadas para "Em Vigor" com base na data.
+registrarLog(): Centraliza a criação de registros de auditoria na tabela t_historico.
+reordenarNumeros(): Recalcula a numeração sequencial das siglas ativas, garantindo a ordem correta.
+Controller (controllers/SiglasController.php):
+
+Propósito: Orquestrador do módulo. Recebe as requisições do usuário, utiliza o SiglasModel para manipular os dados e decide qual View será exibida.
+Funcionalidades:
+Roteamento de Ações: Utiliza um switch na variável action para direcionar o fluxo (ex: create, editar, excluir_fisico).
+Processamento de AJAX: Possui rotas específicas para requisições assíncronas (ex: ajax_busca, buscar_historico), retornando HTML parcial para a interface.
+Lógica de Negócio: Contém a lógica para validar entradas, chamar os métodos do Model e redirecionar o usuário com mensagens de sucesso ou erro.
+Automação: Invoca processarAgendamentos() no início para garantir que os status estejam sempre atualizados.
+Views (views/siglas/):
+
+Propósito: Camada de apresentação. São arquivos PHP/HTML responsáveis por exibir a interface para o usuário.
+selecionar.php: Painel de entrada do módulo, com "cards" para navegar entre as seções (Em Vigor, Agendados, Obsoletos, Cadastrar).
+lista.php: Exibe a lista de siglas "Em Vigor". Contém o formulário de filtro e a tabela de resultados, que é preenchida via AJAX.
+agendados.php: Exibe a lista de siglas aguardando a data de vigor.
+historico.php: Exibe a lista de siglas marcadas como "Obsoletas".
+create.php: Formulário para cadastrar uma nova sigla.
+editar.php: Formulário pré-preenchido para editar uma sigla existente.
+Assets (CSS e JS):
+
+assets/css/siglas.css: Contém estilos visuais específicos para o módulo de siglas, como a aparência dos "cards" de seleção e formatação da tabela.
+assets/js/siglas.js: Contém toda a lógica de front-end, como as funções para busca com fetch (AJAX), exibição de modais e validação de formulários.
+1.2. Fluxo de Trabalho e Lógica de Negócio
+Navegação: O usuário inicia em selecionar.php e escolhe uma das visualizações (Em Vigor, Agendados, Obsoletos).
+Listagem: A página de listagem (ex: lista.php) é carregada. O siglas.js dispara uma requisição AJAX para o SiglasController.php (action=ajax_busca).
+Busca de Dados: O Controller recebe a requisição, chama o método apropriado no SiglasModel (ex: listarEmVigor()) e retorna o HTML das linhas da tabela.
+Cadastro/Edição: O usuário preenche o formulário em create.php ou editar.php. Ao submeter, os dados são enviados para o SiglasController.php.
+Persistência: O Controller valida os dados, chama o método inserir() ou editar() no Model, que executa a query no banco. Em seguida, o Controller redireciona o usuário de volta para a lista com uma mensagem de status.
+Ciclo de Vida (Status):
+Agendado (Status 1): Uma sigla cadastrada com data_vigor no futuro.
+Em Vigor (Status 2): Uma sigla ativa e visível para todos.
+Obsoleto (Status 3): Uma sigla movida para o histórico, não mais em uso.
+Automação: Toda vez que o SiglasController.php é acessado, ele executa processarAgendamentos(), que automaticamente muda o status de 1 para 2 se a data de vigor for atingida.
+1.3. Estrutura do Banco de Dados (Inferida)
+t_sigla (Tabela Principal):
+
+id_sigla: PK, Auto Increment.
+nome_sigla: VARCHAR, Nome da sigla (ex: "SGQ").
+definicao_sigla: TEXT, Descrição completa.
+referencia_sigla: VARCHAR, Documento ou norma de referência.
+data_sigla: DATE, Data de entrada em vigor.
+data_saida_sigla: DATE, Data em que se tornou obsoleta.
+id_status: INT, Chave estrangeira para t_status (1=Agendado, 2=Em Vigor, 3=Obsoleto).
+numero_sigla: INT, Número sequencial para ordenação em relatórios.
+t_historico (Tabela de Auditoria):
+
+id_historico: PK, Auto Increment.
+acao_historico: VARCHAR, Descrição da ação (ex: "Novo Cadastro", "Edição").
+justificativa_historico: TEXT, Motivo da alteração.
+data_historico: DATETIME, Timestamp da ação.
+id_sigla: INT, Chave estrangeira para t_sigla.
+qualidade_id: INT, Chave estrangeira para o usuário que realizou a ação.
+
+---
+
+## 2. Módulo de Documentos
+
+Este é o módulo central do sistema, responsável pelo ciclo de vida completo de todos os tipos de documentos (Procedimentos, Manuais, Diretrizes, etc.). Ele foi reescrito utilizando uma arquitetura MVC e unificando a lógica que antes era duplicada.
+
+### 2.1. Arquitetura e Estrutura de Arquivos
+
+*   **Model (`models/DocumentosModel.php`):**
+    *   **Propósito:** Camada de acesso a dados. Centraliza todas as interações com as tabelas `t_documento`, `t_categoria`, `t_local`, `t_documento_local` e `t_historico`.
+    *   **Funcionalidades:**
+        *   `listarDocumentosComFiltros()`: Método principal para buscar documentos com base em status (`publicados`, `agendados`, `obsoletos`) e filtros de tela.
+        *   `getDocumentoPorId()`: Busca um documento específico para a tela de edição.
+        *   `inserir()`, `editar()`, `excluir()`: Funções de CRUD.
+        *   `mudarStatus()`: Altera o status de um documento (ex: para "Obsoleto").
+        *   `agendarObsolescencia()`: Define a `data_saida_documento` para uma data futura.
+        *   `mudarStatusAutomatico()`: Lógica de automação que promove documentos de "Agendado" para "Em Vigor" e de "Em Vigor" para "Obsoleto" com base nas datas.
+        *   `vincularLocais()`: Gerencia a tabela de ligação `t_documento_local`, associando um documento a seus locais de distribuição.
+        *   `registrarLog()`: Centraliza a criação de registros de auditoria na tabela `t_historico`.
+
+*   **Controller (`controllers/DocumentosController.php`):**
+    *   **Propósito:** Orquestrador do módulo. Recebe as requisições, valida os dados, interage com o `DocumentosModel` e direciona para a `View` correta.
+    *   **Funcionalidades:**
+        *   **Roteamento de Ações:** Utiliza `if/else` e `switch` para tratar diferentes ações (`inserir`, `editar`, `excluir`, `agendar_obsoleto`).
+        *   **Processamento de AJAX:** Possui rotas para `ajax_busca` (que retorna o HTML da tabela de listagem) e `verificar_codigo` (para validação em tempo real).
+        *   **Gerenciamento de Uploads:** Contém a lógica para tratar o upload de arquivos (`$_FILES`), renomeá-los de forma padronizada e movê-los para a pasta correta com base na categoria do documento.
+        *   **Automação:** Invoca `mudarStatusAutomatico()` no início de sua execução para garantir que os status dos documentos estejam sempre atualizados.
+
+*   **Views (`views/documentos/`):**
+    *   **Propósito:** Camada de apresentação (HTML).
+    *   `selecionar.php`: Painel de entrada do módulo, com "cards" para as seções (Em Vigor, Agendados, Obsoletos, Cadastrar).
+    *   `lista.php`: Exibe a lista de documentos "Em Vigor". Contém o formulário de filtro e a tabela que é preenchida via AJAX.
+    *   `agendados.php`: Exibe a lista de documentos aguardando a data de vigor e os agendados para se tornarem obsoletos.
+    *   `historico.php`: Exibe a lista de documentos marcados como "Obsoletos".
+    *   `create.php`: Formulário para cadastrar um novo documento.
+    *   `editar.php`: Formulário pré-preenchido para editar um documento existente.
+
+*   **Geradores de PDF (`controllers/gerar_*.php`):**
+    *   **Propósito:** Scripts especializados que utilizam a biblioteca **FPDF** para criar as "Listas Mestras" em formato PDF.
+    *   `gerar_lista_mestra.php`: Gera o PDF para as categorias principais (PQ, IT, FQ).
+    *   `gerar_pdf_DO.php`: Gera o PDF específico para a categoria "Diretrizes Organizacionais".
+    *   `gerar_pdf_manuais.php`: Gera o PDF para as categorias de Manuais (MQ, MS), separando por "Controlados" e "Não Controlados".
+    *   **Observação:** A lógica de layout dinâmico (cálculo de largura de colunas, texto rotacionado) do sistema antigo foi mantida e adaptada para a nova estrutura de banco de dados.
+
+*   **Assets (CSS e JS):**
+    *   `assets/css/documentos.css`: Estilos específicos para o módulo, como a cor do cabeçalho da tabela e a aparência dos checkboxes de distribuição.
+    *   `assets/js/documentos.js`: Contém a lógica de front-end, incluindo:
+        *   Funções de busca com `fetch` (AJAX) para as listagens.
+        *   Lógica para exibir/ocultar campos do formulário (`create.php`, `editar.php`) dinamicamente com base na categoria selecionada.
+        *   Cálculo automático da data de "Próxima Análise" (+3 anos da data de vigor).
+
+### 2.2. Fluxo de Trabalho e Lógica de Negócio
+
+1.  **Navegação:** O usuário inicia em `selecionar.php` e escolhe uma das visualizações.
+2.  **Listagem:** A página de listagem (ex: `lista.php`) é carregada. O `documentos.js` dispara uma requisição AJAX para o `DocumentosController.php` (`ajax_busca=1`), que retorna o HTML da tabela.
+3.  **Cadastro (`create.php`):**
+    *   O usuário preenche os metadados. O JavaScript ajusta os campos visíveis conforme a categoria.
+    *   Ao submeter, o `DocumentosController.php` recebe os dados.
+    *   Se a `data_vigor` for futura, o documento é inserido com `id_status = 1` (Agendado).
+    *   Se a `data_vigor` for hoje ou no passado, é inserido com `id_status = 2` (Em Vigor).
+    *   O arquivo é renomeado e salvo. Os locais de distribuição são vinculados na tabela `t_documento_local`.
+4.  **Edição (`editar.php`):**
+    *   Permite alterar metadados, substituir o arquivo e mudar os locais de distribuição.
+    *   Exige uma justificativa de alteração, que é registrada no histórico.
+5.  **Obsolescência:**
+    *   Na tela de listagem ou edição, o usuário pode tornar um documento obsoleto.
+    *   Um modal solicita a data e a justificativa.
+    *   Se a data for futura, o `DocumentosController` apenas preenche o campo `data_saida_documento` no registro. O documento continua com status 2 (Em Vigor).
+    *   Se a data for hoje/passado, o Controller altera o `id_status` para `3` (Obsoleto) imediatamente.
+6.  **Automação (`mudarStatusAutomatico`):**
+    *   Executada a cada acesso ao Controller.
+    *   Verifica documentos com `id_status = 1` e `data_vigor` <= hoje, e os promove para `id_status = 2`.
+    *   Verifica documentos com `id_status = 2`, `data_saida_documento` preenchida e <= hoje, e os move para `id_status = 3`.
+
+### 2.3. Estrutura do Banco de Dados (Unificada)
+
+*   **`t_documento` (Tabela Central):**
+    *   **Propósito:** Armazena **todos** os tipos de documentos (procedimentos, manuais, relatórios, etc.), unificando a estrutura.
+    *   `id_documento`: PK, Auto Increment.
+    *   `id_categoria`: FK para `t_categoria`. Define o tipo do documento (PQ, IT, MQ, DO, etc.).
+    *   `id_status`: FK para `t_status` (1=Agendado, 2=Em Vigor, 3=Obsoleto).
+    *   `nome_documento`, `codigo_documento`, `autor_documento`, `revisao_documento`: Metadados principais.
+    *   `data_vigor_documento`: Data em que o documento se torna ativo.
+    *   `data_analise_documento`: Data da próxima análise crítica.
+    *   `data_saida_documento`: Data em que o documento se tornará obsoleto.
+    *   `arquivo_documento`: Nome do arquivo físico.
+    *   `controle_documento`: Flag (1 ou 0) para diferenciar Manuais "Controlados" de "Não Controlados".
+
+*   **`t_categoria`:**
+    *   `id_categoria`: PK.
+    *   `nome_categoria`, `sigla_categoria`: Descreve o tipo de documento (ex: "Procedimento da Qualidade", "PQ").
+
+*   **`t_local`:**
+    *   `id_local`: PK.
+    *   `nome_local`: Descreve um local de distribuição (ex: "Intranet", "Cereal Chocotec").
+
+*   **`t_documento_local` (Tabela de Ligação):**
+    *   `id_documento`: FK para `t_documento`.
+    *   `id_local`: FK para `t_local`.
+    *   `numero_documento`: Campo para armazenar o número da cópia, usado especificamente para Manuais.
+
+*   **`t_historico` (Tabela de Auditoria Unificada):**
+    *   **Propósito:** Registra todas as alterações feitas nos módulos (Siglas, Documentos, etc.).
+    *   `id_historico`: PK.
+    *   `acao_historico`: Descrição da ação (ex: "Edição de Documento", "Obsolescência Agendada").
+    *   `justificativa_historico`: Motivo da alteração.
+    *   `data_historico`: Timestamp da ação.
+    *   `id_documento`: FK para `t_documento` (se a ação foi em um documento).
+    *   `id_sigla`: FK para `t_sigla` (se a ação foi em uma sigla).
+    *   `qualidade_id`: FK para o usuário que realizou a ação.
+
+---
+
+## 3. Painel Principal e Estrutura Final do Banco de Dados
+
+Esta seção finaliza o relatório com a análise do `index.php` (ponto de entrada do sistema) e a estrutura de banco de dados confirmada pelo arquivo `qualidade_teste.sql`.
+
+### 3.1. `index.php` (Painel Principal)
+
+*   **Propósito:** É a página inicial do sistema após o login. Diferente da versão antiga, este `index.php` funciona puramente como um **painel de navegação visual**, direcionando o usuário para os diferentes módulos do sistema.
+*   **Funcionalidades:**
+    *   **Controle de Acesso:** Garante que apenas usuários logados (`$_SESSION['usuario_logado']`) possam acessar o painel.
+    *   **Navegação por Módulos:** Exibe "cards" que funcionam como links para as páginas de seleção de cada módulo principal:
+        *   Documentos
+        *   Siglas e Definições
+    *   **Informações do Usuário:** Exibe o nome do usuário logado e fornece links para "Minha Conta", "Admin" (se aplicável) e "Sair".
+*   **Observações de Arquitetura:**
+    *   **Separação de Responsabilidades:** Este arquivo não contém lógica de negócio ou acesso a dados, como o painel de notificações da versão antiga. Essa é uma excelente prática de arquitetura, mantendo o `index.php` limpo e focado apenas na apresentação e roteamento inicial.
+    *   **Lógica de Notificação:** A lógica de notificações de "Análise Crítica" (documentos vencidos/próximos do vencimento), que existia no `index.php` antigo, provavelmente será implementada de forma mais moderna no novo sistema, talvez através de uma chamada AJAX a partir do painel para um endpoint específico no `DocumentosController.php`, ou em um componente de dashboard dedicado.
+
+### 3.2. Estrutura do Banco de Dados (Confirmada por `qualidade_teste.sql`)
+
+A análise do arquivo SQL confirma a nova estrutura de dados unificada e modernizada.
+
+#### Tabelas de Conteúdo (Unificadas)
+
+*   **`t_documento` (Tabela Central de Documentos):**
+    *   **Propósito:** Armazena todos os tipos de documentos (PQ, IT, MQ, MS, DO, etc.), unificando o que antes eram várias tabelas.
+    *   **Colunas Chave:**
+        *   `id_documento` (PK)
+        *   `id_categoria` (FK para `t_categoria`): Define o tipo do documento.
+        *   `id_status` (FK para `t_status`): Controla o ciclo de vida (Agendado, Em Vigor, Obsoleto).
+        *   `codigo_documento`, `nome_documento`, `autor_documento`, `revisao_documento`: Metadados.
+        *   `data_vigor_documento`, `data_analise_documento`, `data_saida_documento`: Datas do ciclo de vida.
+        *   `arquivo_documento`: Nome do arquivo físico.
+        *   `controle_documento`: Flag para diferenciar Manuais Controlados/Não Controlados.
+
+*   **`t_sigla` (Tabela Central de Siglas):**
+    *   **Propósito:** Armazena todas as siglas e definições.
+    *   **Colunas Chave:**
+        *   `id_sigla` (PK)
+        *   `id_status` (FK para `t_status`): Controla o ciclo de vida.
+        *   `numero_sigla`: Campo para ordenação em relatórios.
+        *   `nome_sigla`, `definicao_sigla`, `referencia_sigla`: Metadados.
+        *   `data_sigla`, `data_saida_sigla`: Datas do ciclo de vida.
+
+#### Tabelas de Suporte e Relacionamento
+
+*   **`t_status`:**
+    *   **Propósito:** Tabela de domínio para os status.
+    *   **Valores:** `1` (Agendado), `2` (Em vigor), `3` (Obsoleto).
+
+*   **`t_categoria`:**
+    *   **Propósito:** Tabela de domínio para os tipos de documentos.
+    *   **Valores:** `RE` (Relatórios), `CA` (Calendário), `DO` (Diretrizes), `MQ` (Manual da Qualidade), etc.
+
+*   **`t_local`:**
+    *   **Propósito:** Tabela de domínio para os locais de distribuição.
+    *   **Valores:** `CCQA`, `Cereal Chocotec`, `Intranet`, etc.
+
+*   **`t_documento_local`:**
+    *   **Propósito:** Tabela de ligação (N:N) que associa um `id_documento` a um `id_local`.
+    *   **Colunas:** `id_documento_local` (PK), `id_documento` (FK), `id_local` (FK), `numero_documento` (para cópias controladas).
+
+#### Tabela de Auditoria (Unificada)
+
+*   **`t_historico`:**
+    *   **Propósito:** Tabela de log **unificada** para registrar todas as alterações importantes no sistema.
+    *   **Colunas Chave:**
+        *   `id_historico` (PK)
+        *   `acao_historico`: Descrição da ação (ex: "Edição de Documento").
+        *   `justificativa_historico`: Motivo da alteração.
+        *   `data_historico`: Timestamp da ação.
+        *   `qualidade_id`: FK para o usuário que realizou a ação.
+        *   `id_documento` (FK, `ON DELETE SET NULL`): Referencia o documento alterado.
+        *   `id_sigla` (FK, `ON DELETE SET NULL`): Referencia a sigla alterada.
+    *   **Observação:** O uso de `ON DELETE SET NULL` é uma excelente prática, pois permite que o histórico de uma exclusão seja mantido mesmo após o registro principal ser apagado.
+
+---
+
+## 4. Resumo Final e Próximos Passos
+
+A análise dos módulos de Siglas e Documentos do novo sistema (`qualidade3`) revela uma arquitetura significativamente superior à versão anterior.
+
+### Pontos Fortes da Nova Arquitetura:
+1.  **Padrão MVC:** A separação clara entre `Model` (dados), `View` (apresentação) e `Controller` (lógica) torna o código mais organizado, legível e fácil de manter.
+2.  **Banco de Dados Unificado:** A consolidação de múltiplos tipos de conteúdo (documentos, manuais, etc.) na tabela `t_documento` e a criação de uma tabela `t_historico` unificada são as melhorias mais impactantes, reduzindo a complexidade e a redundância.
+3.  **Lógica de Automação no Controller/Model:** A automação do ciclo de vida (promoção de agendados, obsolescência) foi movida para dentro do `Controller` e `Model`, sendo executada de forma mais controlada e previsível a cada requisição, em vez de depender de um `include` no `index.php`.
+4.  **Uso de AJAX:** A implementação de buscas e filtros com AJAX (`fetch` em JavaScript) melhora drasticamente a experiência do usuário, evitando recarregamentos de página.
+
+### Recomendações para Continuidade:
+*   **Segurança de Banco de Dados:** O código ainda utiliza a extensão `mysql_*`, que é obsoleta e insegura. A prioridade máxima na refatoração deve ser substituir todas as chamadas por **PDO com Prepared Statements**, conforme já planejado.
+*   **Segurança de Senhas:** Substituir o uso de `md5()` por `password_hash()` e `password_verify()` para o armazenamento e validação de senhas de usuários.
+*   **Geração de PDF:** Avaliar a substituição da biblioteca `FPDF` por uma mais moderna como `Dompdf` ou `TCPDF`, que permitem criar layouts complexos a partir de HTML e CSS, simplificando a manutenção dos relatórios.
+*   **Cron Job:** Para a automação (`processarAgendamentos`, `mudarStatusAutomatico`), considerar a criação de um script PHP de linha de comando que possa ser executado por um **Cron Job** real no servidor. Isso desvincula a automação do acesso do usuário e garante que ela rode em intervalos regulares, mesmo que ninguém acesse o sistema.
+
+Este relatório agora serve como uma documentação sólida para os módulos de Siglas e Documentos do novo sistema.
+
+---
+
+**FIM DO RELATÓRIO**
+---

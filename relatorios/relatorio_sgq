@@ -1,0 +1,717 @@
+Relatório Técnico do Sistema de Qualidade (SGQ)
+Visão Geral
+Este documento detalha a arquitetura, funcionalidades e estrutura de dados da versão atual do Sistema de Qualidade. O objetivo é servir como um guia completo para a refatoração e modernização do sistema, identificando pontos fortes, fracos e oportunidades de melhoria.
+
+1. Estrutura de Arquivos Analisados
+1.1. config/conexao.php
+Propósito: Este é o arquivo de configuração central para a conexão com o banco de dados. Ele define as credenciais (host, usuário, senha, nome do banco) e estabelece a conexão que será utilizada por todo o sistema.
+Funcionalidades:
+Define as credenciais de acesso ao banco de dados MySQL.
+Define credenciais para um servidor FTP, que são utilizadas por outras partes do sistema (ftp.php).
+Utiliza a extensão mysql_* para conectar e selecionar o banco de dados.
+Configura o charset da conexão para utf8, garantindo o suporte a caracteres especiais e acentuação.
+⚠️ Pontos Críticos de Melhoria:
+Extensão Obsoleta: As funções mysql_* (mysql_connect, mysql_query, etc.) estão obsoletas desde o PHP 5.5 e foram removidas no PHP 7.0. Elas não recebem mais atualizações de segurança e são a principal fonte de vulnerabilidades no código.
+Segurança (SQL Injection): A construção de queries por concatenação de strings, mesmo com mysql_real_escape_string, é uma prática perigosa.
+Recomendação para o Novo Sistema: Substituir a conexão por PDO (PHP Data Objects) ou MySQLi. Ambas as extensões são modernas, seguras e suportam Prepared Statements, que é a forma correta e segura de executar consultas SQL, prevenindo SQL Injection de forma nativa.
+1.2. config/ftp.php
+Propósito: Gerenciar a transferência de arquivos para servidores remotos via protocolo FTP. É usado para distribuir documentos em diferentes sistemas (extranet, portal do aluno, etc.).
+Funcionalidades:
+resolverDestinosFTP(array $distribuicao_ids): Mapeia IDs numéricos para caminhos de diretórios FTP. Por exemplo, o ID 2 corresponde ao caminho da extranet.
+deletarFTP($nome_remoto, array $caminhos): Conecta-se ao servidor FTP e remove um arquivo específico dos diretórios de destino.
+uploadFTP($arquivo_local, $nome_remoto, array $caminhos): Realiza o upload de um arquivo local para um ou mais diretórios no servidor FTP.
+⚠️ Pontos Críticos de Melhoria:
+Gerenciamento de Credenciais: As funções usam variáveis globais ($ftp_host, $ftp_user, $ftp_pass) definidas em conexao.php. Em um sistema moderno, seria melhor encapsular a lógica FTP em uma classe, passando as credenciais pelo construtor ou usando um sistema de gerenciamento de configurações (variáveis de ambiente, por exemplo).
+Error Handling: O uso do operador @ para suprimir erros (@ftp_connect) pode esconder problemas de conexão ou permissão, dificultando o diagnóstico. É melhor capturar os erros e tratá-los de forma explícita (ex: com blocos try/catch ou verificando o retorno das funções).
+1.3. admin/usuarios.php
+Propósito: Página de gerenciamento de usuários do sistema. Acessível apenas por usuários com perfil de admin.
+Funcionalidades:
+Controle de Acesso: Verifica se o usuário está logado e se seu perfil ($_SESSION['usu_perfil']) é 'admin'. Caso contrário, redireciona para a página inicial.
+Criação de Usuário:
+Recebe dados de um formulário (nome, login, perfil).
+Verifica se o login já existe para evitar duplicidade.
+Gera uma senha aleatória de 8 caracteres (gerarSenhaAleatoria).
+Armazena a senha no banco usando md5().
+Insere o novo usuário na tabela t_usuario_qualidade com o status primeiro_acesso = 1.
+Exibe a senha gerada na tela para o administrador copiar.
+Exclusão de Usuário:
+Recebe um id via $_GET['excluir_id'].
+Impede que um administrador exclua a si mesmo.
+Remove o usuário do banco de dados.
+Listagem de Usuários: Exibe todos os usuários cadastrados em uma tabela, mostrando nome, login, perfil e status (Pendente/Ativo).
+⚠️ Pontos Críticos de Melhoria:
+Segurança (SQL Injection): As queries de DELETE e SELECT são construídas concatenando variáveis diretamente na string SQL, o que é uma grave falha de segurança.
+Segurança (Hashing de Senha): md5() é um algoritmo de hash completamente inseguro para senhas. Ele é rápido demais e vulnerável a ataques de rainbow table e força bruta.
+Recomendação para o Novo Sistema:
+Usar PDO/MySQLi com Prepared Statements para todas as queries.
+Usar as funções password_hash() para criar o hash da senha e password_verify() para validá-la. Elas utilizam algoritmos modernos e seguros (como o Bcrypt/Argon2).
+1.4. admin/meu_perfil.php
+Propósito: Permite que o usuário logado visualize e edite suas próprias informações, como nome, login e senha.
+Funcionalidades:
+Controle de Acesso: Garante que apenas usuários logados possam acessar a página.
+Carregamento de Dados: Busca e exibe os dados atuais do usuário no formulário.
+Atualização de Dados:
+Ao submeter o formulário, exige a senha atual para confirmar a identidade do usuário.
+Valida se a senha atual fornecida corresponde à do banco de dados.
+Verifica se o novo login escolhido já não está em uso por outra pessoa.
+Se uma nova senha for fornecida, verifica se a confirmação bate e se tem um comprimento mínimo.
+Atualiza o nome, o login e, opcionalmente, a senha no banco.
+Atualiza os dados na $_SESSION para refletir as mudanças imediatamente no sistema.
+⚠️ Pontos Críticos de Melhoria:
+Segurança (SQL Injection e Hashing): Sofre dos mesmos problemas dos outros arquivos: uso de mysql_* e md5(). A validação da senha atual (md5($_POST['senha_atual'])) também é insegura.
+Lógica Aninhada: A lógica de validação (if/else) é muito aninhada, o que torna o código difícil de ler e manter.
+Recomendação para o Novo Sistema:
+Refatorar a lógica de validação para ser mais linear (usando guard clauses). Por exemplo, verificar cada erro e sair da função mais cedo, em vez de aninhar if/else.
+Aplicar as mesmas melhorias de segurança: PDO/MySQLi e password_hash()/password_verify().
+1.5. css/index.css
+Propósito: Folha de estilos principal que define a identidade visual do sistema.
+Funcionalidades:
+Variáveis CSS (:root): Define uma paleta de cores corporativa (--primary-color, --accent-color, etc.) e outras variáveis globais (como card-shadow). Isso é uma excelente prática, pois facilita a manutenção do design.
+Estilos Globais: Define a fonte padrão (Segoe UI), cor de fundo e cor do texto.
+Estilos Específicos (.doc-*): Cria um conjunto de classes prefixadas com doc- para estilizar formulários de maneira consistente, incluindo campos de input, títulos, botões e checkboxes.
+Estilos Gerais: Contém estilos para componentes reutilizáveis em outras páginas, como a barra de navegação (.navbar-custom), tabelas (.table-custom), e a página de login.
+Estilos do Painel: Define a aparência dos "cards" clicáveis na página inicial (index.php), com efeitos de hover para melhor usabilidade.
+Pontos Positivos:
+Organização: O CSS está bem organizado em seções lógicas com comentários.
+Modernidade: O uso de variáveis CSS é uma prática moderna e recomendada.
+Consistência: O uso de classes prefixadas (doc-) ajuda a evitar conflitos com o framework Bootstrap e cria um sistema de design coeso.
+Recomendação para o Novo Sistema: Manter a estrutura deste arquivo. Ele é um bom ponto de partida. Talvez considerar o uso de um pré-processador como SASS/SCSS para aninhar seletores e usar mixins, o que pode organizar ainda mais o código se o projeto crescer.
+2. Estrutura do Banco de Dados (Inferida)
+Com base nos arquivos PHP, a principal tabela de usuários é a t_usuario_qualidade.
+
+Tabela: t_usuario_qualidade
+Propósito: Armazenar as informações de login, dados pessoais e permissões dos usuários do sistema.
+Estrutura Provável das Colunas:
+Coluna	Tipo Provável	Descrição
+id	INT, PRIMARY KEY, AUTO_INCREMENT	Identificador único para cada usuário.
+nome_usuario	VARCHAR	O login de acesso do usuário (ex: "jsilva"). Deve ser único.
+nome_completo	VARCHAR	O nome completo do usuário (ex: "João da Silva").
+senha	VARCHAR(32)	Armazena o hash da senha. Atualmente usa MD5, que é inseguro.
+perfil	VARCHAR ou ENUM('admin', 'padrao')	Define o nível de permissão do usuário no sistema.
+primeiro_acesso	TINYINT(1) ou BOOLEAN	Um indicador (1 ou 0) para saber se o usuário já fez o primeiro login. Usado para forçar a troca de senha inicial, por exemplo.
+
+---
+
+### 1.6. `index.php` (Painel Principal)
+
+*   **Propósito:** É a página inicial e painel de controle do sistema após o login. Serve como o hub central, apresentando um resumo do estado dos documentos e fornecendo navegação para todas as outras seções.
+*   **Funcionalidades:**
+    *   **Controle de Acesso:** Verifica se o usuário está logado, redirecionando para a página de login caso não esteja.
+    *   **Dashboard de Navegação:** Exibe "cards" que funcionam como links para as principais áreas de gerenciamento de documentos:
+        *   Cadastrar, Controle, Agendados e Obsoletos (para "Siglas e Definições" e "Demais Documentos").
+    *   **Painel de Notificações:**
+        *   Executa duas consultas SQL complexas com `UNION ALL` para buscar documentos e manuais com datas de análise crítica.
+        *   **Vencidos:** Lista todos os itens cuja data de análise já passou.
+        *   **Próximos 6 meses:** Lista todos os itens que vencerão nos próximos 6 meses, servindo como um alerta proativo.
+    *   **Acesso Rápido à Lista Mestra:** Busca no banco de dados o caminho para o documento da "Lista Mestra" e gera um link direto para o arquivo PDF.
+    *   **Informações do Usuário:** Exibe o nome do usuário logado e fornece links para "Minha Conta", "Admin" (se o perfil for de administrador) e "Sair".
+*   **Dependências:**
+    *   `config/conexao.php`: Para conexão com o banco de dados.
+    *   `funcoes/verificar_publicacao.php`: Arquivo incluído, provavelmente contém lógica para atualizar o status de documentos agendados.
+    *   `css/index.css`: Para a estilização do painel.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Segurança e Boas Práticas:** Assim como os outros arquivos, ainda utiliza as funções `mysql_*`, que são obsoletas e inseguras.
+    *   **Performance:** As duas consultas `UNION ALL` são executadas a cada carregamento da página. Em um sistema com muitos documentos, isso pode causar lentidão. No novo sistema, pode-se implementar um sistema de cache para esses resultados, atualizando-os a cada X minutos, por exemplo.
+    *   **Mistura de Código:** O arquivo mistura pesadamente a lógica de acesso a dados (PHP/SQL) com a lógica de apresentação (HTML). Isso torna a manutenção difícil.
+    *   **Recomendação para o Novo Sistema:** Adotar uma arquitetura que separe essas responsabilidades, como o padrão **MVC (Model-View-Controller)**. Um *Controller* buscaria os dados, passaria para uma *View* (template), que apenas se preocuparia em exibi-los. Isso tornaria o código muito mais limpo, organizado e fácil de dar manutenção.
+
+---
+
+## 3. Estrutura Adicional do Banco de Dados (Inferida)
+
+A análise do `index.php` revela a existência de pelo menos duas outras tabelas centrais para o sistema: `t_documento` e `t_manuais`.
+
+### Tabela: `t_documento`
+
+*   **Propósito:** Armazenar metadados sobre os documentos gerais do Sistema de Qualidade (procedimentos, instruções de trabalho, etc.).
+
+#### Estrutura Provável das Colunas:
+
+| Coluna | Tipo Provável | Descrição |
+| :--- | :--- | :--- |
+| `id` | `INT`, `PRIMARY KEY` | Identificador único do documento. |
+| `cod_doc` | `VARCHAR` | O código único do documento (ex: "POP-001", "IT-TEC-012"). |
+| `nome_doc` | `VARCHAR` | O título ou nome descritivo do documento. |
+| `analise_doc` | `DATE` | Data em que a próxima análise crítica do documento deve ser realizada. |
+| `cat_id` | `INT` | Chave estrangeira para uma tabela de categorias. O valor `5` é usado para identificar a "Lista Mestra". |
+| `arq_doc` | `VARCHAR` | O nome do arquivo físico (ex: "documento_rev02.pdf") armazenado no servidor. |
+| `status` | `VARCHAR` ou `ENUM` | Provavelmente existe uma coluna de status (ex: 'Vigente', 'Obsoleto', 'Agendado') para controlar o ciclo de vida. |
+
+### Tabela: `t_manuais`
+
+*   **Propósito:** Armazenar informações específicas sobre os manuais do sistema, que parecem ter um tratamento ligeiramente diferente dos outros documentos.
+
+#### Estrutura Provável das Colunas:
+
+| Coluna | Tipo Provável | Descrição |
+| :--- | :--- | :--- |
+| `id` | `INT`, `PRIMARY KEY` | Identificador único do manual. |
+| `codigo_manual` | `VARCHAR` | O código único do manual (ex: "MAN-QUAL-001"). |
+| `nome_manual` | `VARCHAR` | O título ou nome descritivo do manual. |
+| `data_analise_critica` | `DATE` | Data em que a próxima análise crítica do manual deve ser realizada. |
+| `arquivo` | `VARCHAR` | Provavelmente existe uma coluna para o nome do arquivo do manual. |
+
+### Tabela: `t_categorias_docs` (Tabela Hipotética)
+
+*   **Propósito:** A existência da coluna `cat_id` na tabela `t_documento` sugere fortemente a existência de uma tabela de categorias para organizar os documentos.
+*   **Estrutura Provável:** `id (INT)`, `nome_categoria (VARCHAR)`.
+
+---
+
+## 4. Módulo de Gestão de Documentos (`documentos/`)
+
+Este é o coração do sistema, responsável por todo o ciclo de vida dos documentos, desde o cadastro até a obsolescência.
+
+### 4.1. `documentos/cadastrar.php`
+*   **Propósito:** Formulário para cadastrar um novo documento no sistema.
+*   **Funcionalidades:**
+    *   **Formulário de Metadados:** Coleta informações como categoria, código, nome, autor, revisão, data de vigor e próxima análise.
+    *   **Upload de Arquivo:** Permite anexar o arquivo do documento (PDF, DOC, etc.).
+    *   **Validação de Código (AJAX):** Antes de submeter, verifica em tempo real se o código do documento já existe nas tabelas `t_documento` ou `t_documento_agendado` para evitar duplicidade.
+    *   **Renomeação Automática:** O arquivo enviado é renomeado seguindo um padrão rigoroso baseado na categoria, código, revisão e ano, garantindo a padronização.
+    *   **Lógica de Publicação vs. Agendamento:**
+        *   Se a "Data de Vigor" for hoje ou no passado, o documento é inserido na tabela principal `t_documento` e se torna ativo imediatamente.
+        *   Se a "Data de Vigor" for no futuro, o documento é inserido na tabela `t_documento_agendado` para ser publicado automaticamente no dia correto.
+    *   **Distribuição FTP:** Após o upload, envia o arquivo para os servidores remotos (Extranet, Portal do Aluno) selecionados.
+    *   **Regras de Negócio Específicas:** Possui lógica em JavaScript para ocultar/desabilitar o campo "Revisão" se a categoria for "LM" (Lista Mestra) e para preencher automaticamente a data da próxima análise (+3 anos da data de vigor).
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Segurança:** Vulnerável a SQL Injection. Utiliza `mysql_real_escape_string` mas a concatenação de queries é inerentemente insegura.
+    *   **Estrutura:** Mistura de lógica de negócio, acesso a dados (SQL) e apresentação (HTML) no mesmo arquivo.
+    *   **Recomendação para o Novo Sistema:** Separar a lógica em camadas (Controller, Service, Repository). Usar PDO/MySQLi para acesso seguro ao banco. A lógica de renomeação de arquivos poderia ser encapsulada em uma classe `FileNamer` para facilitar testes e manutenção.
+
+### 4.2. `documentos/listagem.php`
+*   **Propósito:** Página principal para visualizar, filtrar e gerenciar todos os documentos ativos.
+*   **Funcionalidades:**
+    *   **Listagem Completa:** Exibe todos os documentos da tabela `t_documento` em formato de tabela.
+    *   **Filtragem Dinâmica (AJAX):** Permite filtrar a lista em tempo real por Categoria, Código, Nome e Local de Distribuição sem recarregar a página.
+    *   **Ações Rápidas:** Para cada documento, oferece botões para:
+        *   Visualizar o arquivo (se existir).
+        *   Editar o documento (`editar.php`).
+        *   Tornar obsoleto (abre um modal para confirmação).
+        *   Excluir permanentemente (abre um modal para confirmação).
+    *   **Geração de PDF:** Possui um botão para gerar a "Lista Mestra" em PDF, com opções de rodapé.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Performance:** A consulta inicial carrega todos os documentos. Em um sistema com milhares de registros, a paginação seria essencial. A busca AJAX já é uma boa prática, mas também deveria ser paginada no backend.
+    *   **Segurança:** As ações de exclusão e obsolescência são feitas via POST e GET, mas as queries no backend são inseguras.
+
+### 4.3. `documentos/editar.php`
+*   **Propósito:** Formulário para editar os metadados e o arquivo de um documento existente.
+*   **Funcionalidades:**
+    *   **Carregamento de Dados:** Preenche o formulário com os dados atuais do documento selecionado.
+    *   **Edição de Metadados:** Permite alterar todos os campos, incluindo categoria, código, nome, etc.
+    *   **Substituição de Arquivo:** Permite fazer o upload de um novo arquivo, que substituirá o antigo. O novo arquivo também é renomeado automaticamente.
+    *   **Histórico de Análise:** Ao alterar a data de "Próxima Análise", um modal exige uma justificativa, que é salva na tabela `t_historico_analise`.
+    *   **Tornar Obsoleto:** Possui um botão que abre um modal para definir a data e o motivo da obsolescência.
+        *   Se a data for futura, cria um registro em `t_agendamento_obsoleto`.
+        *   Se a data for hoje/passado, move o documento para `t_documento_historico` e o remove da tabela `t_documento`.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Complexidade:** O arquivo é extremamente complexo, com múltiplas lógicas de POST (`editar`, `obsoleto`, `remover_arquivo`) no mesmo lugar. Isso o torna muito difícil de manter.
+    *   **Segurança:** Mesmas vulnerabilidades de SQL Injection.
+    *   **Recomendação para o Novo Sistema:** Dividir as responsabilidades. Por exemplo, criar rotas e controllers diferentes para cada ação: `PUT /documentos/{id}`, `POST /documentos/{id}/obsoleto`, `DELETE /documentos/{id}/arquivo`.
+
+### 4.4. `documentos/agendados.php`
+*   **Propósito:** Painel para gerenciar documentos com ações futuras: novos documentos aguardando para entrar em vigor e documentos ativos aguardando para se tornarem obsoletos.
+*   **Funcionalidades:**
+    *   **Listagem de Novos Agendados:** Mostra documentos da tabela `t_documento_agendado`, com opção de editar seus dados ou excluir o agendamento.
+    *   **Listagem de Agendados para Obsolescência:** Mostra documentos da tabela `t_agendamento_obsoleto`, com a opção de cancelar a ação.
+    *   **Edição de Agendamento:** Permite alterar todos os dados de um novo documento agendado, incluindo a data de vigor. Se a data for alterada para o presente/passado, o documento é publicado imediatamente.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Lógica Duplicada:** A lógica de edição de um documento agendado é muito similar à de `editar.php` e `cadastrar.php`. No novo sistema, isso poderia ser unificado em um único formulário/componente.
+
+### 4.5. `documentos/historico.php`
+*   **Propósito:** Exibir e filtrar a lista de todos os documentos que já foram tornados obsoletos.
+*   **Funcionalidades:**
+    *   **Listagem de Obsoletos:** Busca dados da tabela `t_documento_historico`.
+    *   **Filtragem:** Permite buscar por categoria, código, nome e data de obsolescência.
+    *   **Exclusão Definitiva:** Permite remover permanentemente um registro do histórico.
+
+### 4.6. `documentos/excluir_documento.php` e `excluir_obsoleto.php`
+*   **Propósito:** Scripts dedicados para exclusão permanente.
+*   **Funcionalidades:**
+    *   `excluir_documento.php`: Recebe um ID, apaga o registro de `t_documento`, suas distribuições em `t_doc_distribuicao`, o arquivo físico no servidor e o arquivo nos destinos FTP.
+    *   `excluir_obsoleto.php`: Recebe um ID, apaga o registro de `t_documento_historico` e suas distribuições em `t_doc_distribuicao_historico`.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Segurança:** A exclusão é feita via `$_GET`, o que não é ideal. Uma requisição `DELETE` com confirmação via `POST` seria mais segura. As queries são vulneráveis.
+
+### 4.7. `documentos/importar_csv.php` e `importar_lote.php`
+*   **Propósito:** Ferramentas para automação e migração de dados.
+*   **Funcionalidades:**
+    *   `importar_csv.php`: Permite o upload de um arquivo CSV. O script lê o CSV, identifica a categoria pelo prefixo do código (ex: "FQ-"), e então insere ou atualiza o documento no banco de dados.
+    *   `importar_lote.php`: Permite o upload de múltiplos arquivos (PDF, DOCX, etc.). O script tenta identificar o código do documento a partir do nome do arquivo, busca esse código no banco e, se encontrar, renomeia o arquivo para o padrão do sistema e o associa ao registro.
+*   **Pontos Positivos:** São ferramentas poderosas para administração em massa.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Robustez:** A lógica de "adivinhar" o código a partir do nome do arquivo em `importar_lote.php` pode ser frágil.
+    *   **Feedback ao Usuário:** O feedback de sucesso/erro é básico. Um sistema mais moderno poderia mostrar o progresso em tempo real e um relatório detalhado de quais linhas/arquivos falharam e por quê.
+
+### 4.8. `documentos/gerar_pdf.php`
+*   **Propósito:** Script complexo para gerar a "Lista Mestra" de documentos em formato PDF.
+*   **Funcionalidades:**
+    *   **Uso da Biblioteca FPDF:** Utiliza a biblioteca FPDF para construir o PDF do zero.
+    *   **Layout Dinâmico:** O script é extremamente inteligente. Ele calcula a largura das colunas dinamicamente com base no número de locais de distribuição para fazer a tabela caber perfeitamente na página A4 paisagem.
+    *   **Quebra de Página e Cabeçalhos:** Gerencia a quebra de páginas e repete o cabeçalho em cada nova página.
+    *   **Texto Rotacionado:** Gira o texto dos locais de distribuição em 90 graus para economizar espaço.
+    *   **Agrupamento por Categoria:** Gera uma seção/página separada para cada categoria de documento.
+*   **Pontos Positivos:** É uma peça de engenharia impressionante para a época em que foi escrito, resolvendo um problema de layout complexo com código procedural.
+*   **Recomendação para o Novo Sistema:** Hoje, existem bibliotecas mais modernas como `Dompdf` ou `TCPDF` que convertem HTML+CSS para PDF. Seria muito mais simples criar um template HTML da lista e convertê-lo, em vez de calcular posições (X, Y) manualmente com FPDF.
+
+### 4.9. `documentos/listamestra.php` e `selecionar_documento.php`
+*   **Propósito:** Páginas auxiliares de navegação.
+*   **Funcionalidades:**
+    *   `listamestra.php`: Uma página simples que apenas contém um link para um arquivo PDF estático. Parece ser um fallback ou uma versão antiga.
+    *   `selecionar_documento.php`: Uma versão simplificada da `listagem.php`, sem filtros, que apenas lista os documentos e permite clicar para ir à página de edição.
+
+---
+
+## 5. Análise Detalhada do Banco de Dados (Baseado no SQL Dump)
+
+O arquivo `qualidade (4).sql` revela a estrutura completa e as relações entre as tabelas.
+
+### 5.1. Tabelas Principais (Ciclo de Vida do Documento)
+
+**`t_categoria`**
+*   **Propósito:** Define as categorias dos documentos.
+*   **Colunas:** `cat_id` (PK), `cat_nome` (ex: "Procedimento da Qualidade"), `cat_sigla` (ex: "PQ").
+
+**`t_distribuicao`**
+*   **Propósito:** Define os locais onde um documento pode ser distribuído.
+*   **Colunas:** `id_local` (PK), `nome_local` (ex: "Intranet", "Site do Ital").
+
+**`t_documento`**
+*   **Propósito:** Tabela central, armazena todos os documentos **ativos e em vigor**.
+*   **Colunas:** `id_doc` (PK), `cat_id` (FK para `t_categoria`), `cod_doc`, `nome_doc`, `autor_doc`, `rev_doc`, `vigor_doc`, `analise_doc`, `arq_doc` (nome do arquivo).
+
+**`t_doc_distribuicao`**
+*   **Propósito:** Tabela de ligação (muitos-para-muitos) entre `t_documento` e `t_distribuicao`.
+*   **Colunas:** `id` (PK), `id_doc` (FK), `id_local` (FK).
+
+**`t_documento_agendado`**
+*   **Propósito:** Armazena documentos **novos** que foram cadastrados mas aguardam uma data de vigor futura para se tornarem ativos.
+*   **Colunas:** Similares a `t_documento`, mas com campos adicionais como `responsavel` e `data_cadastro`.
+
+**`t_agendamento_obsoleto`**
+*   **Propósito:** Armazena agendamentos para que documentos **ativos** se tornem obsoletos em uma data futura.
+*   **Colunas:** `id_agend` (PK), `id_doc` (FK para `t_documento`), `data_agendada`, `motivo`, `responsavel`.
+
+**`t_documento_historico`**
+*   **Propósito:** Arquivo morto. Armazena os metadados de documentos que já foram tornados obsoletos.
+*   **Colunas:** Similares a `t_documento`, mas com campos extras como `id_doc_original`, `data_obsoleto`, `motivo`, `responsavel`.
+
+**`t_doc_distribuicao_historico`**
+*   **Propósito:** Tabela de ligação que armazena os locais de distribuição que um documento tinha quando se tornou obsoleto.
+*   **Colunas:** `id_historico_dist` (PK), `id_historico` (FK para `t_documento_historico`), `id_local`, `nome_local`.
+
+### 5.2. Tabelas de Histórico de Alterações
+
+**`t_historico_agendamento`**
+*   **Propósito:** Log de auditoria. Registra toda vez que a data de vigor de um documento em `t_documento_agendado` é alterada.
+*   **Colunas:** `id_hist` (PK), `id_agendado` (FK), `data_antiga`, `data_nova`, `justificativa`, `responsavel`.
+
+**`t_historico_analise`**
+*   **Propósito:** Log de auditoria. Registra toda vez que a data de "próxima análise crítica" de um documento em `t_documento` é alterada.
+*   **Colunas:** `id_hist` (PK), `id_doc` (FK), `data_antiga`, `data_nova`, `justificativa`, `responsavel`.
+
+### 5.3. Tabelas de Conteúdos Especiais (Manuais, Siglas, Relatórios)
+
+O sistema possui um conjunto paralelo de tabelas para gerenciar "Manuais", "Siglas" e "Relatórios", que seguem um ciclo de vida semelhante ao dos documentos, mas em tabelas separadas.
+
+*   `t_manuais`, `t_manuais_agendados`, `t_manual_distribuicao`, `t_distribuicao_manuais`
+*   `t_siglas_definicoes`, `t_siglas_agendadas`, `t_arquivo_siglas`
+*   `t_relatorios`, `t_relatorios_agendados`
+*   `t_historico_conteudo` (serve como arquivo morto para esses itens especiais)
+*   `t_obsolescencia_agendada` (agenda a obsolescência desses itens)
+
+**Observação:** A estrutura para esses conteúdos é um pouco menos normalizada e mais fragmentada que a dos documentos principais. No novo sistema, valeria a pena avaliar se todos poderiam ser unificados sob uma única estrutura de "item gerenciável", com um campo `tipo` (Documento, Manual, Relatório) para diferenciá-los, simplificando a lógica.
+
+### 5.4. Tabelas Não Relacionadas (Outros Sistemas)
+
+O dump SQL também contém tabelas que parecem pertencer a um sistema de treinamento e avaliação, não diretamente ligado à gestão de documentos da qualidade:
+
+*   `t_aluno`
+*   `t_prova`
+*   `t_questao`
+*   `t_resposta`
+*   `t_tema`
+*   `t_avaliacao`
+*   `t_news`, `t_news_email`, `t_news_lista` (parece um sistema de newsletter)
+
+Essas tabelas não são utilizadas pelos scripts da pasta `documentos/` e podem ser consideradas como parte de outro escopo.
+
+---
+
+## 6. Fluxo de Trabalho Principal (Ciclo de Vida do Documento)
+
+1.  **Criação:** Um usuário cria um documento via `cadastrar.php`.
+    *   **Cenário A (Publicação Imediata):** Se a data de vigor é <= hoje, um novo registro é criado em `t_documento`.
+    *   **Cenário B (Agendamento):** Se a data de vigor é > hoje, um novo registro é criado em `t_documento_agendado`.
+
+2.  **Publicação Automática:** O script `funcoes/verificar_publicacao.php` (incluído no `index.php`) roda a cada acesso ao painel. Ele verifica `t_documento_agendado` por documentos cuja data de vigor chegou. Se encontra, move o registro de `t_documento_agendado` para `t_documento`, tornando-o ativo.
+
+3.  **Edição:** Um documento ativo pode ser editado via `editar.php`. Metadados e arquivos podem ser atualizados.
+
+4.  **Obsolescência:** Um usuário decide tornar um documento obsoleto via `editar.php` ou `listagem.php`.
+    *   **Cenário A (Imediata):** Se a data de obsolescência é <= hoje, o registro é movido de `t_documento` para `t_documento_historico`.
+    *   **Cenário B (Agendada):** Se a data é > hoje, um registro é criado em `t_agendamento_obsoleto` referenciando o `id_doc` do documento ativo.
+
+5.  **Obsolescência Automática:** O mesmo script `verificar_publicacao.php` também checa `t_agendamento_obsoleto`. Se encontra um agendamento cuja data chegou, ele move o documento correspondente de `t_documento` para `t_documento_historico`.
+
+6.  **Consulta:**
+    *   Documentos ativos são vistos em `listagem.php`.
+    *   Documentos agendados são vistos em `agendados.php`.
+    *   Documentos obsoletos são vistos em `historico.php`.
+
+7.  **Exclusão:** Um documento pode ser permanentemente removido do sistema (de `t_documento` ou `t_documento_historico`) através dos scripts de exclusão.
+
+---
+
+## 7. Módulo de Funções e Automação (`funcoes/`)
+
+Esta pasta contém scripts de suporte que lidam com a lógica de autenticação do usuário e a automação do ciclo de vida dos documentos.
+
+### 7.1. `funcoes/login.php`
+*   **Propósito:** Página e script de autenticação do usuário.
+*   **Funcionalidades:**
+    *   **Interface de Login:** Apresenta um formulário para o usuário inserir seu login e senha.
+    *   **Processamento da Autenticação:**
+        *   Recebe os dados do formulário via POST.
+        *   Escapa as entradas com `mysql_real_escape_string`.
+        *   Cria um hash da senha fornecida usando o algoritmo **MD5**.
+        *   Consulta o banco de dados (`t_usuario_qualidade`) para encontrar um usuário com o login e o hash da senha correspondentes.
+    *   **Gerenciamento de Primeiro Acesso:**
+        *   Se o usuário é encontrado e a coluna `primeiro_acesso` é `1`, ele é redirecionado para `redefinir_senha.php` para forçar a criação de uma senha pessoal.
+    *   **Criação de Sessão:**
+        *   Se o login for bem-sucedido, cria as variáveis de sessão (`$_SESSION`) com os dados do usuário (ID, nome, perfil, etc.) e o redireciona para o painel principal (`index.php`).
+    *   **Tratamento de Falha:** Se o login falhar, exibe uma mensagem de "Usuário ou senha incorretos".
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Segurança (Hashing):** O uso de `md5()` é **extremamente inseguro** para senhas. É um ponto crítico que deve ser modernizado.
+    *   **Segurança (SQL Injection):** A query é construída por concatenação, o que a torna vulnerável.
+    *   **Recomendação para o Novo Sistema:** Substituir `md5()` por `password_hash()` e `password_verify()`. Utilizar PDO com *prepared statements* para a consulta, tornando-a imune a SQL Injection.
+
+### 7.2. `funcoes/redefinir_senha.php`
+*   **Propósito:** Forçar o usuário a definir uma nova senha pessoal em seu primeiro acesso ao sistema.
+*   **Funcionalidades:**
+    *   **Controle de Acesso:** Só permite o acesso se uma sessão temporária (`$_SESSION['temp_id']`) tiver sido criada pelo `login.php`.
+    *   **Formulário de Redefinição:** Apresenta campos para "Nova Senha" e "Confirmar Senha".
+    *   **Validação:**
+        *   Verifica se as duas senhas digitadas são idênticas.
+        *   Verifica se a nova senha tem um comprimento mínimo de 4 caracteres.
+    *   **Atualização no Banco:**
+        *   Cria um hash **MD5** da nova senha.
+        *   Atualiza a tabela `t_usuario_qualidade`, salvando a nova senha e alterando o campo `primeiro_acesso` para `0`.
+    *   **Finalização:** Destrói a sessão temporária e redireciona o usuário para a página de login para que ele possa entrar com sua nova senha.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Segurança:** Sofre dos mesmos problemas de `md5()` e SQL Injection.
+    *   **Política de Senha:** Um requisito de 4 caracteres é muito fraco. O novo sistema deve impor uma política de senhas mais robusta (ex: mínimo de 8 caracteres, complexidade, etc.).
+
+### 7.3. `funcoes/logout.php`
+*   **Propósito:** Encerrar a sessão do usuário de forma segura.
+*   **Funcionalidades:**
+    *   Inicia a sessão para poder manipulá-la.
+    *   Limpa todas as variáveis da `$_SESSION`.
+    *   Envia um comando para o navegador expirar o cookie da sessão.
+    *   Destrói a sessão no servidor.
+    *   Redireciona o usuário para a página de login.
+*   **Pontos Positivos:** O script segue as boas práticas recomendadas para um logout seguro e completo em PHP.
+
+### 7.4. `funcoes/verificar_publicacao.php`
+*   **Propósito:** Este é um dos scripts mais importantes do sistema. Ele funciona como um "cron job" improvisado, sendo incluído e executado toda vez que uma página principal (como `index.php`) é carregada. Sua função é automatizar o ciclo de vida dos documentos.
+*   **Funcionalidades:**
+    *   **Publicação de Documentos Agendados:**
+        1.  Busca na tabela `t_documento_agendado` por todos os registros cuja `vigor_doc` (data de vigor) seja igual ou anterior à data atual.
+        2.  Para cada documento encontrado, ele:
+            *   Insere uma cópia dos dados na tabela principal `t_documento`, efetivamente "publicando" o documento.
+            *   Copia as informações de distribuição para a tabela de ligação `t_doc_distribuicao`.
+            *   Exclui o registro original da tabela `t_documento_agendado` e de seu histórico (`t_historico_agendamento`).
+    *   **Obsolescência de Documentos Agendados:**
+        1.  Busca na tabela `t_agendamento_obsoleto` por todos os registros cuja `data_agendada` seja igual ou anterior à data atual.
+        2.  Para cada agendamento encontrado, ele:
+            *   Localiza o documento correspondente na tabela `t_documento`.
+            *   Copia os dados do documento para a tabela de arquivo morto, `t_documento_historico`.
+            *   Copia as informações de distribuição para a tabela de histórico `t_doc_distribuicao_historico`.
+            *   Exclui o documento da tabela de ativos (`t_documento`) e de suas distribuições (`t_doc_distribuicao`).
+            *   Exclui o registro do agendamento da tabela `t_agendamento_obsoleto`.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Performance e Confiabilidade:** Executar essas operações em cada carregamento de página pode causar lentidão e não é a abordagem mais robusta. Se dois usuários carregarem a página ao mesmo tempo, podem ocorrer condições de corrida (*race conditions*).
+    *   **Segurança:** O script utiliza `mysql_*` e concatenação de strings, sendo vulnerável a SQL Injection, embora o risco seja menor aqui, pois não há entrada direta do usuário.
+    *   **Recomendação para o Novo Sistema:** Substituir este script por um **Cron Job real** no servidor. Um script PHP dedicado (executado via linha de comando) que roda em intervalos fixos (ex: a cada 5 minutos ou uma vez por dia) é a solução padrão da indústria. Isso garante que a automação rode de forma confiável, previsível e sem impactar a performance da navegação do usuário.
+
+---
+
+## 8. Fluxo de Trabalho de Autenticação
+
+1.  **Acesso:** Usuário acessa `login.php`.
+2.  **Credenciais:** Usuário informa login e senha.
+3.  **Validação:** O sistema verifica as credenciais no banco.
+    *   **Falha:** Mensagem de erro é exibida.
+    *   **Sucesso (Primeiro Acesso):**
+        1.  Usuário é redirecionado para `redefinir_senha.php`.
+        2.  Define uma nova senha.
+        3.  É redirecionado de volta para `login.php` para entrar com a nova senha.
+    *   **Sucesso (Acesso Normal):**
+        1.  Sessão é criada.
+        2.  Usuário é redirecionado para o painel `index.php`.
+4.  **Navegação:** O usuário navega pelo sistema. Cada página protegida verifica a existência da `$_SESSION['usuario_logado']`.
+5.  **Logout:** Usuário clica em "Sair", que o leva para `logout.php`, encerrando a sessão e redirecionando para o login.
+
+---
+
+## 9. Fluxo de Trabalho de Automação (Cron Job Simulado)
+
+1.  **Gatilho:** Um usuário logado acessa o `index.php`.
+2.  **Execução:** O `index.php` inclui o `verificar_publicacao.php`.
+3.  **Verificação de Publicação:** O script consulta `t_documento_agendado`. Se houver documentos com data de vigor vencida, eles são movidos para `t_documento`.
+4.  **Verificação de Obsolescência:** O script consulta `t_agendamento_obsoleto`. Se houver agendamentos com data vencida, os documentos correspondentes são movidos de `t_documento` para `t_documento_historico`.
+5.  **Renderização:** Após a automação, o `index.php` continua sua execução normal e renderiza a página para o usuário.
+
+---
+
+## 10. Módulo de Conteúdos Especiais (`outros/`)
+
+Este módulo funciona como um sistema de gestão de documentos paralelo, dedicado a itens que não se encaixam na estrutura principal: **Manuais**, **Siglas e Definições**, e **Relatórios**. Ele replica muitas das funcionalidades do módulo `documentos/`, mas com tabelas e regras de negócio específicas.
+
+**⚠️ Observação Geral Crítica:** A maior questão deste módulo é a **redundância de código e de estrutura**. Ele é quase um clone do sistema principal, o que duplica o esforço de manutenção. A principal recomendação para o novo sistema é **unificar** a gestão de todos os tipos de conteúdo (documentos, manuais, siglas, etc.) em uma única estrutura, diferenciando-os por um campo de "tipo".
+
+### 10.1. `outros/selecionar_conteudo.php` e `cadastro_conteudo.php`
+*   **Propósito:** São as portas de entrada para o módulo.
+*   **Funcionalidades:**
+    *   `selecionar_conteudo.php`: Apresenta três "cards" (Siglas, Manuais, Relatórios) para o usuário escolher qual tipo de conteúdo deseja gerenciar.
+    *   `cadastro_conteudo.php`: É uma página dinâmica. Com base no tipo de conteúdo escolhido, ela exibe um formulário de cadastro diferente e específico para Manuais, Siglas ou Relatórios. Também implementa a lógica de agendamento se a data de vigor for futura.
+
+### 10.2. `outros/listagem_conteudo.php`
+*   **Propósito:** Página principal para visualizar, filtrar e gerenciar os conteúdos ativos.
+*   **Funcionalidades:**
+    *   **Seleção de Tipo:** O usuário primeiro escolhe qual tipo de conteúdo quer listar (Siglas, Manuais ou Relatórios).
+    *   **Listagem Dinâmica:** Com base na seleção, a página consulta a tabela correspondente (`t_siglas_definicoes`, `t_manuais`, `t_relatorios`) e exibe os resultados.
+    *   **Ações:** Para cada item, fornece botões para:
+        *   Editar (`editar_conteudo.php`).
+        *   Tornar Obsoleto (abre um modal para agendar ou executar a obsolescência).
+        *   Excluir permanentemente.
+    *   **Geração de PDF:** Possui botões para gerar as listas mestras em PDF para Siglas e Manuais.
+
+### 10.3. `outros/editar_conteudo.php`
+*   **Propósito:** Formulário para editar um item de conteúdo existente.
+*   **Funcionalidades:**
+    *   **Carregamento Dinâmico:** Recebe um `tipo` e um `id` via GET, busca os dados na tabela correta e preenche o formulário correspondente.
+    *   **Edição de Metadados:** Permite alterar os campos do item.
+    *   **Substituição de Arquivo:** Permite o upload de um novo arquivo para Manuais e Relatórios.
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Complexidade:** Assim como `editar.php`, este arquivo concentra muita lógica condicional (`if ($tipo_selecionado == '...')`) para lidar com os diferentes tipos de conteúdo, tornando-o complexo.
+
+### 10.4. `outros/agendados_conteudo.php`
+*   **Propósito:** Painel para gerenciar agendamentos de publicação e obsolescência para os conteúdos especiais.
+*   **Funcionalidades:**
+    *   **Interface com Abas:** Organiza os agendamentos em abas (Manuais, Siglas, Relatórios).
+    *   **Listagem de Agendamentos:** Para cada tipo, lista os itens aguardando para entrar em vigor e os itens aguardando para se tornarem obsoletos.
+    *   **Ações:** Permite publicar um item agendado manualmente ou cancelar um agendamento de obsolescência.
+
+### 10.5. `outros/historico_conteudo.php` e `historico_conteudo_excluir.php`
+*   **Propósito:** Visualizar e excluir registros do histórico de conteúdos obsoletos.
+*   **Funcionalidades:**
+    *   `historico_conteudo.php`: Apresenta uma tela de seleção e, em seguida, lista os itens das tabelas de histórico (`t_historico_conteudo`, `t_historico_arquivo_siglas`).
+    *   `historico_conteudo_excluir.php`: Script que recebe um ID, localiza o registro em uma das tabelas de histórico, apaga o arquivo físico e o registro do banco.
+
+### 10.6. `outros/gerar_pdf_siglas.php` e `gerar_pdf_manuais.php`
+*   **Propósito:** Scripts dedicados para a criação de listas mestras em PDF.
+*   **Funcionalidades:**
+    *   **Uso da Biblioteca FPDF:** Ambos utilizam FPDF para construir o PDF programaticamente, definindo posições, fontes e desenhando linhas e células.
+    *   `gerar_pdf_siglas.php`: Gera uma lista formatada de todas as siglas e suas definições.
+    *   `gerar_pdf_manuais.php`: É um script muito complexo, similar ao `gerar_pdf.php` principal. Ele cria seções separadas para "Manuais Controlados" e "Não Controlados", calcula larguras de colunas dinamicamente e rotaciona texto para otimizar o espaço.
+*   **Recomendação para o Novo Sistema:** Substituir a geração manual com FPDF por bibliotecas que convertem HTML para PDF, como `Dompdf`. Isso simplificaria drasticamente a manutenção dos layouts.
+
+### 10.7. `outros/importar_csv_siglas.php`
+*   **Propósito:** Ferramenta para importar em massa siglas e definições a partir de um arquivo CSV.
+*   **Funcionalidades:**
+    *   **Upload de CSV:** Permite o upload de um arquivo `.csv`.
+    *   **Parser Inteligente:** O script é robusto, lida com quebras de linha dentro de células e corrige problemas de codificação de caracteres (Windows-1252 para UTF-8).
+    *   **Lógica de Inserção/Atualização:**
+        *   Verifica se uma sigla com a **mesma definição** já existe.
+        *   Se sim, atualiza o registro existente (ex: a referência).
+        *   Se não, insere um novo registro. Isso permite que a mesma sigla (ex: "SGQ") tenha múltiplas definições.
+    *   **Reordenação:** Após a importação, reordena a coluna `numero` de toda a tabela para manter a consistência.
+*   **Pontos Positivos:** É uma ferramenta de administração muito poderosa e bem construída para a tecnologia da época.
+
+---
+
+## 11. Fluxo de Trabalho de Conteúdos Especiais
+
+O fluxo é praticamente idêntico ao do módulo de documentos, mas usando um conjunto diferente de arquivos e tabelas:
+
+1.  **Criação/Edição:** O usuário navega por `selecionar_conteudo.php` -> `listagem_conteudo.php` -> `editar_conteudo.php` ou vai direto para `cadastro_conteudo.php`.
+2.  **Agendamento:** Se a data de vigor for futura, o item é salvo nas tabelas `_agendados` (`t_manuais_agendados`, etc.).
+3.  **Publicação:** O script `funcoes/verificar_publicacao.php` (que ainda não foi analisado em detalhe para este fluxo) provavelmente também lida com a publicação automática desses conteúdos, movendo-os das tabelas `_agendados` para as tabelas principais.
+4.  **Obsolescência:** Um item pode ser tornado obsoleto imediatamente ou agendado via `listagem_conteudo.php`. A ação imediata move o registro para `t_historico_conteudo`. A ação agendada cria um registro em `t_obsolescencia_agendada`.
+5.  **Consulta:**
+    *   Ativos: `listagem_conteudo.php`
+    *   Agendados: `agendados_conteudo.php`
+    *   Obsoletos: `historico_conteudo.php`
+
+---
+
+## 12. Resumo Final e Próximos Passos
+
+A análise de todos os arquivos revela um sistema robusto, com uma lógica de negócio bem definida e complexa para o gerenciamento do ciclo de vida de documentos e conteúdos.
+
+### Pontos Fortes da Lógica Atual:
+*   **Ciclo de Vida Completo:** O sistema contempla todas as etapas: cadastro, agendamento, vigência, obsolescência e histórico.
+*   **Automação:** A ideia de um script que verifica e atualiza os status (`verificar_publicacao.php`) é o pilar da automação do sistema.
+*   **Ferramentas de Apoio:** A existência de importadores de CSV/Lote e geradores de PDF mostra que o sistema foi pensado para facilitar a administração.
+
+### Pontos Fracos da Implementação Atual:
+1.  **Tecnologia Obsoleta:** O uso de `mysql_*` e `md5()` é o problema mais grave, representando um risco de segurança e incompatibilidade com versões modernas do PHP.
+2.  **Duplicação de Código:** A existência dos módulos `documentos/` e `outros/` fazendo quase a mesma coisa é o principal problema de arquitetura, tornando a manutenção e a evolução do sistema extremamente difíceis.
+3.  **Mistura de Responsabilidades:** Quase todos os arquivos misturam lógica de banco de dados (SQL), lógica de negócio (PHP) e apresentação (HTML), o que é conhecido como "código espaguete".
+
+### Recomendações Estratégicas para o Novo Sistema:
+1.  **Unificar o Modelo de Dados:** Criar uma única tabela `documentos` (ou `itens`) que possa armazenar todos os tipos de conteúdo. Uma coluna `tipo` ('procedimento', 'manual', 'sigla', 'relatorio') diferenciaria cada um. Isso eliminaria dezenas de tabelas e simplificaria todas as queries.
+2.  **Adotar uma Arquitetura Moderna:** Implementar o padrão **MVC (Model-View-Controller)** ou similar.
+    *   **Model:** Classes que representam os dados (ex: `Documento.php`) e lidam com o acesso ao banco de dados (usando **PDO**).
+    *   **View:** Templates (HTML puro com `echo` de variáveis) que apenas exibem os dados.
+    *   **Controller:** Classes que recebem as requisições, usam os Models para buscar/salvar dados e chamam as Views para renderizar a resposta.
+3.  **Centralizar a Lógica de Negócio:** Criar "Services" (Serviços), que são classes responsáveis pelas regras de negócio. Por exemplo, uma classe `CicloDeVidaService` poderia conter os métodos `publicar(documento)` e `tornarObsoleto(documento)`, que seriam reutilizados em todo o sistema.
+4.  **Usar um Cron Job Real:** Substituir o `verificar_publicacao.php` por um script de linha de comando agendado no servidor (cron job) para rodar a automação de forma independente e confiável.
+5.  **Segurança em Primeiro Lugar:** Utilizar **PDO com Prepared Statements** para todas as consultas e `password_hash()` / `password_verify()` para senhas.
+
+Este relatório agora serve como um mapa completo do sistema antigo e um guia claro para as decisões de arquitetura do novo sistema.
+
+---
+
+**FIM DO RELATÓRIO**
+
+---
+
+## Adendo: Análise do `index.php` e do Dump SQL
+
+Esta seção complementa o relatório com a análise detalhada do painel principal (`index.php`) e a estrutura confirmada do banco de dados a partir do arquivo `qualidade (4).sql`.
+
+### Análise do `index.php` (Painel Principal)
+
+*   **Propósito:** É a página inicial e painel de controle do sistema após o login. Serve como o hub central, apresentando um resumo do estado dos documentos e fornecendo navegação para todas as outras seções.
+*   **Funcionalidades:**
+    *   **Controle de Acesso:** Verifica se o usuário está logado, redirecionando para a página de login caso não esteja.
+    *   **Automação (Gatilho):** Inclui e executa o script `funcoes/verificar_publicacao.php` a cada carregamento, atuando como o gatilho para a automação do ciclo de vida dos documentos.
+    *   **Dashboard de Navegação:** Exibe "cards" que funcionam como links para as principais áreas de gerenciamento:
+        *   Módulo de "Conteúdos Especiais" (`outros/`): Cadastrar, Controle, Agendados, Obsoletos.
+        *   Módulo de "Demais Documentos" (`documentos/`): Cadastrar, Controle, Agendados, Obsoletos.
+    *   **Painel de Notificações (Análise Crítica):**
+        *   Executa duas consultas SQL complexas com `UNION ALL` para buscar documentos (`t_documento`) e manuais (`t_manuais`) com datas de análise crítica.
+        *   **Vencidos:** Lista todos os itens cuja data de análise já passou (`<= CURDATE()`).
+        *   **Próximos 6 meses:** Lista todos os itens que vencerão nos próximos 6 meses, servindo como um alerta proativo.
+    *   **Acesso Rápido à Lista Mestra:** Busca na tabela `t_documento` pelo `cat_id = 5` para encontrar o caminho do arquivo PDF da "Lista Mestra" e gera um link direto para ele.
+    *   **Informações do Usuário:** Exibe o nome do usuário logado e fornece links para "Minha Conta" (`admin/meu_perfil.php`), "Admin" (se o perfil for de administrador) e "Sair".
+*   **⚠️ Pontos Críticos de Melhoria:**
+    *   **Segurança e Boas Práticas:** Assim como os outros arquivos, ainda utiliza as funções `mysql_*`, que são obsoletas e inseguras.
+    *   **Performance:** As duas consultas `UNION ALL` são executadas a cada carregamento da página. Em um sistema com muitos documentos, isso pode causar lentidão. No novo sistema, pode-se implementar um sistema de cache para esses resultados, atualizando-os a cada X minutos, por exemplo.
+    *   **Mistura de Código:** O arquivo mistura pesadamente a lógica de acesso a dados (PHP/SQL) com a lógica de apresentação (HTML). Isso torna a manutenção difícil.
+    *   **Recomendação para o Novo Sistema:** Adotar uma arquitetura que separe essas responsabilidades, como o padrão **MVC (Model-View-Controller)**. Um *Controller* buscaria os dados, passaria para uma *View* (template), que apenas se preocuparia em exibi-los. Isso tornaria o código muito mais limpo, organizado e fácil de dar manutenção.
+
+---
+
+### Análise Detalhada do Banco de Dados (Baseado no SQL Dump)
+
+O arquivo `qualidade (4).sql` revela a estrutura completa e as relações entre as tabelas, confirmando e detalhando as inferências anteriores.
+
+#### Tabelas Principais (Ciclo de Vida do Documento)
+
+**`t_categoria`**
+*   **Propósito:** Define as categorias dos documentos.
+*   **Colunas:** `cat_id` (PK), `cat_nome` (ex: "Procedimento da Qualidade"), `cat_sigla` (ex: "PQ").
+
+**`t_distribuicao`**
+*   **Propósito:** Define os locais onde um documento pode ser distribuído.
+*   **Colunas:** `id_local` (PK), `nome_local` (ex: "Intranet", "Site do Ital").
+
+**`t_documento`**
+*   **Propósito:** Tabela central, armazena todos os documentos **ativos e em vigor**.
+*   **Colunas:** `id_doc` (PK), `cat_id` (FK para `t_categoria`), `cod_doc`, `nome_doc`, `autor_doc`, `rev_doc`, `vigor_doc`, `analise_doc`, `arq_doc` (nome do arquivo).
+
+**`t_doc_distribuicao`**
+*   **Propósito:** Tabela de ligação (muitos-para-muitos) entre `t_documento` e `t_distribuicao`.
+*   **Colunas:** `id` (PK), `id_doc` (FK), `id_local` (FK).
+
+**`t_documento_agendado`**
+*   **Propósito:** Armazena documentos **novos** que foram cadastrados mas aguardam uma data de vigor futura para se tornarem ativos.
+*   **Colunas:** Similares a `t_documento`, mas com campos adicionais como `responsavel`, `distribuicao_ids` e `data_cadastro`.
+
+**`t_agendamento_obsoleto`**
+*   **Propósito:** Armazena agendamentos para que documentos **ativos** se tornem obsoletos em uma data futura.
+*   **Colunas:** `id_agend` (PK), `id_doc` (FK para `t_documento`), `data_agendada`, `motivo`, `responsavel`.
+
+**`t_documento_historico`**
+*   **Propósito:** Arquivo morto. Armazena os metadados de documentos que já foram tornados obsoletos.
+*   **Colunas:** Similares a `t_documento`, mas com campos extras como `id_doc_original`, `data_obsoleto`, `motivo`, `responsavel`.
+
+**`t_doc_distribuicao_historico`**
+*   **Propósito:** Tabela de ligação que armazena os locais de distribuição que um documento tinha quando se tornou obsoleto.
+*   **Colunas:** `id_historico_dist` (PK), `id_historico` (FK para `t_documento_historico`), `id_local`, `nome_local`.
+
+#### Tabelas de Histórico de Alterações
+
+**`t_historico_agendamento`**
+*   **Propósito:** Log de auditoria. Registra toda vez que a data de vigor de um documento em `t_documento_agendado` é alterada.
+*   **Colunas:** `id_hist` (PK), `id_agendado` (FK), `data_antiga`, `data_nova`, `justificativa`, `responsavel`.
+
+**`t_historico_analise`**
+*   **Propósito:** Log de auditoria. Registra toda vez que a data de "próxima análise crítica" de um documento em `t_documento` é alterada.
+*   **Colunas:** `id_hist` (PK), `id_doc` (FK), `data_antiga`, `data_nova`, `justificativa`, `responsavel`.
+
+#### Tabelas de Conteúdos Especiais (Manuais, Siglas, Relatórios)
+
+O sistema possui um conjunto paralelo de tabelas para gerenciar "Manuais", "Siglas" e "Relatórios", que seguem um ciclo de vida semelhante ao dos documentos, mas em tabelas separadas.
+
+*   `t_manuais`, `t_manuais_agendados`, `t_manual_distribuicao`, `t_distribuicao_manuais`
+*   `t_siglas_definicoes`, `t_siglas_agendadas`, `t_arquivo_siglas`
+*   `t_relatorios`, `t_relatorios_agendados`
+*   `t_historico_conteudo` (serve como arquivo morto para esses itens especiais)
+*   `t_obsolescencia_agendada` (agenda a obsolescência desses itens)
+*   `t_historico_arquivo_siglas` (tabela específica para o histórico do PDF de siglas)
+
+**Observação:** A estrutura para esses conteúdos é um pouco menos normalizada e mais fragmentada que a dos documentos principais. No novo sistema, valeria a pena avaliar se todos poderiam ser unificados sob uma única estrutura de "item gerenciável", com um campo `tipo` (Documento, Manual, Relatório) para diferenciá-los, simplificando a lógica.
+
+#### Tabelas de Usuários
+
+**`t_usuario_qualidade`**
+*   **Propósito:** Armazena as credenciais e perfis dos usuários do sistema de qualidade.
+*   **Colunas:** `id` (PK), `nome_usuario` (login), `nome_completo`, `senha` (hash MD5), `perfil` ('admin' ou 'padrao'), `primeiro_acesso` (flag booleana).
+
+#### Tabelas Não Relacionadas (Outros Sistemas)
+
+O dump SQL também contém tabelas que parecem pertencer a outros sistemas, não diretamente ligados à gestão de documentos da qualidade:
+
+*   **Sistema de Treinamento/Avaliação:** `t_aluno`, `t_prova`, `t_questao`, `t_resposta`, `t_tema`, `t_materia`, `t_dominio`, `t_avaliacao`.
+*   **Sistema de Newsletter:** `t_news`, `t_news_email`, `t_news_lista`.
+*   **Outro Sistema de Usuários:** `t_usuario` (parece ser de um sistema mais antigo ou paralelo).
+
+Essas tabelas não são utilizadas pelos scripts analisados e podem ser consideradas como parte de outro escopo.
+
+---
+
+## Resumo Final e Próximos Passos
+
+A análise de todos os arquivos e do banco de dados revela um sistema robusto, com uma lógica de negócio bem definida e complexa para o gerenciamento do ciclo de vida de documentos e conteúdos.
+
+### Pontos Fortes da Lógica Atual:
+*   **Ciclo de Vida Completo:** O sistema contempla todas as etapas: cadastro, agendamento, vigência, obsolescência e histórico.
+*   **Automação:** A ideia de um script que verifica e atualiza os status (`verificar_publicacao.php`) é o pilar da automação do sistema.
+*   **Ferramentas de Apoio:** A existência de importadores de CSV/Lote e geradores de PDF mostra que o sistema foi pensado para facilitar a administração.
+*   **Auditoria:** A presença de tabelas de histórico (`t_historico_analise`, `t_historico_agendamento`) é uma excelente prática para rastreabilidade.
+
+### Pontos Fracos da Implementação Atual:
+1.  **Tecnologia Obsoleta:** O uso de `mysql_*` e `md5()` é o problema mais grave, representando um risco de segurança e incompatibilidade com versões modernas do PHP.
+2.  **Duplicação de Código:** A existência dos módulos `documentos/` e `outros/` fazendo quase a mesma coisa é o principal problema de arquitetura, tornando a manutenção e a evolução do sistema extremamente difíceis.
+3.  **Mistura de Responsabilidades:** Quase todos os arquivos misturam lógica de banco de dados (SQL), lógica de negócio (PHP) e apresentação (HTML), o que é conhecido como "código espaguete".
+4.  **Gatilho de Automação Frágil:** Usar a visita de um usuário ao `index.php` para rodar a automação não é confiável. Se ninguém acessar o sistema no dia, as publicações e obsolescências não ocorrem.
+
+### Recomendações Estratégicas para o Novo Sistema:
+1.  **Unificar o Modelo de Dados:** Criar uma única tabela `itens` (ou `documentos`) que possa armazenar todos os tipos de conteúdo. Uma coluna `tipo` ('procedimento', 'manual', 'sigla', 'relatorio') diferenciaria cada um. Isso eliminaria dezenas de tabelas e simplificaria todas as queries.
+2.  **Adotar uma Arquitetura Moderna:** Implementar o padrão **MVC (Model-View-Controller)** ou similar.
+    *   **Model:** Classes que representam os dados (ex: `Documento.php`) e lidam com o acesso ao banco de dados (usando **PDO**).
+    *   **View:** Templates (HTML puro com `echo` de variáveis) que apenas exibem os dados.
+    *   **Controller:** Classes que recebem as requisições, usam os Models para buscar/salvar dados e chamam as Views para renderizar a resposta.
+3.  **Centralizar a Lógica de Negócio:** Criar "Services" (Serviços), que são classes responsáveis pelas regras de negócio. Por exemplo, uma classe `CicloDeVidaService` poderia conter os métodos `publicar(item)` e `tornarObsoleto(item)`, que seriam reutilizados em todo o sistema.
+4.  **Usar um Cron Job Real:** Substituir o `verificar_publicacao.php` por um script de linha de comando agendado no servidor (cron job) para rodar a automação de forma independente e confiável (ex: uma vez por dia, à meia-noite).
+5.  **Segurança em Primeiro Lugar:** Utilizar **PDO com Prepared Statements** para todas as consultas e `password_hash()` / `password_verify()` para senhas.
+
+Este relatório agora serve como um mapa completo do sistema antigo e um guia claro para as decisões de arquitetura do novo sistema.
+
+---
+
+**FIM DO RELATÓRIO**

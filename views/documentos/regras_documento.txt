@@ -1,0 +1,24 @@
+MANUAIS: (MQ OU MS (MANUAL DA QUALIDADE OU MANUAL DE SEGURANÇA) 
+Tipo de Manual: "Controlado" e "Não Controlado", Código:, Nome do Manual:, Revisão:, Em Vigor: dd/mm/aaaa, Próxima Análise: dd/mm/aaaa, Arquivo:Nenhum arquivo escolhido
+Distribuição: Área do aluno, CCQA, Cereal Chocotec, Cetea, Cial, CTC, DG, DQS, Extranet, Fruthotec, INMETRO, Intranet, RA, Tecnolat (cada local se estiver selecionado, voce deve colocar um campo de numero, porque pra cada local, tem um numero do documento de distribuição)
+
+RELATÓRIOS:
+Nome:, Ano:, Publicação: dd/mm/aaaa, Arquivo:
+
+DO- DIRETRIZES ORGANIZACIONAIS:
+Categoria:DO - Diretrizes Organizacionais, Código do documento:, Nome do documento:, Autor:, Revisão:, Sufixo/Idioma:Ex: PT, Em vigor a partir de: dd/mm/aaaa, Próxima análise crítica:dd/mm/aaaa, Distribuição: (Intranet, Manual da Qualidade, Site do Ital, Treinamento Integração Alunos, Treinamento Integração Estagiários, Treinamento Integração Funcionários, Treinamento, Integração Profissional Externo) Anexar Documento:
+
+FQ-FORMULARIO DA QUALIDADE
+Categoria:FQ - Formulário da Qualidade, Código do documento:, Nome do documento:, Autor:, Revisão:, Sufixo/Idioma: Ex: PT, Em vigor a partir de: dd/mm/aaaa, Próxima análise crítica: dd/mm/aaaa, Distribuição:(Área do aluno, CCQA, Cereal Chocotec, Cetea, Cial, CTC, DG, DQS, Extranet, Fruthotec, Google Drive, INMETRO, Intranet, Manual da Qualidade, RA, RA-110, RA-25, RA-56, Site do Ital, Tecnolat, Treinamento Integração Alunos, Treinamento Integração Estagiários, Treinamento Integração Funcionários, Treinamento Integração, Profissional Externo), Anexar Documento:
+
+IT- INSTRUÇÕES DE TRABALHO
+Categoria: IT - Instruções de Trabalho, Código do documento:, Nome do documento:, Autor:, Revisão:, Sufixo/Idioma: Ex: PT, Em vigor a partir de: dd/mm/aaaa, Próxima análise crítica: dd/mm/aaaa, Distribuição: (Área do aluno, CCQA, Cereal Chocotec, Cetea, Cial, CTC, DG, DQS, Extranet, Fruthotec, Google Drive, INMETRO, Intranet, Manual da Qualidade, RA, RA-110, RA-25, RA-56, Site do Ital, Tecnolat, Treinamento Integração Alunos, Treinamento Integração Estagiários, Treinamento, Integração Funcionários, Treinamento Integração Profissional Externo), Anexar Documento:
+
+PQ- PROCEDIMENTOS DA QUALIDADE
+Categoria: PQ - Procedimentos da Qualidade, Código do documento:, Nome do documento:, Autor:, Revisão:, Sufixo/Idioma: Ex: PT, Em vigor a partir de: dd/mm/aaaa, Próxima análise crítica: dd/mm/aaaa, Distribuição: (Área do aluno, CCQA, Cereal Chocotec, Cetea, Cial, CTC, DG, DQS, Extranet, Fruthotec, Google Drive, INMETRO, Intranet, Manual da Qualidade, RA, RA-110, RA-25, RA-56, Site do Ital, Tecnolat, Treinamento Integração Alunos, Treinamento Integração Estagiários, Treinamento Integração Funcionários, Treinamento Integração Profissional Externo), Anexar Documento:
+
+CA- CALENDARIO
+Nome do Documento:, Publicação: dd/mm/aaaa, Arquivo:
+
+PR- PROCESSOS
+Categoria: PR - Processos, Nome do Documento:, Publicação: dd/mm/aaaa, Arquivo:

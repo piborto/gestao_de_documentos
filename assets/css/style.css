@@ -1,0 +1,72 @@
+/* z:\intranet.ital.sp.gov.br\qualidade3\assets\css\style.css */
+
+:root {
+    --primary-color: #0d47a1; /* Azul Escuro Corporativo */
+    --primary-light: #1565c0; /* Azul Médio */
+    --accent-color: #64b5f6;  /* Azul Claro (Foco) */
+    --bg-color: #f4f6f9;      /* Fundo Cinza Suave */
+    --text-color: #343a40;    /* Texto Escuro */
+    --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08); /* Sombra elegante */
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text-color);
+}
+
+/* --- BARRA DE NAVEGAÇÃO --- */
+.navbar-custom {
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 0.75rem 0;
+}
+
+.navbar-custom .navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* --- ESTILOS DO PAINEL (INDEX) --- */
+.card-panel {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid #dee2e6;
+    text-decoration: none !important;
+    color: inherit !important;
+    display: block;
+    background-color: #fff;
+    border-radius: 12px;
+}
+
+.card-panel:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.card-panel .card-icon {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.card-panel:hover .card-icon {
+    transform: scale(1.1);
+}
+
+/* --- PÁGINAS DE AUTENTICAÇÃO (LOGIN, ETC) --- */
+body.auth-page {
+    background: linear-gradient(135deg, var(--bg-color) 0%, #dbe4f0 100%);
+    min-height: 100vh;
+}
+
+.auth-card {
+    border: none;
+    border-top: 5px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 450px;
+}

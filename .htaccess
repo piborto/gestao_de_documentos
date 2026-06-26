@@ -1,0 +1,5 @@
+# Ativa a reescrita de URL (útil para futuras URLs amigáveis)
+RewriteEngine On
+
+# Força o PHP a usar a biblioteca mbstring para manipulação de strings
+php_value mbstring.func_overload 2

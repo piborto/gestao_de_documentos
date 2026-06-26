@@ -1,0 +1,68 @@
+Relatório de Arquitetura do Sistema de Qualidade (Versão Atual - qualidade3)
+============================================================================
+
+Visão Geral
+-----------
+Este documento descreve a estrutura atual de pastas e arquivos do projeto `qualidade3`. O objetivo é fornecer um mapa claro das responsabilidades de cada componente, servindo como base para futuras manutenções e evoluções do sistema.
+
+A arquitetura atual é um modelo híbrido, que mistura conceitos de MVC (Model-View-Controller) com uma estrutura de arquivos mais tradicional em PHP.
+
+---
+
+Estrutura de Pastas e Arquivos
+------------------------------
+
+### 1. Pasta Raiz (`/`)
+
+*   **`index.php`**:
+    *   **Função**: É o ponto de entrada para a área logada do sistema (painel principal).
+    *   **Lógica**: Verifica se o usuário está logado, define o título da página e qual arquivo de "conteúdo" deve ser exibido, e então carrega o layout principal (`views/layout/main.php`) para renderizar a página.
+
+### 2. Pasta `/assets/`
+
+*   **Função**: Armazena todos os recursos estáticos (arquivos que não são PHP), como folhas de estilo, imagens e JavaScript.
+*   **Subpastas**:
+    *   `/assets/css/style.css`: Contém todo o estilo visual customizado da aplicação, incluindo o esquema de cores (azul corporativo), o gradiente da barra de navegação e os efeitos de "hover" nos cards do painel.
+    *   `/assets/img/logo_ital.png`: (Inferido) Arquivo de imagem do logo do ITAL, exibido na tela de login.
+
+### 3. Pasta `/classes/`
+
+*   **Função**: Destinada a armazenar classes PHP reutilizáveis.
+*   **Arquivos**:
+    *   `class.phpmailer.php`: Uma versão antiga (5.2.28) da biblioteca PHPMailer. É responsável por todo o envio de e-mails do sistema, como o link de redefinição de senha.
+
+### 4. Pasta `/config/`
+
+*   **Função**: Centraliza as configurações da aplicação.
+*   **Arquivos**:
+    *   `conexao.php`: Arquivo crucial que estabelece a conexão com o banco de dados `qualidade_teste` usando PDO. Define as credenciais de acesso e as opções de conexão, como o `charset=latin1` para compatibilidade com as tabelas.
+
+### 5. Pasta `/controllers/`
+
+*   **Função**: Contém os arquivos que orquestram a lógica da aplicação. Eles recebem as requisições do usuário, interagem com o banco de dados e decidem o que será exibido.
+*   **Arquivos**:
+    *   `AutenticacaoController.php`: Controla todo o fluxo de autenticação: login, logout e o processo de "esqueci minha senha". Ele valida as credenciais do usuário, gerencia as sessões (`$_SESSION`) e interage com o PHPMailer para enviar e-mails.
+
+### 6. Pasta `/lib/`
+
+*   **Função**: Contém bibliotecas de terceiros.
+*   **Subpastas**:
+    *   `/lib/tcpdf/`: Biblioteca para geração de documentos PDF. Os arquivos dentro dela são parte da biblioteca e não devem ser modificados diretamente.
+
+### 7. Pasta `/views/`
+
+*   **Função**: Responsável por toda a camada de apresentação (o que o usuário vê). Contém o HTML das páginas.
+*   **Subpastas**:
+    *   `/views/layout/`: Armazena os "templates" principais da aplicação.
+        *   `auth.php`: O layout mestre para as telas de autenticação (login, etc.). Inclui o cabeçalho, rodapé, logo e o CSS.
+        *   `main.php`: O layout mestre para a área interna do sistema. Inclui a barra de navegação superior (com nome do usuário e botão de sair) e o rodapé. Ele também tem a lógica de segurança que redireciona para o login se o usuário não estiver autenticado.
+    *   `/views/contents/`: Armazena os "pedaços" de conteúdo que são inseridos dentro dos layouts.
+        *   `login_content.php`: Contém apenas o formulário de login.
+        *   `index_content.php`: Contém o conteúdo do painel principal, incluindo os cards de navegação (Documentos, Siglas, etc.) e a caixa de notificações.
+*   **Arquivos na raiz de `/views/`**:
+    *   `login.php`: A página de login. Sua única função é definir as variáveis de título e conteúdo e chamar o layout `auth.php`.
+    *   `esqueci_senha.php`: Página com o formulário para o usuário digitar o e-mail e solicitar a redefinição de senha.
+    *   `redefinir_senha.php`: Página onde o usuário, após clicar no link do e-mail, define sua nova senha.
+
+---
+**FIM DO RELATÓRIO**
