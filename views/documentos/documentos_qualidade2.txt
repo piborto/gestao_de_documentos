@@ -1,0 +1,331 @@
+ATIVOS:
+Documentos em vigor
+Código	Nome		Categoria	Autor	Revisão	Vigor	Análise	Distribuição	Ações
+DO-01	Missão		DO	Diretora Geral	6	05/01/26	05/01/29	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	   
+DO-02	Visão		DO	Diretora Geral	4	05/01/26	05/01/29	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	   
+DO-03	Valores institucionais		DO	Diretora Geral	7	05/01/26	05/01/29	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	   
+DO-04	Política da qualidade		DO	Diretora Geral	8	05/01/26	05/01/29	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	   
+DO-05	Código de ética		DO	Diretora Geral	5	05/01/26	05/01/29	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	   
+DO-06	Escopo ABNT NBR ISO 9001		DO	Diretora Geral	3	24/05/18	-	Manual da Qualidade Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	   
+FQ-04.01	Lista Mestra de 12/06/2026		LM	RA	-	12/06/26	-	Intranet	   
+FQ-04.01	Lista mestra de documentos do sistema de gestão da qualidade		FQ	RA	8	08/11/21	-	Intranet RA-25 RA-56	   
+FQ-04.02	Registro de análise crítica de documentos do sistema de gestão da qualidade		FQ	RA	0	16/01/08	-	Intranet RA-25 RA-56	   
+FQ-04.03	Planejamento de mudanças		FQ	RA	1	13/12/21	-	Intranet RA-25 RA-56	   
+FQ-04.04	Controle de registros e outros documentos		FQ	RA	10	06/04/23	-	Intranet RA-25 RA-56	   
+FQ-04.05	Matriz riscos e oportunidades gerais x processos		FQ	RA	0	26/01/24	-	Intranet RA-25 RA-56	   
+FQ-04.06	Fatores estratégicos		FQ	RA	0	18/07/17	-	Intranet RA-25 RA-56	   
+FQ-04.07	Monitoramento ambiente externo e ambiente interno		FQ	RA	1	27/02/19	-	Intranet RA-25 RA-56	   
+FQ-04.08	Monitoramento de partes interessadas		FQ	RA	1	27/02/19	-	Intranet RA-25 RA-56	   
+FQ-04.09	Mapeamento de processo		FQ	RA	2	26/01/24	-	Intranet RA-25 RA-56	   
+FQ-04.10	Monitoramento de indicadores		FQ	RA	1	02/02/18	-	Intranet RA-25 RA-56	   
+FQ-04.11	Definições e siglas (Acesso não liberado - entre em contato com Setor RA-DG)		FQ	RA	1	09/04/26	-	RA-25 RA-56	   
+FQ-04.12	Diretrizes organizacionais		FQ	RA	0	08/11/21	-	Intranet RA-25 RA-56	   
+FQ-04.13	Análise de riscos e oportunidades gerais - Matriz GUT		FQ	RA	0	20/08/21	-	Intranet RA-25 RA-56	   
+FQ-04.14	Identificação e gestão de riscos inerentes		FQ	RA	0	13/11/24	-	Intranet RA-25 RA-56	   
+FQ-04.15	Controle de acesso - Pastas de uso compartilhado		FQ	RA	0	23/09/25	-	Intranet RA-25 RA-56	   
+FQ-05.01	Comunicação interna		FQ	RA	0	16/09/05	-	Intranet RA-25 RA-56	   
+FQ-05.02	Termo de compromisso		FQ	RA	2	15/08/24	-	Intranet RA-25 RA-56	   
+FQ-05.03	Registro de reunião		FQ	RA	2	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-05.05	Lista de presença		FQ	RA	1	19/09/24	-	Google Drive Intranet RA-25 RA-56	   
+FQ-05.06	Custos da Qualidade		FQ	RA	3	02/01/23	-	Intranet RA-25 RA-56	   
+FQ-05.07	Calendário de atividades		FQ	RA	1	14/11/18	-	Intranet RA-25 RA-56	   
+FQ-05.08	Comunicação - Sistema de Gestão da Qualidade		FQ	RA	0	21/12/17	-	Intranet RA-25 RA-56	   
+FQ-06.01	Plano e controle de treinamentos planejados		FQ	RA	11	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-06.02	Registro e avaliação de eficácia de treinamento		FQ	RA	11	23/09/25	-	Intranet RA-25 RA-56	   
+FQ-06.03	Matriz de versatilidade		FQ	RA	8	15/12/22	-	Intranet RA-25 RA-56	   
+FQ-06.04	Relatório de atividades de pós-graduação		FQ	RA	6	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-06.05	Plano de investimentos		FQ	RA	9	08/07/22	-	Intranet RA-25 RA-56	   
+FQ-06.07	Controle de participação e emissão de certificados em palestras e treinamentos internos		FQ	RA	3	18/11/22	-	Intranet RA-25 RA-56	   
+FQ-06.10	Controle de entrega de equipamentos de proteção individual		FQ	RA	3	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-06.12	Ficha de estagiário		FQ	RA	6	10/05/19	-	Intranet RA-25 RA-56	   
+FQ-06.13	Controle de treinamentos não planejados		FQ	RA	2	02/01/23	-	Intranet RA-25 RA-56	   
+FQ-06.16	Avaliação 5S - Áreas Externas		FQ	RA	9	16/12/25	-	Intranet RA-25 RA-56	   
+FQ-06.17	Avaliação 5S - Auditórios		FQ	RA	9	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.18	Avaliação 5S - Avaliação Geral da Unidade		FQ	RA	7	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.19	Avaliação 5S - Banheiros		FQ	RA	10	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.20	Avaliação 5S - Bibliotecas		FQ	RA	9	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.21	Avaliação 5S - Câmaras de estocagem e casa de máquinas		FQ	RA	9	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.22	Avaliação 5S - Corredores		FQ	RA	8	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.23	Avaliação 5S - Copas e Cozinhas		FQ	RA	10	13/11/24	-	Intranet RA-25 RA-56	   
+FQ-06.24	Avaliação 5S - Frota		FQ	RA	8	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.25	Avaliação 5S - Laboratórios		FQ	RA	9	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.26	Avaliação 5S - Lavanderias		FQ	RA	7	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.27	Avaliação 5S - Oficinas		FQ	RA	8	21/10/25	-	Intranet RA-25 RA-56	   
+FQ-06.28	Avaliação 5S - Almoxarifados		FQ	RA	8	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.29	Avaliação 5S - Plantas piloto		FQ	RA	7	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.30	Avaliação 5S - Salas de espera/Hall		FQ	RA	9	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-06.31	Avaliação 5S - Salas		FQ	RA	8	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.32	Avaliação 5S - Almoxarifados de reagentes		FQ	RA	10	01/09/22	-	Intranet RA-25 RA-56	   
+FQ-06.33	Programa 5S - Avaliação da equipe		FQ	RA	3	16/08/17	-	Intranet RA-25 RA-56	   
+FQ-06.34	Programa 5S - Feedback da Unidade Avaliada		FQ	RA	2	16/08/17	-	Intranet RA-25 RA-56	   
+FQ-06.35	Inspeção dos extintores de incêndio		FQ	RA	1	06/04/23	-	Intranet RA-25 RA-56	   
+FQ-06.36	Inspeção periódica de chuveiro e lavador de olhos		FQ	RA	1	06/04/23	-	Intranet RA-25 RA-56	   
+FQ-06.37	Avaliação da eficácia do sistema de exaustão e iluminação de capelas de exaustão		FQ	RA	3	12/05/23	-	Intranet RA-25 RA-56	   
+FQ-06.38	Relatório de avaliação de riscos		FQ	RA	5	13/05/25	-	Intranet RA-25 RA-56	   
+FQ-06.39	Avaliação de segurança do trabalho		FQ	RA	9	12/06/25	-	Intranet RA-25 RA-56	   
+FQ-06.40	Cadastro de Veículos		FQ	RA	7	09/04/26	-	Intranet RA-25 RA-56	   
+FQ-06.41	Avaliação de palestra/treinamento interno		FQ	RA	1	20/08/21	-	Google Drive Intranet RA-25 RA-56	   
+FQ-06.42	Tabulação de avaliações de palestra/treinamento interno		FQ	RA	1	08/10/21	-	Intranet RA-25 RA-56	   
+FQ-06.43	Avaliação 5S - Pontos de coleta de lixo		FQ	RA	3	12/07/19	-	Intranet RA-25 RA-56	   
+FQ-06.44	Programação de avaliação		FQ	RA	0	16/08/17	-	Intranet RA-25 RA-56	   
+FQ-06.45	Informações complementares - Cadastro ERP - Ital		FQ	RA	3	18/11/22	-	Intranet RA-25 RA-56	   
+FQ-06.47	Orientações para utilização de sistemas internos		FQ	RA	0	12/07/19	-	Intranet RA-25 RA-56	   
+FQ-06.49	Descrição de vaga para contratação de estagiário via FA		FQ	RA	1	21/06/23	-	Intranet RA-25 RA-56	   
+FQ-06.51	Descrição de Função		FQ	RA	0	10/03/20	-	Intranet RA-25 RA-56	   
+FQ-06.52	Avaliação da aprendizagem - Jovem Aprendiz		FQ	RA	0	08/07/20	-	Intranet RA-25 RA-56	   
+FQ-06.53	Notificação Cipa		FQ	RA	0	08/07/20	-	Intranet RA-25 RA-56	   
+FQ-06.54	Programa		FQ	RA	1	23/08/23	-	Intranet RA-25 RA-56	   
+FQ-06.55	Inscrições em palestras/treinamentos internos		FQ	RA	3	19/09/24	-	Google Drive Intranet RA-25 RA-56	   
+FQ-06.56	Avaliação de Palestra/Treinamento Interno Remoto		FQ	RA	1	12/05/23	-	Intranet RA-25 RA-56	   
+FQ-06.57	Tabulação de avaliações de palestra/treinamento interno remoto		FQ	RA	1	12/05/23	-	Intranet RA-25 RA-56	   
+FQ-06.58	Controle de capacitação de funcionários		FQ	RA	0	01/04/22	-	Intranet RA-25 RA-56	   
+FQ-06.59	Avaliação 5S - Depósitos		FQ	RA	1	21/10/25	-	Intranet RA-25 RA-56	   
+FQ-06.60	Mapeamento e amostragem - Avaliação 5S		FQ	RA	2	15/05/26	-	Intranet RA-25 RA-56	   
+FQ-06.61	Controle de Treinamento de longa duração		FQ	RA	0	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-06.62	Avaliação 5S - Estacionamento		FQ	RA	0	16/12/25	-	Intranet RA-25 RA-56	   
+FQ-07.01	Plano detalhado de projeto		FQ	RA	10	24/02/23	-	Intranet RA-25 RA-56	   
+FQ-07.02	Plano Detalhado de Projeto P&D&I (Fomento e Outros Recursos)		FQ	RA	15	18/11/22	-	Intranet RA-25 RA-56	   
+FQ-07.04	Controle de relatório de projeto de P&D (iniciativa privada)		FQ	RA	4	23/03/18	-	Intranet RA-25 RA-56	   
+FQ-07.05	Controle de Eimes/Equipamentos		FQ	RA	8	29/07/21	-	Intranet RA-25 RA-56	   
+FQ-07.06	Ficha de identificação de equipamentos		FQ	RA	7	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-07.07	Histórico do equipamento		FQ	RA	2	18/09/12	-	Intranet RA-25 RA-56	   
+FQ-07.09	Avaliação de fornecimento		FQ	RA	7	06/01/25	-	Intranet RA-25 RA-56	   
+FQ-07.10	Events Evaluation (Acesso não liberado - entre em contato com Setor RA-DG)		FQ	RA	11	16/02/24	-	RA-25 RA-56	   
+FQ-07.10	Avaliação de eventos (Acesso não liberado - entre em contato com Setor RA-DG)		FQ	RA	11	16/02/24	-	RA-25 RA-56	   
+FQ-07.11	Cadastro simplificado de bolsas e demais auxílios		FQ	RA	6	18/11/22	-	Intranet RA-25 RA-56	   
+FQ-07.12	Avaliação da condição dos materiais em estoque		FQ	RA	5	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-07.13	Cadastro de fornecedor		FQ	RA	3	09/04/18	-	Intranet RA-25 RA-56	   
+FQ-07.14	Plano e controle anual de manutenção preventiva		FQ	RA	6	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-07.15	Programação de Eventos		FQ	RA	8	02/06/26	-	Intranet RA-56	   
+FQ-07.17	Controle de saída de material permanente		FQ	RA	4	28/06/22	-	Intranet RA-25 RA-56	   
+FQ-07.18	Registro de certificados emitidos		FQ	RA	1	22/03/17	-	Intranet RA-25 RA-56	   
+FQ-07.19	Histórico de incerteza		FQ	RA	1	27/02/19	-	Intranet RA-25 RA-56	   
+FQ-07.20	Verificação da performance de espectrofotômetro		FQ	RA	8	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-07.21	Verificação da performance de cromatógrafos líquidos (HPLC)		FQ	RA	3	18/03/22	-	Intranet RA-25 RA-56	   
+FQ-07.22	Verificação da performance de cromatógrafos gasosos (CG)		FQ	RA	3	23/03/18	-	Intranet RA-25 RA-56	   
+FQ-07.23	Verificação de vidraria volumétrica		FQ	RA	0	26/01/15	-	Intranet RA-25 RA-56	   
+FQ-07.24	Checagem intermediária de pipeta automática ou micropipeta		FQ	RA	3	23/09/25	-	Intranet RA-25 RA-56	   
+FQ-07.25	Ficha de inscrição de candidatos pós-graduação (aluno regular)		FQ	RA	4	17/04/25	-	Intranet RA-25 RA-56	   
+FQ-07.26	Matrícula de aluno regular		FQ	RA	3	17/04/25	-	Área do aluno Intranet RA-25 RA-56	   
+FQ-07.27	Solicitação de matrícula de aluno especial		FQ	RA	3	17/04/25	-	Intranet RA-25 RA-56	   
+FQ-07.29	Termo de confidencialidade e sigilo - aluno pós-graduação		FQ	RA	1	17/04/25	-	Área do aluno Intranet RA-25 RA-56	   
+FQ-07.32	Solicitação de trancamento de matrícula de disciplina		FQ	RA	1	18/05/15	-	Área do aluno Intranet RA-25 RA-56	   
+FQ-07.33	Solicitação de trancamento do curso		FQ	RA	1	13/12/21	-	Área do aluno Intranet RA-25 RA-56	   
+FQ-07.34	Solicitação de desligamento do curso		FQ	RA	1	13/12/21	-	Área do aluno Intranet RA-25 RA-56	   
+FQ-07.37	Controle de resíduos químicos		FQ	RA	2	20/10/23	-	Intranet RA-25 RA-56	   
+FQ-07.40	Certificado de disciplinas cursadas como aluno especial		FQ	RA	1	04/07/16	-	Intranet RA-25 RA-56	   
+FQ-07.43	Termo de sigilo e confidencialidade - Projeto de dissertação		FQ	RA	1	21/11/23	-	Intranet RA-25 RA-56	   
+FQ-07.44	Termo de responsabilidade de bens patrimoniais		FQ	RA	0	22/04/19	-	Intranet RA-25 RA-56	   
+FQ-07.45	Comunicado de invenção		FQ	RA	0	07/06/19	-	Intranet RA-25 RA-56	   
+FQ-07.46	Avaliação dos requisitos de patenteabilidade NIT		FQ	RA	0	07/06/19	-	Intranet RA-25 RA-56	   
+FQ-07.47	Formulário de submissão de solicitação de análise em Equipamento multiusuário (EMU) Fapesp		FQ	RA	0	17/06/19	-	Intranet RA-25 RA-56	   
+FQ-07.48	Controle de registro de projetos de dissertação		FQ	RA	2	07/05/24	-	Intranet RA-25 RA-56	   
+FQ-07.49	Controle de transmissões ao vivo		FQ	RA	1	02/01/24	-	Intranet RA-25 RA-56	   
+FQ-07.50	Registro de diplomas		FQ	RA	0	21/09/20	-	Intranet RA-25 RA-56	   
+FQ-07.52	Controle de termos e acordos		FQ	RA	1	02/01/23	-	Intranet RA-25 RA-56	   
+FQ-07.53	Controle de atendimentos via fale conosco, ouvidoria e SIC		FQ	RA	1	27/04/22	-	Intranet RA-25 RA-56	   
+FQ-07.54	Controle de projetos, bolsas e demais auxílios (fomento e outros recursos)		FQ	RA	3	02/02/26	-	Intranet RA-25 RA-56	   
+FQ-07.55	Aprovação do certificado de calibração dos filtros		FQ	RA	1	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-07.56	Determinação do erro máximo do equipamento (EME) através da incerteza gerada pela curva de regressão		FQ	RA	2	19/09/24	-	Intranet RA-25 RA-56	   
+FQ-07.57	Termo de Autorização - Dissertação		FQ	RA	1	18/02/25	-	Intranet RA-25 RA-56	   
+FQ-07.58	Termo de conhecimento, confidencialidade e imparcialidade - serviços prestados à Vigilância Sanitária		FQ	RA	1	28/06/22	-	Intranet RA-25 RA-56	   
+FQ-07.59	Termo de manifestação de conflito de interesses, impedimento e suspeição - serviços prestados à Vigilância Sanitária		FQ	RA	0	13/12/21	-	Intranet RA-25 RA-56	   
+FQ-07.60	Avaliação de conflito de interesse da instituição - serviços prestados à Vigilância Sanitária		FQ	RA	0	13/12/21	-	Intranet RA-25 RA-56	   
+FQ-07.61	Avaliação de conflito de interesse da equipe - serviços prestados à Vigilância Sanitária		FQ	RA	0	13/12/21	-	Intranet RA-25 RA-56	   
+FQ-07.62	Verificação da capacidade para realização de ensaio/análise		FQ	RA	1	13/10/22	-	Intranet RA-25 RA-56	   
+FQ-07.63	Controle de estoque de produtos controlados		FQ	RA	1	21/10/25	-	Intranet RA-25 RA-56	   
+FQ-07.64	Solicitação de Coorientação		FQ	RA	0	21/11/23	-	Intranet RA-25 RA-56	   
+FQ-07.65	Monitoramento de saída e retorno de material permanente (FQ-07.17)		FQ	RA	0	12/06/25	-	Intranet RA-25 RA-56	   
+FQ-08.03	Pesquisa de satisfação de clientes		FQ	RA	16	05/06/24	-	Intranet RA-25 RA-56	   
+FQ-08.03	Customer Satisfaction Survey		FQ	RA	16	05/06/24	-	Intranet RA-25 RA-56	   
+FQ-08.04	Pesquisa clima organizacional - Funcionários (Acesso não liberado - entre em contato com Setor RA-DG)		FQ	RA	5	05/06/24	-	RA-25 RA-56	   
+FQ-08.05	Programação de auditoria interna		FQ	RA	6	16/02/24	-	Intranet RA-25 RA-56	   
+FQ-08.06	Lista de verificação de auditoria interna		FQ	RA	42	17/04/25	-	Intranet RA-25 RA-56	   
+FQ-08.09	Informações sobre realização de produtos e serviços¹		FQ	RA	13	03/02/25	-	Intranet RA-25 RA-56	   
+FQ-08.11	Receita - Recursos captados (FA e FED)		FQ	RA	8	01/08/22	-	Intranet RA-25 RA-56	   
+FQ-08.12	Despesas Gesp e FA		FQ	RA	8	01/08/22	-	Intranet RA-25 RA-56	   
+FQ-08.13	Recursos Gesp (despesas e captação)		FQ	RA	6	02/01/23	-	Intranet RA-25 RA-56	   
+FQ-08.14	Controle de visitas		FQ	RA	9	18/02/25	-	Intranet RA-25 RA-56	   
+FQ-08.14	Visitor control		FQ	RA	9	18/02/25	-	Intranet RA-25 RA-56	   
+FQ-08.15	Análise financeira de evento		FQ	RA	11	02/02/26	-	Intranet RA-25 RA-56	   
+FQ-08.16	Controle de estagiários		FQ	RA	13	06/01/25	-	Intranet RA-25 RA-56	   
+FQ-08.17	Avaliação de auditoria interna		FQ	RA	5	23/02/26	-	Intranet RA-25 RA-56	   
+FQ-08.18	Avaliação do estágio realizado		FQ	RA	4	03/02/25	-	Google Drive Intranet RA-25 RA-56	   
+FQ-08.19	Execução de recursos de agências de fomento		FQ	RA	6	01/08/22	-	Intranet RA-25 RA-56	   
+FQ-08.21	Relatório de auditoria interna		FQ	RA	5	16/02/24	-	Intranet RA-25 RA-56	   
+FQ-08.23	Metas dos indicadores		FQ	RA	3	19/01/18	-	Intranet RA-25 RA-56	   
+FQ-08.24	Análise de desempenho das Unidades - indicadores		FQ	RA	6	02/01/24	-	Intranet RA-25 RA-56	   
+FQ-08.25	Relatório de Avaliação de Evento e Treinamento/curso fechado (Acesso não liberado - entre em contato com Setor RA-DG)		FQ	RA	7	31/01/24	-	RA-25 RA-56	   
+FQ-08.26	Plano de ação		FQ	RA	0	17/02/14	-	Intranet RA-25 RA-56	   
+FQ-08.27	Termo de confidencialidade externo		FQ	RA	2	11/07/25	-	Intranet RA-25 RA-56	   
+FQ-08.27	Agreement External		FQ	RA	2	11/07/25	-	Intranet RA-25 RA-56	   
+FQ-08.28	Análise crítica de indicadores		FQ	RA	3	02/01/24	-	Intranet RA-25 RA-56	   
+FQ-08.29	Pesquisa de satisfação de alunos pós-graduação		FQ	RA	0	18/05/15	-	Intranet RA-25 RA-56	   
+FQ-08.30	Pesquisa de satisfação de cliente externo - Difusão do conhecimento		FQ	RA	2	28/06/22	-	Intranet RA-25 RA-56	   
+FQ-08.31	Controle de Melhorias		FQ	RA	2	12/06/26	-	Intranet RA-25 RA-56	   
+FQ-08.32	Relatório de satisfação dos alunos - Pós Graduação Ital		FQ	RA	1	20/10/23	-	Intranet RA-25 RA-56	   
+FQ-08.33	Indicadores do sistema de gestão da qualidade		FQ	RA	4	05/06/24	-	Intranet RA-25 RA-56	   
+FQ-08.34	Resultados Financeiros - Índices de sustentabilidade financeira (arrecadação/despesa FA)		FQ	RA	2	05/06/24	-	Intranet RA-25 RA-56	   
+FQ-08.35	Monitoramento de ocorrências - Fundação de apoio		FQ	RA	5	02/01/24	-	Intranet RA-25 RA-56	   
+FQ-08.36	Registro de satisfação dos estagiários		FQ	RA	2	02/01/23	-	Intranet RA-25 RA-56	   
+FQ-08.38	Mapeamento para auditoria interna		FQ	RA	0	25/01/21	-	Intranet RA-25 RA-56	   
+FQ-08.39	Controle de eventos e treinamentos/cursos fechados		FQ	RA	0	02/08/21	-	Intranet RA-25 RA-56	   
+FQ-08.40	Controle de qualificação do corpo técnico (TNS e TNSE)		FQ	RA	0	02/08/21	-	Intranet RA-25 RA-56	   
+FQ-08.41	Controle de recebimentos e despesas via FED		FQ	RA	0	08/07/22	-	Intranet RA-25 RA-56	   
+FQ-08.42	Controle de transferências entre Unidades		FQ	RA	0	08/07/22	-	Intranet RA-25 RA-56	   
+FQ-08.43	Controle de auditoria de 2ª parte		FQ	RA	0	18/07/23	-	Intranet RA-25 RA-56	   
+FQ-08.44	Monitoramento de sustentabilidade Pós-Graduação Ital		FQ	RA	1	19/09/24	-	Intranet RA-25 RA-56	   
+IT-04.02.01	Elaboração de documentos do SGQ		IT	RA	24	23/02/26	23/02/29	Intranet RA-110	   
+IT-05.01.01	Reunião de análise crítica		IT	RA	22	11/12/24	11/12/27	Intranet RA-110	   
+IT-05.01.04	Objetivos da qualidade e indicadores corrrelacionados		IT	Diretora Geral	16	15/05/26	15/05/29	Intranet RA-110	   
+IT-05.01.05	Comunicação Institucional		IT	Especialista em Comunicação (Comunicação - DG)	2	16/10/24	16/10/27	Intranet RA-110	   
+IT-06.01.01	Plano de investimentos		IT	RA	12	13/05/25	12/05/28	Intranet RA-110	   
+IT-06.01.02	Conduta em caso de acidente e incidente		IT	Coordenador Time Segurança/Presidente Cipa	16	17/04/26	17/04/29	Área do aluno Extranet Intranet RA-110	   
+IT-06.01.03	Viagens a serviço, missão, estudo ou participação em eventos científicos		IT	Secretária do Diretor Geral	15	23/09/25	22/09/28	Intranet RA-110	   
+IT-06.01.04	Política de utilização da rede de informática e telefonia		IT	Analista de Sistemas GTI - DG	22	23/09/25	22/09/28	Área do aluno Extranet Intranet RA-110	   
+IT-06.01.05	Estágio		IT	Diretora do Núcleo de Treinamento e Capacitação (NTC)	19	23/09/25	22/09/28	Intranet RA-110	   
+IT-06.01.07	Compra de materiais ou serviços com recursos do Tesouro ou FED		IT	Diretora do Centro de Atividades Administrativas	17	21/10/25	20/10/28	Intranet RA-110	   
+IT-06.01.08	Gestão e controle de recebimentos via fundo especial de despesas – FED		IT	Diretora do Centro de Atividades Administrativas	11	12/06/26	12/06/29	Intranet RA-110	   
+IT-06.01.09	Programa 5S		IT	Coordenadora Time 5S	14	15/05/26	15/05/29	Área do aluno Extranet Intranet RA-110	   
+IT-06.01.11	Segurança do trabalho		IT	Coordenador Time SegurançaPresidente Cipa	18	21/10/25	20/10/28	Área do aluno Extranet Intranet RA-110	   
+IT-06.01.12	Verificação de segurança das capelas de exaustão		IT	Coordenador Time SegurançaPresidente Cipa	6	13/11/24	13/11/27	Intranet RA-110	   
+IT-06.01.13	Controle de acesso na portaria do Ital		IT	Diretora Geral	11	17/04/24	17/04/27	Intranet RA-110	   
+IT-06.01.14	Profissional externo		IT	Diretora Geral	15	21/10/25	20/10/28	Extranet Intranet RA-110	   
+IT-06.01.15	Recursos Humanos		IT	Diretora Geral	11	02/02/26	02/02/29	Intranet RA-110	   
+IT-06.02.01	Matriz de versatilidade		IT	RA	15	02/02/26	02/02/29	Intranet RA-110	   
+IT-06.02.02	Palestras e treinamentos internos		IT	RA	7	16/12/25	16/12/28	Intranet RA-110	   
+IT-07.01.01	Gerenciamento de resíduos		IT	Coordenadora Time Ger. Resíduos	14	23/09/25	22/09/28	Área do aluno Extranet Intranet RA-110	   
+IT-07.01.02	Controle de estoque e aprovação de materiais para processos e ensaios		IT	RA	16	17/04/25	16/04/28	Intranet RA-110	   
+IT-07.01.03	Difusão do conhecimento		IT	Analista de Eventos (Eventos - DG)	34	02/06/26	02/06/29	Intranet RA-110 RA-56	   
+IT-07.01.04	Serviços de apoio		IT	Diretor do Núcleo de Apoio Operacional - DG	10	13/05/25	12/05/28	Intranet RA-110	   
+IT-07.01.06	Controle patrimonial		IT	Diretor do Apoio Operacional	15	21/10/25	20/10/28	Intranet	   
+IT-07.01.07	Programa de Pós-Graduação stricto sensu		IT	Reitora da Pós-Graduação	21	17/04/26	17/04/29	Área do aluno Intranet RA-110	   
+IT-07.01.08	Proteção intelectual		IT	Diretor Técnico de Divisão – NIT	2	21/06/24	21/06/27	Intranet RA-110	   
+IT-07.01.09	Ensaios e análises		IT	RA	6	11/12/24	11/12/27	Intranet RA-110	   
+IT-07.01.10	Orientação para cálculos de incerteza de medição		IT	RA	3	16/12/25	16/12/28	Intranet RA-110	   
+IT-07.01.11	Contratos via fundação de apoio (FA) e outros acordos e termos		IT	Diretora Geral	2	13/11/24	13/11/27	Intranet RA-110	   
+IT-07.01.12	Curso EAD (Educação a Distância)		IT	RA	0	02/06/26	02/06/29	Intranet RA-110 RA-56	   
+IT-07.03.01	Controle e verificação de vidrarias volumétricas		IT	Coordenadora Time de Metrologia/Eimes	12	19/11/25	18/11/28	Intranet RA-110	   
+IT-07.03.02	Checagem intermediária de pipeta automática ou micropipeta		IT	Coordenadora Time de Metrologia/Eimes	6	06/01/25	06/01/28	Intranet RA-110	   
+IT-07.03.03	Verificação de performance de ICP OES		IT	Coordenadora Time de Metrologia/Eimes	6	16/10/24	16/10/27	Intranet RA-110	   
+IT-07.03.04	Verificação da performance de espectrofotômetros com largura da fenda espectral até 2nm		IT	Coordenadora Time de Metrologia/Eimes	6	19/09/24	19/09/27	Intranet RA-110	   
+IT-07.03.05	Verificação da performance de cromatógrafos liquídos e gasosos		IT	Coordenadora Time de Metrologia/Eimes	5	16/10/24	16/10/27	Intranet RA-110	   
+IT-07.03.06	Checagem intermediária de dispositivos de medição de temperatura		IT	Coordenadora Time de Metrologia/Eimes	6	13/11/24	13/11/27	Intranet RA-110	   
+IT-08.01.01	Tratamento a sugestões ou reclamações de clientes		IT	RA	19	18/02/25	18/02/28	Intranet RA-110	   
+IT-08.01.02	Análise de satisfação e insatisfação de clientes		IT	RA	25	17/04/25	16/04/28	Intranet RA-110	   
+IT-08.01.03	Programa e plano de auditorias		IT	RA	25	23/02/26	23/02/29	Intranet RA-110	   
+IT-08.01.04	Monitoramento, medição, análise e avaliação - indicadores de desempenho		IT	RA	27	21/10/25	20/10/28	Intranet RA-110	   
+PQ-04.01	Sistema de Gestão da Qualidade		PQ	RA	20	15/05/26	15/05/29	Intranet RA-110	   
+PQ-04.02	Controle de documentos		PQ	RA	38	02/02/26	02/02/29	Intranet RA-110 RA-56	   
+PQ-04.03	Controle de registros		PQ	RA	19	17/04/25	16/04/28	Intranet RA-110	   
+PQ-04.04	Fatores estratégicos		PQ	RA	18	18/02/25	18/02/28	Intranet RA-110	   
+PQ-04.05	Gestão de Mudanças		PQ	RA	0	15/05/26	15/05/29	Intranet	   
+PQ-05.01	Responsabilidade da alta direção		PQ	Diretora Geral	33	09/04/26	09/04/29	Intranet RA-110 RA-56	   
+PQ-06.01	Gestão de recursos		PQ	RA	17	12/06/25	11/06/28	Intranet RA-110	   
+PQ-06.02	Competência, conscientização e treinamento		PQ	RA	41	17/04/26	17/04/29	Intranet RA-110	   
+PQ-07.01	Realização de produto e serviço		PQ	RA	31	02/06/26	02/06/29	Intranet RA-110 RA-56	   
+PQ-07.02	Planejamento e controle de projeto e desenvolvimento		PQ	RA	30	18/11/22	30/09/26	Intranet RA-110	   
+PQ-07.03	Gestão de equipamentos		PQ	Coordenadora Time de Metrologia/Eimes	29	19/11/25	18/11/28	Área do aluno Extranet Intranet RA-110	   
+PQ-07.04	Aquisição		PQ	RA	34	09/04/26	09/04/29	Intranet RA-110 RA-56	   
+PQ-08.01	Melhorias		PQ	RA	16	17/04/26	17/04/29	Intranet RA-110	   
+PQ-08.02	Controle de insumo, atividade e produto não conformes		PQ	RA	14	18/02/25	18/02/28	Intranet RA-110	   
+PQ-08.03	Ação corretiva e ação preventiva		PQ	RA	25	17/04/25	16/04/28	Intranet RA-110	   
+Total: 229 registros.
+
+
+OBSOLETOS:
+Histórico de Documentos Obsoletos
+Código	Nome	Autor	Rev.	Vigor (Era)	Data Obsoleto	Responsável	Categoria	Locais (Histórico)	Ações
+FQ-04.01	Lista Mestra de 15/05/2026	RA	0	15/05/2026	 12/06/2026	Daiana Guimarães de Sousa	LM	Intranet	
+FQ-04.01	Lista Mestra de 02/06/2026	RA	0	02/06/2026	 12/06/2026	Daiana Guimarães de Sousa	LM	Intranet	
+FQ-08.31	Controle de Melhorias	RA	1	09/04/2026	 12/06/2026		FQ	Intranet RA-25 RA-56	
+IT-06.01.08	Emissão de recibo do fundo especial de despesas - FED	Diretora do Centro de Atividade Administrativa	10	12/06/2025	 12/06/2026		IT	Intranet RA-110	
+FQ-07.15	Programação de evento	RA	7	21/06/2024	 02/06/2026		FQ	Intranet RA-25 RA-56	
+IT-07.01.03	Difusão do conhecimento	Analista de eventos (Eventos - DG)	33	18/02/2025	 02/06/2026		IT	Intranet RA-110	
+PQ-07.01	Realização de produto e serviço	RA	30	12/06/2025	 02/06/2026		PQ	Intranet RA-110	
+FQ-04.01	Lista Mestra de 17/04/2026	RA	0	17/04/2026	 15/05/2026	Daiana Guimarães de Sousa	LM	Intranet	
+FQ-06.60	Mapeamento e amostragem - Avaliação 5S	RA	1	19/09/2024	 15/05/2026		FQ	Intranet RA-25 RA-56	
+IT-05.01.04	Objetivos da qualidade e indicadores correlacionados	RA	15	05/01/2026	 15/05/2026		IT	Intranet RA-25	
+IT-06.01.09	Programa 5S	CoordenadoraTime 5S	13	19/09/2024	 15/05/2026		IT	Área do aluno Extranet Intranet RA-110	
+PQ-04.01	Sistema de Gestão da Qualidade	RA	19	18/02/2025	 15/05/2026		PQ	Intranet RA-110	
+IT-06.01.02	Conduta em caso de acidente e incidente	Coordenador Time Segurança Presidente Cipa	15	02/02/2026	 17/04/2026		IT	Área do aluno Extranet Intranet RA-110 RA-56	
+IT-07.01.07	Programa de Pós-Graduação stricto sensu	Reitora da Pós-Graduação	20	02/02/2026	 17/04/2026		IT	Área do aluno Intranet RA-110	
+PQ-06.02	Competência, conscientização e treinamento	RA	40	02/02/2026	 17/04/2026		PQ	Intranet RA-110 RA-56	
+PQ-08.01	Melhorias	RA	15	03/02/2025	 17/04/2026		PQ	Intranet RA-110	
+FQ-04.11	Definições e siglas (Acesso não liberado - entre em contato com Setor RA-DG)	RA	0	18/07/2017	 09/04/2026		FQ	RA-25 RA-56	
+FQ-06.40	Cadastro de veículos	RA	6	08/07/2022	 09/04/2026		FQ	Intranet RA-25 RA-56	
+FQ-08.31	Controle de melhorias	RA	0	15/12/2017	 09/04/2026		FQ	Intranet RA-25 RA-56	
+LM	Lista Mestra 23.02.26	RA	0	23/02/2026	 09/04/2026	Daiana Guimarães Sousa	LM	Intranet	
+PQ-05.01	Responsabilidade da alta direção	Diretora Geral	32	23/02/2026	 09/04/2026		PQ	Intranet RA-110	
+PQ-07.04	Aquisição	RA	33	23/02/2026	 09/04/2026		PQ	Intranet RA-110	
+FQ-04.01	Lista Mestra de 02/02/2026	RA	0	02/02/2026	 23/02/2026	Daiana Guimarães Sousa	LM	Intranet	
+FQ-08.17	Avaliação de auditoria interna	RA	4	13/10/2011	 23/02/2026		FQ	Intranet RA-25 RA-56	
+IT-04.02.01	Elaboração de documentos do SGQ	RA	23	17/04/2024	 23/02/2026		IT	Intranet RA-110	
+IT-08.01.03	Programa e plano de auditorias	RA	24	18/07/2023	 23/02/2026		IT	Intranet RA-110	
+PQ-05.01	Responsabilidade da alta direção	Diretora Geral	31	17/04/2025	 23/02/2026		PQ	Intranet RA-110	
+PQ-07.04	Aquisição	RA	32	19/11/2025	 23/02/2026		PQ	Intranet RA-110	
+FQ-04.01	Lista Mestra - 05/01/2026	RA	0	05/01/2026	 02/02/2026	Daiana Guimarães Sousa	LM	Intranet RA-25	
+FQ-06.06	Registro e relatório de investigação de acidente de trabalho	RA	6	10/05/2019	 02/02/2026		FQ	Intranet RA-25 RA-56	
+FQ-06.46	Registro de incidente de trabalho	RA	0	10/05/2019	 02/02/2026		FQ	Intranet RA-25 RA-56	
+FQ-07.54	Controle de projetos, bolsas e demais auxílios (fomento e outros recursos)	RA	2	12/06/2025	 02/02/2026		FQ	Intranet RA-25 RA-56	
+FQ-08.15	Análise financeira de evento	RA	10	05/07/2024	 02/02/2026		FQ	Intranet RA-25 RA-56	
+IT-06.01.02	Conduta em caso de acidente e incidente	Coordenador Time SegurançaPresidente Cipa	14	13/11/2024	 02/02/2026		IT	Extranet Intranet RA-110	
+IT-06.01.15	Recursos Humanos	Diretora Geral	10	16/10/2024	 02/02/2026		IT	Intranet RA-110	
+IT-06.02.01	Matriz de versatilidade	RA	14	04/04/2024	 02/02/2026		IT	Intranet RA-110	
+IT-07.01.07	Programa de pós-graduação stricto sensu	Reitora da Pós-Graduação	19	11/07/2025	 02/02/2026		IT	Intranet RA-110	
+PQ-04.02	Controle de documentos	RA	37	13/05/2025	 02/02/2026		PQ	Intranet RA-110	
+PQ-06.02	Competência, conscientização e treinamento	RA	39	23/09/2025	 02/02/2026		PQ	Intranet RA-110	
+DO-01	Missão	Diretora Geral	5	21/12/2017	 05/01/2026		DO	Intranet Manual da Qualidade Site do Ital Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	
+DO-02	Visão	Diretora Geral	3	21/01/2020	 05/01/2026		DO	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	
+DO-03	Valores	Diretora Geral	6	21/01/2020	 05/01/2026		DO	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	
+DO-04	Política	Diretora Geral	7	07/01/2019	 05/01/2026		DO	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	
+DO-05	Código de ética	Diretora Geral	4	21/12/2017	 05/01/2026		DO	Intranet Manual da Qualidade Site do Ital Treinamento Integração Alunos Treinamento Integração Estagiários Treinamento Integração Funcionários Treinamento Integração Profissional Externo	
+FQ-04.01	Lista Mestra de 16/12/25	RA	0	16/12/2025	 05/01/2026		LM	Intranet RA-25	
+IT-05.01.04	Objetivos da qualidade e indicadores correlacionados	Diretora Geral	14	26/01/2024	 05/01/2026	Cinthia Ronchesel	IT	Intranet RA-110	
+IT-05.01.04	Objetivos da qualidade e indicadores correlacionados	Diretora Geral	14	26/01/2024	 05/01/2026	Cinthia Ronchesel	IT	Intranet RA-25	
+05.01.04	Objetivos da qualidade e indicadores correlacionados	RA	15	05/01/2026	 01/01/2026		IT	Intranet RA-25	
+IT-05.01.04	Objetivos da qualidade e indicadores correlacionados	Diretora Geral	15	05/01/2026	 01/01/2026		IT	Intranet RA-25	
+FQ-04.01	Lista mestra de documentos do sistema de gestão da qualidade	RA	8	08/11/2021	 16/12/2025		LM	Intranet RA-25 RA-56	
+FQ-06.16	Avaliação 5S - Áreas externas	RA	8	01/09/2022	 16/12/2025		FQ	Intranet RA-25 RA-56	
+IT-06.02.02	Palestras e treinamentos internos	RA	6	16/10/2024	 16/12/2025		IT	Intranet RA-110	
+IT-07.01.10	Orientação para cálculos da incerteza de medição	RA	2	18/02/2025	 16/12/2025		IT	Intranet RA-110	
+Total: 53 documentos obsoletos.
+
+Manuais:
+Manuais ATIVOS
+ID	Tipo	Manual	Distribuição	Rev.	Vigor	Ações
+3	Nao_Controlado	Manual da qualidade	DQS, INMETRO	28	09/05/2025	  
+15	Controlado	Manual de Segurança do Trabalho	Intranet	6	02/02/2026	   
+16	Controlado	Manual de Segurança do Trabalho	Extranet	6	02/02/2026	   
+17	Controlado	Manual de Segurança do Trabalho	Área do aluno	6	02/02/2026	   
+18	Controlado	Manual da Qualidade	Intranet	30	02/06/2026	   
+total: 5
+OBSOLETOS:
+ Histórico de Manuais
+ID	Arquivo / Nome Antigo	Data Arquivamento	Responsável	Descrição	Ações
+35	Manual da Qualidade
+MQ_rev29_2026.pdf	02/06/2026 07:50	Daiana Guimarães de Sousa	nova revisão em vigor	 
+27	Manual de Segurança do Trabalho
+MS_rev5_2023.pdf	02/02/2026 08:10	Daiana Guimarães Sousa	Nova revisão em vigor em 02/02/2026	 
+25	Manual da Qualidade
+MQ_rev28_2025 - Intranet.pdf	05/01/2026 08:05	Cinthia Ronchesel	Nova revisão publicada.	 
+19	MS - Manual de Segurança do Trabalho (Antigo)
+MS_ rev05 2023 I.pdf	11/12/2025 15:30	Sistema	Substituído na edição	 
+18	Manual da Qualidade (Antigo)
+MQ_rev28 2025 - Intranet.pdf	11/12/2025 15:30	Sistema	Substituído na edição
+TOTAL:5	 
+
+Relatórios:
+Relatórios ATIVOS:
+ID	Relatório	Ano	Alteração	Ações
+1	Relatórios o relatório da 6ª Gincana	2025	04/12/2025	   
+2	Relatório de Avaliação do Programa 5S	2025	04/12/2025	   
+4	Relatório da Pesquisa de Clima Organizacional	2024	14/01/2026	   
+7	Relatório Pesquisa de Satisfação de Cliente Externo	2025	20/03/2026	
+Total: 4   
+
+OBSOLETOS:
+Arquivo / Nome Antigo	Data Arquivamento	Responsável	Descrição	Ações
+26	Relatório da Pesquisa de Satisfação de Cliente Externo
+Relatorio-CE-2024-rev00-Intranet.pdf	29/01/2026 10:09	Cinthia Ronchesel	Pesquisa de satisfação de 2025 foi concluída.
+Total: 1

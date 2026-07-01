@@ -48,7 +48,7 @@ $token = $_GET['token'];
             </div>
         <?php endif; ?>
 
-        <form action="../controllers/AutenticacaoController.php?action=redefinir_senha" method="POST">
+        <form action="../../controllers/AutenticacaoController.php?action=redefinir_senha" method="POST">
             <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
             
             <div class="mb-3">

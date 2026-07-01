@@ -1,11 +1,11 @@
 <?php
-// A sessão já é iniciada em 'config/conexao.php', que é carregado pelo index.php
+// Constrói o caminho base de forma segura para os assets e links
 $base_path = strpos($_SERVER['REQUEST_URI'], '/views/') !== false ? '../' : '';
 
+// Validação de segurança
 if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) {
-    // Constrói o caminho para o login de forma segura
-    $base_path = strpos($_SERVER['REQUEST_URI'], '/views/') !== false ? '../' : '';
-    header("Location: ".$base_path."views/login.php");
+    // CORREÇÃO: Ajuste do caminho do login
+    header("Location: " . $base_path . "views/login/login.php");
     exit();
 }
 ?>
@@ -18,6 +18,46 @@ if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true)
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="<?php echo $base_path; ?>assets/css/style.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d47a1; /* Seu novo azul principal */
+            --primary-hover-color: #0a3880; /* Um tom um pouco mais escuro para hover */
+            --bs-primary: var(--primary-color);
+            --bs-primary-rgb: 13, 71, 161;
+            --bs-link-color: var(--primary-color);
+            --bs-link-hover-color: var(--primary-hover-color);
+        }
+
+        .navbar-custom {
+            background-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover-color);
+            border-color: var(--primary-hover-color);
+        }
+
+        /* Classe específica para o cabeçalho da tabela, aplicando a cor também nas células th */
+        .thead-custom th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .table-responsive {
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
 </head>
 <body>
 

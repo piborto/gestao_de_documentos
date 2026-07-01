@@ -52,20 +52,38 @@
         <h5 class="mb-3 fw-light"><i class="bi bi-bell-fill text-secondary me-2"></i>Notificações</h5>
         
         <!-- Card de Vencidos -->
-        <div class="card shadow-sm mb-4">
-            <h6 class="card-header bg-danger text-white p-2">Vencidos <span class="badge bg-light text-dark rounded-pill ms-1">0</span></h6>
-            <div class="card-body">
-                <p class="text-muted small m-0">Nenhum item vencido.</p>
+        <div class="card shadow-sm mb-3">
+            <h6 class="card-header bg-danger text-white p-2">Vencidos <span class="badge bg-light text-dark rounded-pill ms-1"><?php echo count($notificacoes['vencidos']); ?></span></h6>
+            <div class="card-body p-2" style="max-height: 150px; overflow-y: auto;">
+                <?php if (empty($notificacoes['vencidos'])): ?>
+                    <p class="text-muted small m-2">Nenhum item vencido.</p>
+                <?php else: ?>
+                    <?php foreach ($notificacoes['vencidos'] as $doc): ?>
+                        <div class="border-bottom pb-1 mb-1">
+                            <div class="fw-bold small"><?php echo htmlspecialchars(utf8_encode($doc['codigo_documento'])); ?></div>
+                            <div class="small text-muted"><?php echo htmlspecialchars(utf8_encode($doc['nome_documento'])); ?></div>
+                            <div class="text-danger small">Venceu em: <?php echo date('d/m/Y', strtotime($doc['data_analise_documento'])); ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- Card de Próximos Vencimentos -->
-        <div class="card shadow-sm">
-            <h6 class="card-header bg-warning text-dark p-2">Próximos 6 meses <span class="badge bg-dark text-white rounded-pill ms-1">1</span></h6>
-            <div class="card-body">
-                <div class="fw-bold">PQ-07.02</div>
-                <div>Planejamento e controle de projeto e desenvolvimento</div>
-                <div class="text-danger small">Vence: 30/06/2026</div>
+        <div class="card shadow-sm mb-3">
+            <h6 class="card-header bg-warning text-dark p-2">Próximos 6 meses <span class="badge bg-dark text-white rounded-pill ms-1"><?php echo count($notificacoes['proximos']); ?></span></h6>
+            <div class="card-body p-2" style="max-height: 150px; overflow-y: auto;">
+                <?php if (empty($notificacoes['proximos'])): ?>
+                    <p class="text-muted small m-2">Nenhum item com vencimento próximo.</p>
+                <?php else: ?>
+                    <?php foreach ($notificacoes['proximos'] as $doc): ?>
+                        <div class="border-bottom pb-1 mb-1">
+                            <div class="fw-bold small"><?php echo htmlspecialchars(utf8_encode($doc['codigo_documento'])); ?></div>
+                            <div class="small text-muted"><?php echo htmlspecialchars(utf8_encode($doc['nome_documento'])); ?></div>
+                            <div class="text-danger small">Vence em: <?php echo date('d/m/Y', strtotime($doc['data_analise_documento'])); ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>

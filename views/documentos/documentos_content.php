@@ -8,11 +8,14 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
 
 <div class="row mb-4">
     <div class="col">
-        <h3 class="fw-bold text-secondary"><i class="bi bi-file-earmark-text me-2 text-primary"></i>Gestão de Documentos</h3>
+        <h3 class="fw-bold text-black"><i class="bi bi-file-earmark-text me-2 text-primary"></i>Gestão de Documentos</h3>
         <p class="text-muted">Consulte, filtre e acesse a lista de documentos do SGQ.</p>
     </div>
     <div class="col-auto">
-        <a href="index.php?modulo=documentos_cadastrar" class="btn btn-primary fw-bold"><i class="bi bi-plus-circle me-2"></i>Cadastrar Documento</a>
+        <a href="index.php?modulo=documentos_importar" class="btn btn-outline-success fw-bold"><i class="bi bi-cloud-upload me-2"></i>Importar CSV</a>
+        <a href="index.php?modulo=documentos_cadastrar" class="btn btn-primary fw-bold">
+            <i class="bi bi-plus-circle me-2"></i>Cadastrar Documento
+        </a>
     </div>
 </div>
 
@@ -61,46 +64,87 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light text-secondary small text-uppercase">
+            <table class="table table-hover table-striped align-middle">
+                <thead class="thead-custom">
                     <tr>
-                        <th class="ps-3" style="width: 15%;">Código</th>
-                        <th style="width: 40%;">Título do Documento</th>
-                        <th style="width: 10%;" class="text-center">Rev.</th>
-                        <th style="width: 15%;">Vigor</th>
-                        <th style="width: 10%;" class="text-center">PDF</th>
-                        <th class="pe-3 text-end" style="width: 10%;">Ações</th>
+                        <th style="width: 10%;">Código</th>
+                        <th style="width: 23%;">Nome</th>
+                        <th class="text-center" style="width: 1%;"><i class="bi bi-paperclip"></i></th>
+                        <?php if ($filtro_status == 3): // Cabeçalho para Obsoletos ?>
+                            <th class="text-center" style="width: 5%;">Categoria</th>
+                            <th style="width: 15%;">Responsável</th>
+                            <th style="width: 10%;">Data Obsoleto</th>
+                            <th style="width: 29%;">Distribuição (Histórico)</th>
+                        <?php else: // Cabeçalho Padrão ?>
+                            <th class="text-center" style="width: 5%;">Categoria</th>
+                            <th style="width: 12%;">Autor</th>
+                            <th class="text-center" style="width: 5%;">Revisão</th>
+                            <th style="width: 8%;">Vigor</th>
+                            <th style="width: 8%;">Análise</th>
+                            <th style="width: 23%;">Distribuição</th>
+                        <?php endif; ?>
+                        <th class="text-end pe-3" style="width: 4%;">Ações</th>
                     </tr>
                 </thead>
-                <tbody class="small">
+                <tbody>
                     <?php if (empty($listaDocumentos)): ?>
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                <i class="bi bi-folder-x display-6 d-block mb-2 text-black-50"></i>
-                                Nenhum documento encontrado com os filtros selecionados.
-                            </td>
+                            <td colspan="9" class="text-center py-5 text-muted">Nenhum documento encontrado com os filtros atuais.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($listaDocumentos as $doc): ?>
                             <tr>
-                                <td class="ps-3 fw-bold text-dark"><?php echo htmlspecialchars($doc['codigo_documento']); ?></td>
+                                <td class="fw-bold text-primary"><?php echo htmlspecialchars($doc['codigo_documento']); ?></td>
                                 <td>
-                                    <span class="badge bg-light text-primary border me-1"><?php echo htmlspecialchars($doc['sigla_categoria']); ?></span>
-                                    <span class="fw-semibold text-secondary"><?php echo htmlspecialchars($doc['nome_documento']); ?></span>
+                                    <?php echo htmlspecialchars($doc['nome_documento']); ?>
                                 </td>
-                                <td class="text-center"><span class="badge bg-secondary text-white rounded-pill"><?php echo str_pad($doc['revisao_documento'], 2, "0", STR_PAD_LEFT); ?></span></td>
-                                <td><?php echo date('d/m/Y', strtotime($doc['data_vigor_documento'])); ?></td>
                                 <td class="text-center">
-                                    <?php if (!empty($doc['arquivo_documento'])): ?>
-                                        <a href="/arquivos/<?php echo $doc['arquivo_documento']; ?>" target="_blank" class="btn btn-link text-danger p-0 fs-5"><i class="bi bi-filetype-pdf"></i></a>
-                                    <?php else: ?>
-                                        <span class="text-muted small">-</span>
-                                    <?php endif; ?>
+                                    <?php if (!empty($doc['arquivo_documento'])): ?><i class="bi bi-file-earmark-text text-secondary"></i><?php endif; ?>
                                 </td>
-                                <td class="pe-3 text-end">
+                                <?php if ($filtro_status == 3): // Colunas para Obsoletos ?>
+                                    <td class="text-center"><span class="badge bg-white text-dark border"><?php echo htmlspecialchars($doc['sigla_categoria']); ?></span></td>
+                                    <td>
+                                        <small class="text-muted fst-italic">
+                                            <?php echo htmlspecialchars(isset($doc['responsavel_obsoleto']) ? $doc['responsavel_obsoleto'] : 'Não informado'); ?>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <?php echo !empty($doc['data_obsoleto']) ? date('d/m/Y', strtotime($doc['data_obsoleto'])) : '-'; ?>
+                                    </td>
+                                <?php else: // Colunas Padrão ?>
+                                    <td class="text-center"><span class="badge bg-white text-dark border"><?php echo htmlspecialchars($doc['sigla_categoria']); ?></span></td>
+                                    <td><small><?php echo htmlspecialchars($doc['autor_documento'] ? $doc['autor_documento'] : '-'); ?></small></td>
+                                    <td class="text-center"><?php echo htmlspecialchars($doc['revisao_documento'] !== '' ? $doc['revisao_documento'] : '-'); ?></td>
+                                    <td><?php echo $doc['data_vigor_documento'] ? date('d/m/Y', strtotime($doc['data_vigor_documento'])) : '-'; ?></td>
+                                    <td>
+                                        <?php echo (!empty($doc['data_analise_documento']) && $doc['data_analise_documento'] != '0000-00-00') ? date('d/m/Y', strtotime($doc['data_analise_documento'])) : '-'; ?>
+                                    </td>
+                                <?php endif; ?>
+                                <td>
+                                    <?php if (!empty($doc['locais_distribuicao']) && $doc['locais_distribuicao'] !== '-'): ?>
+                                        <?php
+                                        $locais = explode(', ', $doc['locais_distribuicao']);
+                                        foreach ($locais as $local):
+                                        ?>
+                                            <span class="badge bg-info text-dark me-1" style="font-size: 0.7em;"><?php echo htmlspecialchars(trim($local)); ?></span>
+                                        <?php endforeach; ?>
+                                    <?php else: echo '-'; endif; ?>
+                                </td>
+                                <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="index.php?modulo=documentos_editar&id=<?php echo $doc['id_documento']; ?>" class="btn btn-outline-secondary border-0 text-primary" title="Editar"><i class="bi bi-pencil-square"></i></a>
-                                        <a href="index.php?modulo=documentos_historico&id=<?php echo $doc['id_documento']; ?>" class="btn btn-outline-secondary border-0 text-info" title="Histórico"><i class="bi bi-clock-history"></i></a>
+                                        <?php if (!empty($doc['arquivo_documento'])): ?>
+                                            <a href="/uploads/documentos/<?php echo htmlspecialchars($doc['sigla_categoria']); ?>/<?php echo htmlspecialchars($doc['arquivo_documento']); ?>" target="_blank" class="btn btn-outline-secondary" title="Visualizar"><i class="bi bi-eye"></i></a>
+                                        <?php else: ?>
+                                            <button class="btn btn-sm btn-outline-secondary disabled" style="opacity: 0.3;"><i class="bi bi-eye-slash"></i></button>
+                                        <?php endif; ?>
+                                        <button type="button" class="btn btn-outline-info" title="Histórico" data-bs-toggle="modal" data-bs-target="#modalHistorico" data-id="<?php echo $doc['id_documento']; ?>"><i class="bi bi-clock-history"></i></button>
+                                        <?php if ($filtro_status == 3): // Ações para Obsoletos ?>
+                                            <button type="button" class="btn btn-outline-success" title="Restaurar Documento"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                        <?php else: // Ações para Ativos/Em Revisão ?>
+                                            <a href="index.php?modulo=documentos_editar&id=<?php echo $doc['id_documento']; ?>" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <button type="button" class="btn btn-outline-warning" title="Tornar Obsoleto" data-bs-toggle="modal" data-bs-target="#modalObsoleto" data-id="<?php echo $doc['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($doc['nome_documento']); ?>"><i class="bi bi-archive"></i></button>
+                                            <button type="button" class="btn btn-outline-danger" title="Excluir" data-bs-toggle="modal" data-bs-target="#modalExcluir" data-id="<?php echo $doc['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($doc['nome_documento']); ?>"><i class="bi bi-trash"></i></button>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -111,3 +155,105 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
         </div>
     </div>
 </div>
+
+<!-- Modal Histórico -->
+<div class="modal fade" id="modalHistorico" tabindex="-1" aria-labelledby="modalHistoricoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalHistoricoLabel"><i class="bi bi-clock-history me-2"></i>Histórico do Documento</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="historico-content">
+        <div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tornar Obsoleto -->
+<div class="modal fade" id="modalObsoleto" tabindex="-1" aria-labelledby="modalObsoletoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="index.php?modulo=documentos_obsoleto">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title" id="modalObsoletoLabel"><i class="bi bi-archive me-2"></i>Tornar Documento Obsoleto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Você está prestes a tornar o documento <strong id="nome-documento-obsoleto"></strong> obsoleto. Esta ação não pode ser desfeita.</p>
+          <input type="hidden" name="id_documento" id="id-documento-obsoleto">
+          <div class="mb-3">
+            <label for="justificativa_obsoleto" class="form-label">Justificativa <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="justificativa_obsoleto" name="justificativa" rows="4" required placeholder="Ex: Substituído pela revisão X, incorporado ao documento Y, etc."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-warning">Confirmar Obsolescência</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Excluir -->
+<div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="index.php?modulo=documentos_excluir">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalExcluirLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Exclusão</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Tem certeza que deseja excluir permanentemente o documento <strong id="nome-documento-excluir"></strong>?</p>
+          <p class="text-danger small"><strong>Atenção:</strong> Esta ação é irreversível e o documento será removido do banco de dados sem deixar registro no histórico.</p>
+          <input type="hidden" name="id_documento" id="id-documento-excluir">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Modal de Histórico
+    var modalHistorico = document.getElementById('modalHistorico');
+    modalHistorico.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var docId = button.getAttribute('data-id');
+        var modalBody = document.getElementById('historico-content');
+        modalBody.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div></div>';
+        
+        fetch('views/documentos/documentos_historico_ajax.php?id=' + docId)
+            .then(response => response.text())
+            .then(html => {
+                modalBody.innerHTML = html;
+            });
+    });
+
+    // Modal de Obsolescência
+    var modalObsoleto = document.getElementById('modalObsoleto');
+    modalObsoleto.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        document.getElementById('id-documento-obsoleto').value = button.getAttribute('data-id');
+        document.getElementById('nome-documento-obsoleto').textContent = button.getAttribute('data-nome');
+    });
+
+    // Modal de Exclusão
+    var modalExcluir = document.getElementById('modalExcluir');
+    modalExcluir.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        document.getElementById('id-documento-excluir').value = button.getAttribute('data-id');
+        document.getElementById('nome-documento-excluir').textContent = button.getAttribute('data-nome');
+    });
+});
+</script>

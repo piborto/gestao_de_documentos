@@ -42,7 +42,7 @@ session_start();
             </div>
         <?php endif; ?>
 
-        <form action="../controllers/AutenticacaoController.php?action=solicitar_redefinicao" method="POST">
+        <form action="../../controllers/AutenticacaoController.php?action=solicitar_redefinicao" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label text-secondary fw-semibold">E-mail</label>
                 <div class="input-group">

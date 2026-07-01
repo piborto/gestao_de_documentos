@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tempo de Geração: 01/07/2026 às 15h25min
+-- Tempo de Geração: 01/07/2026 às 11h59min
 -- Versão do Servidor: 5.0.32
 -- Versão do PHP: 5.2.0-8+etch16
 
@@ -19,36 +19,6 @@ SET time_zone = "+00:00";
 --
 -- Banco de Dados: `qualidade_teste`
 --
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `t_categoria`
---
-
-CREATE TABLE IF NOT EXISTS `t_categoria` (
-  `id_categoria` int(11) NOT NULL auto_increment,
-  `nome_categoria` varchar(100) NOT NULL,
-  `sigla_categoria` varchar(10) NOT NULL,
-  PRIMARY KEY  (`id_categoria`),
-  UNIQUE KEY `sigla_categoria` (`sigla_categoria`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
-
---
--- Extraindo dados da tabela `t_categoria`
---
-
-INSERT INTO `t_categoria` (`id_categoria`, `nome_categoria`, `sigla_categoria`) VALUES
-(1, 'Relatórios', 'RE'),
-(2, 'Calendário de Atividades', 'CA'),
-(3, 'Diretrizes Organizacionais', 'DO'),
-(4, 'Manual da Qualidade', 'MQ'),
-(5, 'Manual de Segurança', 'MS'),
-(6, 'Formulários da Qualidade', 'FQ'),
-(7, 'Instruções de Trabalho', 'IT'),
-(8, 'Procedimentos da Qualidade', 'PQ'),
-(9, 'Processos', 'PR'),
-(10, 'LM', 'LM');
 
 -- --------------------------------------------------------
 
@@ -374,11 +344,11 @@ INSERT INTO `t_documento` (`id_documento`, `id_categoria`, `id_status`, `codigo_
 (291, 4, 3, '', 'MS - Manual de Segurança do Trabalho (Antigo)', NULL, 'Sistema', NULL, NULL, '2026-07-01', NULL, NULL, 'MS_ rev05 2023 I.pdf', 0),
 (292, 4, 3, '', 'Manual da Qualidade', NULL, 'Cinthia Ronchesel', NULL, NULL, '2026-07-01', NULL, NULL, 'MQ_rev28_2025 - Intranet.pdf', 0),
 (293, 4, 3, '', 'Manual de Segurança do Trabalho', NULL, 'Daiana Guimarães Sousa', NULL, NULL, '2026-07-01', NULL, NULL, 'MS_rev5_2023.pdf', 0),
-(294, 1, 1, 'REL-2025-RELATRIOSO', 'Relatórios o relatório da 6ª Gincana', NULL, '', NULL, NULL, '2025-12-04', NULL, NULL, 'Relatorio-6Gincana.pdf', 0),
-(295, 1, 1, 'REL-2025-RELATRIODE', 'Relatório de Avaliação do Programa 5S', NULL, '', NULL, NULL, '2025-12-04', NULL, NULL, 'RELATORIO-5S.pdf', 0),
-(296, 1, 1, 'REL-2024-RELATRIODA', 'Relatório da Pesquisa de Clima Organizacional', NULL, '', NULL, NULL, '2026-01-14', NULL, NULL, '1768399836_Relatorio-Geral-Clima-Organizacional.pdf', 0),
-(297, 1, 1, 'REL-2025-RELATRIOPE', 'Relatório Pesquisa de Satisfação de Cliente Externo', NULL, '', NULL, NULL, '2026-03-20', NULL, NULL, '1774027183_RelatÃ³rio CE 2025 rev01 intranet.pdf', 0),
-(298, 1, 3, 'REL--RELATRIODA', 'Relatório da Pesquisa de Satisfação de Cliente Externo', NULL, 'Cinthia Ronchesel', NULL, NULL, '2026-07-01', NULL, NULL, 'Relatorio-CE-2024-rev00-Intranet.pdf', 0);
+(294, 11, 1, 'REL-2025-RELATRIOSO', 'Relatórios o relatório da 6ª Gincana', NULL, '', NULL, NULL, '2025-12-04', NULL, NULL, 'Relatorio-6Gincana.pdf', 0),
+(295, 11, 1, 'REL-2025-RELATRIODE', 'Relatório de Avaliação do Programa 5S', NULL, '', NULL, NULL, '2025-12-04', NULL, NULL, 'RELATORIO-5S.pdf', 0),
+(296, 11, 1, 'REL-2024-RELATRIODA', 'Relatório da Pesquisa de Clima Organizacional', NULL, '', NULL, NULL, '2026-01-14', NULL, NULL, '1768399836_Relatorio-Geral-Clima-Organizacional.pdf', 0),
+(297, 11, 1, 'REL-2025-RELATRIOPE', 'Relatório Pesquisa de Satisfação de Cliente Externo', NULL, '', NULL, NULL, '2026-03-20', NULL, NULL, '1774027183_RelatÃ³rio CE 2025 rev01 intranet.pdf', 0),
+(298, 11, 3, 'REL--RELATRIODA', 'Relatório da Pesquisa de Satisfação de Cliente Externo', NULL, 'Cinthia Ronchesel', NULL, NULL, '2026-07-01', NULL, NULL, 'Relatorio-CE-2024-rev00-Intranet.pdf', 0);
 
 -- --------------------------------------------------------
 
@@ -1251,211 +1221,66 @@ CREATE TABLE IF NOT EXISTS `t_historico` (
 --
 
 INSERT INTO `t_historico` (`id_historico`, `acao_historico`, `justificativa_historico`, `data_historico`, `qualidade_id`, `id_documento`, `id_sigla`) VALUES
-(1, 'Importacao de Obsoleto', 'Documento obsoleto.', '2025-12-16 12:00:00', 1, 230, NULL),
-(2, 'Importacao de Obsoleto', 'Documento obsoleto.', '2025-12-16 12:00:00', 1, 231, NULL),
-(3, 'Importacao de Obsoleto', 'Documento obsoleto.', '2025-12-16 12:00:00', 1, 232, NULL),
-(4, 'Importacao de Obsoleto', 'Documento obsoleto.', '2025-12-16 12:00:00', 1, 233, NULL),
-(5, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Cinthia Ronchesel', '2026-01-05 12:00:00', 1, 234, NULL),
-(6, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-05 12:00:00', 1, 235, NULL),
-(7, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-05 12:00:00', 1, 236, NULL),
-(8, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-05 12:00:00', 1, 237, NULL),
-(9, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-05 12:00:00', 1, 238, NULL),
-(10, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-05 12:00:00', 1, 239, NULL),
-(11, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-05 12:00:00', 1, 240, NULL),
-(12, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-01 12:00:00', 1, 241, NULL),
-(13, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Cinthia Ronchesel', '2026-01-05 12:00:00', 1, 242, NULL),
-(14, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-01-01 12:00:00', 1, 243, NULL),
-(15, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 244, NULL),
-(16, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 245, NULL),
-(17, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 246, NULL),
-(18, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 247, NULL),
-(19, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 248, NULL),
-(20, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 249, NULL),
-(21, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 250, NULL),
-(22, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 251, NULL),
-(23, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 252, NULL),
-(24, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-02 12:00:00', 1, 253, NULL),
-(25, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Daiana Guimarães Sousa', '2026-02-02 12:00:00', 1, 254, NULL),
-(26, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-23 12:00:00', 1, 255, NULL),
-(27, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-23 12:00:00', 1, 256, NULL),
-(28, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-23 12:00:00', 1, 257, NULL),
-(29, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-23 12:00:00', 1, 258, NULL),
-(30, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-02-23 12:00:00', 1, 259, NULL),
-(31, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Daiana Guimarães Sousa', '2026-02-23 12:00:00', 1, 260, NULL),
-(32, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-09 12:00:00', 1, 261, NULL),
-(33, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-09 12:00:00', 1, 262, NULL),
-(34, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-09 12:00:00', 1, 263, NULL),
-(35, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-09 12:00:00', 1, 264, NULL),
-(36, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-09 12:00:00', 1, 265, NULL),
-(37, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Daiana Guimarães Sousa', '2026-04-09 12:00:00', 1, 266, NULL),
-(38, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-17 12:00:00', 1, 267, NULL),
-(39, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-17 12:00:00', 1, 268, NULL),
-(40, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-17 12:00:00', 1, 269, NULL),
-(41, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-04-17 12:00:00', 1, 270, NULL),
-(42, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-05-15 12:00:00', 1, 271, NULL),
-(43, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-05-15 12:00:00', 1, 272, NULL),
-(44, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-05-15 12:00:00', 1, 273, NULL),
-(45, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-05-15 12:00:00', 1, 274, NULL),
-(46, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Daiana Guimarães de Sousa', '2026-05-15 12:00:00', 1, 275, NULL),
-(47, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-06-02 12:00:00', 1, 276, NULL),
-(48, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-06-02 12:00:00', 1, 277, NULL),
-(49, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-06-02 12:00:00', 1, 278, NULL),
-(50, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-06-12 12:00:00', 1, 279, NULL),
-(51, 'Importacao de Obsoleto', 'Documento obsoleto.', '2026-06-12 12:00:00', 1, 280, NULL),
-(52, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Daiana Guimarães de Sousa', '2026-06-12 12:00:00', 1, 281, NULL),
-(53, 'Importacao de Obsoleto', 'Documento obsoleto. Responsável: Daiana Guimarães de Sousa', '2026-06-12 12:00:00', 1, 282, NULL),
-(54, 'Importacao de Obsoleto', 'Motivo: Nova revisão publicada. Responsável: Cinthia Ronchesel', '2026-01-05 08:05:00', 1, 288, NULL),
-(55, 'Importacao de Obsoleto', 'Motivo: nova revisão em vigor. Responsável: Daiana Guimarães de Sousa', '2026-06-02 07:50:00', 1, 289, NULL),
-(56, 'Importacao de Obsoleto', 'Motivo: Substituído na edição. Responsável: Sistema', '2025-12-11 15:30:00', 1, 290, NULL),
-(57, 'Importacao de Obsoleto', 'Motivo: Substituído na edição. Responsável: Sistema', '2025-12-11 15:30:00', 1, 291, NULL),
-(58, 'Importacao de Obsoleto', 'Motivo: Nova revisão publicada. Responsável: Cinthia Ronchesel', '2026-01-05 08:05:00', 1, 292, NULL),
-(59, 'Importacao de Obsoleto', 'Motivo: Nova revisão em vigor em 02/02/2026. Responsável: Daiana Guimarães Sousa', '2026-02-02 08:10:00', 1, 293, NULL),
-(60, 'Importacao de Obsoleto', 'Motivo: Pesquisa de satisfação de 2025 foi concluída. Responsável: Cinthia Ronchesel', '2026-01-29 10:09:00', 1, 298, NULL);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `t_local`
---
-
-CREATE TABLE IF NOT EXISTS `t_local` (
-  `id_local` int(11) NOT NULL auto_increment,
-  `nome_local` varchar(100) NOT NULL,
-  `logo_url` varchar(255) default NULL,
-  PRIMARY KEY  (`id_local`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32 ;
-
---
--- Extraindo dados da tabela `t_local`
---
-
-INSERT INTO `t_local` (`id_local`, `nome_local`, `logo_url`) VALUES
-(1, 'Área do aluno', NULL),
-(2, 'CCQA', NULL),
-(3, 'Cereal Chocotec', NULL),
-(4, 'Cetea', NULL),
-(5, 'Cial', NULL),
-(6, 'CTC', NULL),
-(7, 'DG', NULL),
-(8, 'DQS', NULL),
-(9, 'Extranet', NULL),
-(10, 'Fruthotec', NULL),
-(11, 'Google Drive', NULL),
-(12, 'INMETRO', NULL),
-(13, 'Intranet', NULL),
-(14, 'Manual da Qualidade', NULL),
-(15, 'RA', NULL),
-(16, 'RA-110', NULL),
-(17, 'Site do Ital', NULL),
-(18, 'Tecnolat', NULL),
-(19, 'Treinamento Integração Alunos', NULL),
-(20, 'Treinamento Integração Estagiários', NULL),
-(21, 'Treinamento Integração Funcionários', NULL),
-(22, 'Treinamento Integração Profissional Externo', NULL),
-(23, 'RA-25', NULL),
-(24, 'RA-56', NULL),
-(25, 'RA-22', NULL),
-(26, 'RA-111', NULL),
-(27, 'RA-22', NULL),
-(28, 'RA-111', NULL),
-(29, 'CAPD', NULL),
-(30, 'GEPC', NULL),
-(31, 'POS', NULL);
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `t_perfil`
---
-
-CREATE TABLE IF NOT EXISTS `t_perfil` (
-  `id_perfil` int(11) NOT NULL auto_increment,
-  `nome_perfil` varchar(100) NOT NULL,
-  PRIMARY KEY  (`id_perfil`),
-  UNIQUE KEY `nome_perfil` (`nome_perfil`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
-
---
--- Extraindo dados da tabela `t_perfil`
---
-
-INSERT INTO `t_perfil` (`id_perfil`, `nome_perfil`) VALUES
-(1, 'RA-Ital'),
-(2, 'RQ da Unidade'),
-(3, 'Responsável pelo controle'),
-(4, 'Colaborador'),
-(5, 'Administrador');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `t_sigla`
---
-
-CREATE TABLE IF NOT EXISTS `t_sigla` (
-  `id_sigla` int(11) NOT NULL auto_increment,
-  `id_status` int(11) NOT NULL default '2',
-  `numero_sigla` int(11) NOT NULL,
-  `nome_sigla` varchar(100) NOT NULL,
-  `definicao_sigla` text NOT NULL,
-  `referencia_sigla` varchar(255) default NULL,
-  `data_sigla` date NOT NULL,
-  `data_saida_sigla` date default NULL,
-  PRIMARY KEY  (`id_sigla`),
-  KEY `id_status` (`id_status`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `t_status`
---
-
-CREATE TABLE IF NOT EXISTS `t_status` (
-  `id_status` int(11) NOT NULL,
-  `nome_status` varchar(50) NOT NULL,
-  PRIMARY KEY  (`id_status`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Extraindo dados da tabela `t_status`
---
-
-INSERT INTO `t_status` (`id_status`, `nome_status`) VALUES
-(1, 'Agendado'),
-(2, 'Em Vigor'),
-(3, 'Obsoleto');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `t_usuario_qualidade`
---
-
-CREATE TABLE IF NOT EXISTS `t_usuario_qualidade` (
-  `id_usuario_qualidade` int(11) NOT NULL auto_increment,
-  `id_perfil` int(11) NOT NULL,
-  `id_local` int(11) default NULL,
-  `nome_usuario` varchar(150) NOT NULL,
-  `email_usuario` varchar(150) NOT NULL,
-  `login_usuario` varchar(50) NOT NULL,
-  `senha_usuario` varchar(255) NOT NULL,
-  `status_usuario` tinyint(1) NOT NULL default '1',
-  `reset_token` varchar(255) default NULL,
-  `reset_token_expires_at` datetime default NULL,
-  PRIMARY KEY  (`id_usuario_qualidade`),
-  UNIQUE KEY `email_usuario` (`email_usuario`),
-  UNIQUE KEY `login_usuario` (`login_usuario`),
-  KEY `id_perfil` (`id_perfil`),
-  KEY `id_local` (`id_local`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- Extraindo dados da tabela `t_usuario_qualidade`
---
-
-INSERT INTO `t_usuario_qualidade` (`id_usuario_qualidade`, `id_perfil`, `id_local`, `nome_usuario`, `email_usuario`, `login_usuario`, `senha_usuario`, `status_usuario`, `reset_token`, `reset_token_expires_at`) VALUES
-(1, 5, 15, 'Pietra Façanha Bortolato', 'suporte@ital.sp.gov.br', 'pietra', '0b69fc7776c7287a90930d36a69a139843b0908f4f4175bda2a94c744dc9c834', 1, NULL, NULL);
+(1, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 230, NULL),
+(2, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 231, NULL),
+(3, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 232, NULL),
+(4, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 233, NULL),
+(5, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 234, NULL),
+(6, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 235, NULL),
+(7, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 236, NULL),
+(8, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 237, NULL),
+(9, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 238, NULL),
+(10, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 239, NULL),
+(11, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 240, NULL),
+(12, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 241, NULL),
+(13, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 242, NULL),
+(14, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 243, NULL),
+(15, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 244, NULL),
+(16, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 245, NULL),
+(17, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 246, NULL),
+(18, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 247, NULL),
+(19, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 248, NULL),
+(20, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 249, NULL),
+(21, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 250, NULL),
+(22, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 251, NULL),
+(23, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 252, NULL),
+(24, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 253, NULL),
+(25, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 254, NULL),
+(26, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 255, NULL),
+(27, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 256, NULL),
+(28, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 257, NULL),
+(29, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 258, NULL),
+(30, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 259, NULL),
+(31, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 260, NULL),
+(32, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 261, NULL),
+(33, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 262, NULL),
+(34, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 263, NULL),
+(35, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 264, NULL),
+(36, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 265, NULL),
+(37, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 266, NULL),
+(38, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 267, NULL),
+(39, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 268, NULL),
+(40, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 269, NULL),
+(41, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 270, NULL),
+(42, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 271, NULL),
+(43, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 272, NULL),
+(44, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 273, NULL),
+(45, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 274, NULL),
+(46, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 275, NULL),
+(47, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 276, NULL),
+(48, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 277, NULL),
+(49, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 278, NULL),
+(50, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 279, NULL),
+(51, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 280, NULL),
+(52, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 281, NULL),
+(53, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: . Responsavel original: .', '2026-07-01 11:32:57', 1, 282, NULL),
+(54, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: Nova revisão.. Responsavel original: .', '2026-07-01 11:33:02', 1, 288, NULL),
+(55, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: nova revisão em vigor. Responsavel original: .', '2026-07-01 11:33:02', 1, 289, NULL),
+(56, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: Substituído na edição. Responsavel original: .', '2026-07-01 11:33:02', 1, 290, NULL),
+(57, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: Substituído na edição. Responsavel original: .', '2026-07-01 11:33:02', 1, 291, NULL),
+(58, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: Nova revisão publicada.. Responsavel original: .', '2026-07-01 11:33:02', 1, 292, NULL),
+(59, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: Nova revisão em vigor em 02/02/2026. Responsavel original: .', '2026-07-01 11:33:02', 1, 293, NULL),
+(60, 'Importacao de Obsoleto', 'Documento importado como obsoleto. Motivo original: Pesquisa de satisfação de 2025 foi concluída.. Responsavel original: .', '2026-07-01 11:33:07', 1, 298, NULL);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

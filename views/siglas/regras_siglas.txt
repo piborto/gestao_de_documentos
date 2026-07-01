@@ -1,0 +1,15 @@
+SIGLAS E DEFINIÇÕES - CADASTRO MANUAL
+Campos no Formulário: Sigla:, Definição:, Referência:, Data: dd/mm/aaaa
+
+Regra de Agendamento: Se a Data preenchida for futura (maior que o dia atual), a sigla não é publicada na hora; ela é salva temporariamente como agendada. Se for a data atual ou retroativa, é publicada imediatamente.
+
+Regra de Numeração e Ordenação: Não há campo para o usuário digitar o "Nº". Sempre que uma sigla nova é cadastrada, o sistema recalcula e atualiza automaticamente o número sequencial (1, 2, 3...) de todos os registros do banco, garantindo que fiquem em estrita ordem alfabética (ordenado por Sigla e, em caso de empate, pela Definição).
+
+SIGLAS E DEFINIÇÕES - GERAÇÃO DE PDF
+Apresentação: Tabela com 3 colunas visíveis (Palavra/Sigla, Definição, Referência) em layout de linhas zebradas.
+
+Ordem de Impressão: Alfabética (A-Z) seguindo a Palavra/Sigla.
+
+Dados de Cabeçalho: O relatório busca no banco qual foi a data mais recente de atualização e a estampa no topo ao lado das informações fixas: Responsavel: RA e Aplicacao: PQ/IT/MQ/MS.
+
+Rodapé: Utiliza o texto padrão eletrônico FQ-04.11 (Anexo à IT-04.02.01) - RA - revisão 01 de 09/04/26, a menos que um rodapé customizado seja enviado no momento da geração.

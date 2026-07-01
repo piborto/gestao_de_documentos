@@ -1,13 +1,13 @@
 <?php
 // Garante que o controller já foi carregado pelo index.php e as variáveis $listaCategorias e $documento estão disponíveis.
-$is_edit = isset($documento) && !empty($documento['id_documento']);
+$is_edit = isset($documento) && !empty($documento);
 $form_action = $is_edit ? 'documentos_editar' : 'documentos_cadastrar';
 $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
 ?>
 
 <div class="row mb-4">
     <div class="col">
-        <h3 class="fw-bold text-secondary"><i class="bi bi-file-earmark-plus me-2 text-primary"></i><?php echo $page_subtitle; ?></h3>
+        <h3 class="fw-bold text-dark"><i class="bi bi-file-earmark-plus me-2 text-primary"></i><?php echo $page_subtitle; ?></h3>
         <p class="text-muted">Preencha os campos abaixo para <?php echo $is_edit ? 'atualizar o' : 'adicionar um novo'; ?> documento.</p>
     </div>
     <div class="col-auto">
@@ -17,7 +17,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
-        <form id="form-documento" method="POST" action="index.php?modulo=<?php echo $form_action; ?>" enctype="multipart/form-data">
+        <form id="form-documento" method="POST" action="index.php?modulo=<?php echo $form_action; ?><?php echo $is_edit ? '&id=' . $documento['id_documento'] : ''; ?>" enctype="multipart/form-data">
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id_documento" value="<?php echo htmlspecialchars($documento['id_documento']); ?>">
             <?php endif; ?>
@@ -29,7 +29,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                     <select id="id_categoria" name="id_categoria" class="form-select" required>
                         <option value="">Selecione...</option>
                         <?php foreach ($listaCategorias as $categoria): ?>
-                            <option value="<?php echo $categoria['id_categoria']; ?>" data-sigla="<?php echo htmlspecialchars($categoria['sigla_categoria']); ?>">
+                            <option value="<?php echo $categoria['id_categoria']; ?>" data-sigla="<?php echo htmlspecialchars($categoria['sigla_categoria']); ?>" <?php echo ($is_edit && $documento['id_categoria'] == $categoria['id_categoria']) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($categoria['sigla_categoria'] . ' - ' . $categoria['nome_categoria']); ?>
                             </option>
                         <?php endforeach; ?>
@@ -40,7 +40,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                 <div class="col-md-6 campo-dinamico" id="div-tipo_manual" style="display: none;">
                     <label for="tipo_manual" class="form-label text-primary fw-bold">Tipo de Manual</label>
                     <select id="tipo_manual" name="tipo_manual" class="form-select border-primary">
-                        <option value="Controlado">Controlado</option>
+                        <option value="Controlado" <?php echo ($is_edit && $documento['controle_documento'] == 1) ? 'selected' : ''; ?>>Controlado</option>
                         <option value="Nao_Controlado">Não Controlado</option>
                     </select>
                 </div>
@@ -48,55 +48,58 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                 <!-- Código -->
                 <div class="col-md-3 campo-dinamico" id="div-codigo" style="display: none;">
                     <label for="codigo_documento" class="form-label">Código <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="codigo_documento" name="codigo_documento">
+                    <input type="text" class="form-control" id="codigo_documento" name="codigo_documento" value="<?php echo $is_edit ? htmlspecialchars($documento['codigo_documento']) : ''; ?>">
                 </div>
 
                 <!-- Nome do Documento -->
                 <div class="col-md-9 campo-dinamico" id="div-nome" style="display: none;">
                     <label for="nome_documento" class="form-label">Nome do Documento <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="nome_documento" name="nome_documento">
+                    <input type="text" class="form-control" id="nome_documento" name="nome_documento" value="<?php echo $is_edit ? htmlspecialchars($documento['nome_documento']) : ''; ?>">
                 </div>
 
                 <!-- Autor -->
                 <div class="col-md-4 campo-dinamico" id="div-autor" style="display: none;">
                     <label for="autor_documento" class="form-label">Autor</label>
-                    <input type="text" class="form-control" id="autor_documento" name="autor_documento">
+                    <input type="text" class="form-control" id="autor_documento" name="autor_documento" value="<?php echo $is_edit ? htmlspecialchars($documento['autor_documento']) : ''; ?>">
                 </div>
 
                 <!-- Revisão -->
                 <div class="col-md-2 campo-dinamico" id="div-revisao" style="display: none;">
                     <label for="revisao_documento" class="form-label">Revisão</label>
-                    <input type="number" class="form-control" id="revisao_documento" name="revisao_documento" value="0">
+                    <input type="number" class="form-control" id="revisao_documento" name="revisao_documento" value="<?php echo $is_edit ? htmlspecialchars($documento['revisao_documento']) : '0'; ?>">
                 </div>
 
                 <!-- Sufixo -->
                 <div class="col-md-2 campo-dinamico" id="div-sufixo" style="display: none;">
                     <label for="sufixo" class="form-label">Sufixo/Idioma</label>
-                    <input type="text" class="form-control" id="sufixo" name="sufixo" placeholder="Ex: PT">
+                    <input type="text" class="form-control" id="sufixo" name="sufixo" placeholder="Ex: PT" value="<?php echo $is_edit ? htmlspecialchars($documento['sufixo_documento']) : ''; ?>">
                 </div>
 
                 <!-- Ano (RE, CA, PR) -->
                 <div class="col-md-2 campo-dinamico" id="div-ano" style="display: none;">
                     <label for="ano" class="form-label">Ano</label>
-                    <input type="number" class="form-control" id="ano" name="ano" value="<?php echo date('Y'); ?>">
+                    <input type="number" class="form-control" id="ano" name="ano" value="<?php echo $is_edit ? htmlspecialchars($documento['ano_documento']) : date('Y'); ?>">
                 </div>
 
                 <!-- Data de Vigor/Publicação -->
                 <div class="col-md-2 campo-dinamico" id="div-vigor" style="display: none;">
                     <label for="data_vigor_documento" class="form-label">Publicação <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" id="data_vigor_documento" name="data_vigor_documento">
+                    <input type="date" class="form-control" id="data_vigor_documento" name="data_vigor_documento" value="<?php echo $is_edit ? $documento['data_vigor_documento'] : ''; ?>">
                 </div>
 
                 <!-- Próxima Análise -->
                 <div class="col-md-2 campo-dinamico" id="div-analise" style="display: none;">
                     <label for="data_analise_documento" class="form-label">Próxima Análise</label>
-                    <input type="date" class="form-control" id="data_analise_documento" name="data_analise_documento">
+                    <input type="date" class="form-control" id="data_analise_documento" name="data_analise_documento" value="<?php echo $is_edit ? $documento['data_analise_documento'] : ''; ?>">
                 </div>
 
                 <!-- Arquivo -->
                 <div class="col-md-6 campo-dinamico" id="div-arquivo" style="display: none;">
-                    <label for="arquivo_documento" class="form-label">Anexar Documento <span class="text-danger">*</span></label>
-                    <input class="form-control" type="file" id="arquivo_documento" name="arquivo_documento" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
+                    <label for="arquivo_documento" class="form-label">Anexar Documento <?php if (!$is_edit) echo '<span class="text-danger">*</span>'; ?></label>
+                    <input class="form-control" type="file" id="arquivo_documento" name="arquivo_documento" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" <?php if (!$is_edit) echo 'required'; ?>>
+                    <?php if ($is_edit && !empty($documento['arquivo_documento'])): ?>
+                        <div class="form-text">Arquivo atual: <a href="/uploads/documentos/<?php echo htmlspecialchars($documento['sigla_categoria']); ?>/<?php echo htmlspecialchars($documento['arquivo_documento']); ?>" target="_blank"><?php echo htmlspecialchars($documento['arquivo_documento']); ?></a>. Envie um novo para substituir.</div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Distribuição Padrão -->
@@ -127,11 +130,100 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                     </div>
                 </div>
 
+                <?php if ($is_edit): ?>
+                <div class="col-12">
+                    <hr>
+                    <label for="justificativa" class="form-label fw-bold text-danger">Justificativa da Alteração <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="justificativa" name="justificativa" rows="3" required placeholder="Ex: Correção do código, atualização da data de análise, etc."></textarea>
+                </div>
+                <?php endif; ?>
+
                 <div class="col-12 text-end">
                     <hr>
+                    <?php if ($is_edit): ?>
+                        <div class="btn-group float-start">
+                            <button type="button" class="btn btn-outline-warning" title="Tornar Obsoleto" data-bs-toggle="modal" data-bs-target="#modalObsoleto" data-id="<?php echo $documento['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($documento['nome_documento']); ?>"><i class="bi bi-archive me-2"></i>Tornar Obsoleto</button>
+                            <button type="button" class="btn btn-outline-danger" title="Excluir" data-bs-toggle="modal" data-bs-target="#modalExcluir" data-id="<?php echo $documento['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($documento['nome_documento']); ?>"><i class="bi bi-trash me-2"></i>Excluir</button>
+                        </div>
+                    <?php endif; ?>
                     <button type="submit" class="btn btn-success fw-bold"><i class="bi bi-check-circle me-2"></i>Salvar Documento</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
+<?php if ($is_edit): ?>
+<!-- Modal Tornar Obsoleto -->
+<div class="modal fade" id="modalObsoleto" tabindex="-1" aria-labelledby="modalObsoletoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="index.php?modulo=documentos_obsoleto">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title" id="modalObsoletoLabel"><i class="bi bi-archive me-2"></i>Tornar Documento Obsoleto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Você está prestes a tornar o documento <strong id="nome-documento-obsoleto"></strong> obsoleto. Esta ação não pode ser desfeita.</p>
+          <input type="hidden" name="id_documento" id="id-documento-obsoleto">
+          <div class="mb-3">
+            <label for="justificativa_obsoleto" class="form-label">Justificativa <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="justificativa_obsoleto" name="justificativa" rows="4" required placeholder="Ex: Substituído pela revisão X, incorporado ao documento Y, etc."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-warning">Confirmar Obsolescência</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Excluir -->
+<div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="index.php?modulo=documentos_excluir">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalExcluirLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Exclusão</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Tem certeza que deseja excluir permanentemente o documento <strong id="nome-documento-excluir"></strong>?</p>
+          <p class="text-danger small"><strong>Atenção:</strong> Esta ação é irreversível e o documento será removido do banco de dados sem deixar registro no histórico.</p>
+          <input type="hidden" name="id_documento" id="id-documento-excluir">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Modal de Obsolescência
+    var modalObsoleto = document.getElementById('modalObsoleto');
+    if (modalObsoleto) {
+        modalObsoleto.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            document.getElementById('id-documento-obsoleto').value = button.getAttribute('data-id');
+            document.getElementById('nome-documento-obsoleto').textContent = button.getAttribute('data-nome');
+        });
+    }
+
+    // Modal de Exclusão
+    var modalExcluir = document.getElementById('modalExcluir');
+    if (modalExcluir) {
+        modalExcluir.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            document.getElementById('id-documento-excluir').value = button.getAttribute('data-id');
+            document.getElementById('nome-documento-excluir').textContent = button.getAttribute('data-nome');
+        });
+    }
+});
+</script>
+<?php endif; ?>

@@ -1,0 +1,283 @@
+�\BFStatus;Tipo;Codigo;Nome;Autor;Revisao;Data_Vigor;Data_Analise_Critica;Data_Obsoleto;Motivo_Obsoleto;Responsavel_Obsoleto;Categoria_Sigla;Nome_Arquivo;Locais_Distribuicao
+ATIVO;DOCUMENTO;IT-05.01.01;"Reunião de análise crítica";RA;22;2024-12-11;2027-12-11;;;;IT;IT050101_rev22_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-05.01.05;"Comunicação Institucional";"Especialista em Comunicação (Comunicação - DG)";2;2024-10-16;2027-10-16;;;;IT;IT050105_rev02_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.01;"Plano de investimentos";RA;12;2025-05-13;2028-05-12;;;;IT;IT060101_rev12_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.03;"Viagens a serviço, missão, estudo ou participação em eventos científicos";"Secretária do Diretor Geral";15;2025-09-23;2028-09-22;;;;IT;IT060103_rev15_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.04;"Política de utilização da rede de informática e telefonia";"Analista de Sistemas GTI - DG";22;2025-09-23;2028-09-22;;;;IT;IT060104_rev22_2025.pdf;"Área do aluno|Extranet|Intranet|RA-110"
+ATIVO;DOCUMENTO;IT-06.01.05;Estágio;"Diretora do Núcleo de Treinamento e Capacitação (NTC)";19;2025-09-23;2028-09-22;;;;IT;IT060105_rev19_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.07;"Compra de materiais ou serviços com recursos do Tesouro ou FED";"Diretora do Centro de Atividades Administrativas";17;2025-10-21;2028-10-20;;;;IT;IT060107_rev17_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.11;"Segurança do trabalho";"Coordenador Time SegurançaPresidente Cipa";18;2025-10-21;2028-10-20;;;;IT;IT060111_rev18_2025.pdf;"Área do aluno|Extranet|Intranet|RA-110"
+ATIVO;DOCUMENTO;IT-06.01.12;"Verificação de segurança das capelas de exaustão";"Coordenador Time SegurançaPresidente Cipa";6;2024-11-13;2027-11-13;;;;IT;IT060112_rev06_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.13;"Controle de acesso na portaria do Ital";"Diretora Geral";11;2024-04-17;2027-04-17;;;;IT;IT060113_rev11_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.14;"Profissional externo";"Diretora Geral";15;2025-10-21;2028-10-20;;;;IT;IT060114_rev15_2025.pdf;Extranet|Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.01.01;"Gerenciamento de resíduos";"Coordenadora Time Ger. Resíduos";14;2025-09-23;2028-09-22;;;;IT;IT070101_rev14_2025.pdf;"Área do aluno|Extranet|Intranet|RA-110"
+ATIVO;DOCUMENTO;IT-07.01.02;"Controle de estoque e aprovação de materiais para processos e ensaios";RA;16;2025-04-17;2028-04-16;;;;IT;IT070102_rev16_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.01.04;"Serviços de apoio";"Diretor do Núcleo de Apoio Operacional - DG";10;2025-05-13;2028-05-12;;;;IT;IT070104_rev10_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.01.06;"Controle patrimonial";"Diretor do Apoio Operacional";15;2025-10-21;2028-10-20;;;;IT;IT070106_rev15_2025.pdf;Intranet
+ATIVO;DOCUMENTO;IT-07.01.08;"Proteção intelectual";"Diretor Técnico de Divisão – NIT";2;2024-06-21;2027-06-21;;;;IT;IT070108_rev02_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.01.09;"Ensaios e análises";RA;6;2024-12-11;2027-12-11;;;;IT;IT070109_rev06_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.01.11;"Contratos via fundação de apoio (FA) e outros acordos e termos";"Diretora Geral";2;2024-11-13;2027-11-13;;;;IT;IT070111_rev02_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.03.01;"Controle e verificação de vidrarias volumétricas";"Coordenadora Time de Metrologia/Eimes";12;2025-11-19;2028-11-18;;;;IT;IT070301_rev12_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.03.02;"Checagem intermediária de pipeta automática ou micropipeta";"Coordenadora Time de Metrologia/Eimes";6;2025-01-06;2028-01-06;;;;IT;IT070302_rev06_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.03.03;"Verificação de performance de ICP OES";"Coordenadora Time de Metrologia/Eimes";6;2024-10-16;2027-10-16;;;;IT;IT070303_rev06_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.03.04;"Verificação da performance de espectrofotômetros com largura da fenda espectral até 2nm";"Coordenadora Time de Metrologia/Eimes";6;2024-09-19;2027-09-19;;;;IT;IT070304_rev06_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.03.05;"Verificação da performance de cromatógrafos liquídos e gasosos";"Coordenadora Time de Metrologia/Eimes";5;2024-10-16;2027-10-16;;;;IT;IT070305_rev05_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.03.06;"Checagem intermediária de dispositivos de medição de temperatura";"Coordenadora Time de Metrologia/Eimes";6;2024-11-13;2027-11-13;;;;IT;IT070306_rev06_2024.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-08.01.01;"Tratamento a sugestões ou reclamações de clientes";RA;19;2025-02-18;2028-02-18;;;;IT;IT080101_rev19_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-08.01.02;"Análise de satisfação e insatisfação de clientes";RA;25;2025-04-17;2028-04-16;;;;IT;IT080102_rev25_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-08.01.04;"Monitoramento, medição, análise e avaliação - indicadores de desempenho";RA;27;2025-10-21;2028-10-20;;;;IT;IT080104_rev27_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-04.03;"Controle de registros";RA;19;2025-04-17;2028-04-16;;;;PQ;PQ0403_rev19_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-04.04;"Fatores estratégicos";RA;18;2025-02-18;2028-02-18;;;;PQ;PQ0404_rev18_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-06.01;"Gestão de recursos";RA;17;2025-06-12;2028-06-11;;;;PQ;PQ0601_rev17_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-07.02;"Planejamento e controle de projeto e desenvolvimento";RA;30;2022-11-18;2026-09-30;;;;PQ;PQ0702_rev30_2022.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-07.03;"Gestão de equipamentos";"Coordenadora Time de Metrologia/Eimes";29;2025-11-19;2028-11-18;;;;PQ;PQ0703_rev29_2025.pdf;"Área do aluno|Extranet|Intranet|RA-110"
+ATIVO;DOCUMENTO;PQ-08.02;"Controle de insumo, atividade e produto não conformes";RA;14;2025-02-18;2028-02-18;;;;PQ;PQ0802_rev14_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-08.03;"Ação corretiva e ação preventiva";RA;25;2025-04-17;2028-04-16;;;;PQ;PQ0803_rev25_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;FQ-04.01;"Lista mestra de documentos do sistema de gestão da qualidade";RA;8;2021-11-08;;;;;FQ;FQ0401_rev08_2021.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.02;"Registro de análise crítica de documentos do sistema de gestão da qualidade";RA;0;2008-01-16;;;;;FQ;FQ0402_rev00_2008.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.03;"Planejamento de mudanças";RA;1;2021-12-13;;;;;FQ;FQ0403_rev01_2021.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.04;"Controle de registros e outros documentos";RA;10;2023-04-06;;;;;FQ;FQ0404_rev10_2023.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.05;"Matriz riscos e oportunidades gerais x processos";RA;0;2024-01-26;;;;;FQ;FQ0405_rev00_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.06;"Fatores estratégicos";RA;0;2017-07-18;;;;;FQ;FQ0406_rev00_2017.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.07;"Monitoramento ambiente externo e ambiente interno";RA;1;2019-02-27;;;;;FQ;FQ0407_rev01_2019.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.08;"Monitoramento de partes interessadas";RA;1;2019-02-27;;;;;FQ;FQ0408_rev01_2019.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.09;"Mapeamento de processo";RA;2;2024-01-26;;;;;FQ;FQ0409_rev02_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.10;"Monitoramento de indicadores";RA;1;2018-02-02;;;;;FQ;FQ0410_rev01_2018.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.12;"Diretrizes organizacionais";RA;0;2021-11-08;;;;;FQ;FQ0412_rev00_2021.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.13;"Análise de riscos e oportunidades gerais - Matriz GUT";RA;0;2021-08-20;;;;;FQ;FQ0413_rev00_2021.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.14;"Identificação e gestão de riscos inerentes";RA;0;2024-11-13;;;;;FQ;FQ0414_rev00_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.15;"Controle de acesso - Pastas de uso compartilhado";RA;0;2025-09-23;;;;;FQ;FQ0415_rev00_2025.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-05.01;"Comunicação interna";RA;0;2005-09-16;;;;;FQ;FQ0501_rev00_2005.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-05.02;"Termo de compromisso";RA;2;2024-08-15;;;;;FQ;FQ0502_rev02_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-05.03;"Registro de reunião";RA;2;2024-09-19;;;;;FQ;FQ0503_rev02_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-05.05;"Lista de presença";RA;1;2024-09-19;;;;;FQ;FQ0505_rev01_2024.doc;"Google Drive|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-05.06;"Custos da Qualidade";RA;3;2023-01-02;;;;;FQ;FQ0506_rev03_2023.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-05.07;"Calendário de atividades";RA;1;2018-11-14;;;;;FQ;FQ0507_rev01_2018.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-05.08;"Comunicação - Sistema de Gestão da Qualidade";RA;0;2017-12-21;;;;;FQ;FQ0508_rev00_2017.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.01;"Plano e controle de treinamentos planejados";RA;11;2024-09-19;;;;;FQ;FQ0601_rev11_2024.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.02;"Registro e avaliação de eficácia de treinamento";RA;11;2025-09-23;;;;;FQ;FQ0602_rev11_2025.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.03;"Matriz de versatilidade";RA;8;2022-12-15;;;;;FQ;FQ0603_rev08_2022.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.04;"Relatório de atividades de pós-graduação";RA;6;2024-09-19;;;;;FQ;FQ0604_rev06_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.05;"Plano de investimentos";RA;9;2022-07-08;;;;;FQ;FQ0605_rev09_2022.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.07;"Controle de participação e emissão de certificados em palestras e treinamentos internos";RA;3;2022-11-18;;;;;FQ;FQ0607_rev03_2022.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.10;"Controle de entrega de equipamentos de proteção individual";RA;3;2024-09-19;;;;;FQ;FQ0610_rev03_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.12;"Ficha de estagiário";RA;6;2019-05-10;;;;;FQ;FQ0612_rev06_2019.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.13;"Controle de treinamentos não planejados";RA;2;2023-01-02;;;;;FQ;FQ0613_rev02_2023.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.17;"Avaliação 5S - Auditórios";RA;9;2022-09-01;;;;;FQ;FQ0617_rev09_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.18;"Avaliação 5S - Avaliação Geral da Unidade";RA;7;2022-09-01;;;;;FQ;FQ0618_rev07_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.19;"Avaliação 5S - Banheiros";RA;10;2022-09-01;;;;;FQ;FQ0619_rev10_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.20;"Avaliação 5S - Bibliotecas";RA;9;2022-09-01;;;;;FQ;FQ0620_rev09_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.21;"Avaliação 5S - Câmaras de estocagem e casa de máquinas";RA;9;2022-09-01;;;;;FQ;FQ0621_rev09_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.22;"Avaliação 5S - Corredores";RA;8;2022-09-01;;;;;FQ;FQ0622_rev08_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.23;"Avaliação 5S - Copas e Cozinhas";RA;10;2024-11-13;;;;;FQ;FQ0623_rev10_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.24;"Avaliação 5S - Frota";RA;8;2022-09-01;;;;;FQ;FQ0624_rev08_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.25;"Avaliação 5S - Laboratórios";RA;9;2022-09-01;;;;;FQ;FQ0625_rev09_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.26;"Avaliação 5S - Lavanderias";RA;7;2022-09-01;;;;;FQ;FQ0626_rev07_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.27;"Avaliação 5S - Oficinas";RA;8;2025-10-21;;;;;FQ;FQ0627_rev08_2025.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.28;"Avaliação 5S -  Almoxarifados";RA;8;2022-09-01;;;;;FQ;FQ0628_rev08_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.29;"Avaliação 5S - Plantas piloto";RA;7;2022-09-01;;;;;FQ;FQ0629_rev07_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.30;"Avaliação 5S - Salas de espera/Hall";RA;9;2024-09-19;;;;;FQ;FQ0630_rev09_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.31;"Avaliação 5S -  Salas";RA;8;2022-09-01;;;;;FQ;FQ0631_rev08_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.32;"Avaliação 5S - Almoxarifados de reagentes";RA;10;2022-09-01;;;;;FQ;FQ0632_rev10_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.33;"Programa 5S - Avaliação da equipe";RA;3;2017-08-16;;;;;FQ;FQ0633_rev03_2017.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.34;"Programa 5S - Feedback da Unidade Avaliada";RA;2;2017-08-16;;;;;FQ;FQ0634_rev02_2017.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.35;"Inspeção dos extintores de incêndio";RA;1;2023-04-06;;;;;FQ;FQ0635_rev01_2023.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.36;"Inspeção periódica de chuveiro e lavador de olhos";RA;1;2023-04-06;;;;;FQ;FQ0636_rev01_2023.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.37;"Avaliação da eficácia do sistema de exaustão e iluminação de capelas de exaustão";RA;3;2023-05-12;;;;;FQ;FQ0637_rev03_2023.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.38;"Relatório de avaliação de riscos";RA;5;2025-05-13;;;;;FQ;FQ0638_rev05_2025.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.39;"Avaliação de segurança do trabalho";RA;9;2025-06-12;;;;;FQ;FQ0639_rev09_2025.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.41;"Avaliação de palestra/treinamento interno";RA;1;2021-08-20;;;;;FQ;FQ0641_rev01_2021.doc;"Google Drive|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-06.42;"Tabulação de avaliações de palestra/treinamento interno";RA;1;2021-10-08;;;;;FQ;FQ0642_rev01_2021.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.43;"Avaliação 5S - Pontos de coleta de lixo";RA;3;2019-07-12;;;;;FQ;FQ0643_rev03_2019.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.44;"Programação de avaliação";RA;0;2017-08-16;;;;;FQ;FQ0644_rev00_2017.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.45;"Informações complementares - Cadastro ERP - Ital";RA;3;2022-11-18;;;;;FQ;FQ0645_rev03_2022.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.47;"Orientações para utilização de sistemas internos";RA;0;2019-07-12;;;;;FQ;FQ0647_rev00_2019.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.49;"Descrição de vaga para contratação de estagiário via FA";RA;1;2023-06-21;;;;;FQ;FQ0649_rev01_2023.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.51;"Descrição de Função";RA;0;2020-03-10;;;;;FQ;FQ0651_rev00_2020.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.52;"Avaliação da aprendizagem - Jovem Aprendiz";RA;0;2020-07-08;;;;;FQ;FQ0652_rev00_2020.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.53;"Notificação Cipa";RA;0;2020-07-08;;;;;FQ;FQ0653_rev00_2020.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.54;Programa;RA;1;2023-08-23;;;;;FQ;FQ0654_rev01_2023.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.55;"Inscrições em palestras/treinamentos internos";RA;3;2024-09-19;;;;;FQ;FQ0655_rev03_2024.xlsx;"Google Drive|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-06.56;"Avaliação de Palestra/Treinamento Interno Remoto";RA;1;2023-05-12;;;;;FQ;FQ0656_rev01_2023.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.57;"Tabulação de avaliações de palestra/treinamento interno remoto";RA;1;2023-05-12;;;;;FQ;FQ0657_rev01_2023.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.58;"Controle de capacitação de funcionários";RA;0;2022-04-01;;;;;FQ;FQ0658_rev00_2022.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.59;"Avaliação 5S - Depósitos";RA;1;2025-10-21;;;;;FQ;FQ0659_rev01_2025.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.61;"Controle de Treinamento de longa duração";RA;0;2024-09-19;;;;;FQ;FQ0661_rev00_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.01;"Plano detalhado de projeto";RA;10;2023-02-24;;;;;FQ;FQ0701_rev10_2023.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.02;"Plano Detalhado de Projeto P&D&I (Fomento e Outros Recursos)";RA;15;2022-11-18;;;;;FQ;FQ0702_rev15_2022.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.04;"Controle de relatório de projeto de P&D (iniciativa privada)";RA;4;2018-03-23;;;;;FQ;FQ0704_rev04_2018.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.05;"Controle de Eimes/Equipamentos";RA;8;2021-07-29;;;;;FQ;FQ0705_rev08_2021.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.06;"Ficha de identificação de equipamentos";RA;7;2024-09-19;;;;;FQ;FQ0706_rev07_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.07;"Histórico do equipamento";RA;2;2012-09-18;;;;;FQ;FQ0707_rev02_2012.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.09;"Avaliação de fornecimento";RA;7;2025-01-06;;;;;FQ;FQ0709_rev07_2025.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.10;"Avaliação de eventos (Acesso não liberado - entre em contato com Setor RA-DG)";RA;11;2024-02-16;;;;;FQ;;RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.11;"Cadastro simplificado de bolsas e demais auxílios";RA;6;2022-11-18;;;;;FQ;FQ0711_rev06_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.12;"Avaliação da condição dos materiais em estoque";RA;5;2024-09-19;;;;;FQ;FQ0712_rev05_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.13;"Cadastro de fornecedor";RA;3;2018-04-09;;;;;FQ;FQ0713_rev03_2018.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.14;"Plano e controle anual de manutenção preventiva";RA;6;2024-09-19;;;;;FQ;FQ0714_rev06_2024.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.17;"Controle de saída de material permanente";RA;4;2022-06-28;;;;;FQ;FQ0717_rev04_2022.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.18;"Registro de certificados emitidos";RA;1;2017-03-22;;;;;FQ;FQ0718_rev01_2017.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.19;"Histórico de incerteza";RA;1;2019-02-27;;;;;FQ;FQ0719_rev01_2019.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.20;"Verificação da performance de espectrofotômetro";RA;8;2024-09-19;;;;;FQ;FQ0720_rev08_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.21;"Verificação da performance de cromatógrafos líquidos (HPLC)";RA;3;2022-03-18;;;;;FQ;FQ0721_rev03_2022.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.22;"Verificação da performance de cromatógrafos gasosos (CG)";RA;3;2018-03-23;;;;;FQ;FQ0722_rev03_2018.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.23;"Verificação de vidraria volumétrica";RA;0;2015-01-26;;;;;FQ;FQ0723_rev00_2015.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.24;"Checagem intermediária de pipeta automática ou micropipeta";RA;3;2025-09-23;;;;;FQ;FQ0724_rev03_2025.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.25;"Ficha de inscrição de candidatos pós-graduação (aluno regular)";RA;4;2025-04-17;;;;;FQ;FQ0725_rev04_2025.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.26;"Matrícula de aluno regular";RA;3;2025-04-17;;;;;FQ;FQ0726_rev03_2025.docx;"Área do aluno|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-07.27;"Solicitação de matrícula de aluno especial";RA;3;2025-04-17;;;;;FQ;FQ0727_rev03_2025.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.29;"Termo de confidencialidade e sigilo - aluno pós-graduação";RA;1;2025-04-17;;;;;FQ;FQ0729_rev01_2025.doc;"Área do aluno|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-07.32;"Solicitação de trancamento de matrícula de disciplina";RA;1;2015-05-18;;;;;FQ;FQ0732_rev01_2015.docx;"Área do aluno|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-07.33;"Solicitação de trancamento do curso";RA;1;2021-12-13;;;;;FQ;FQ0733_rev01_2021.docx;"Área do aluno|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-07.34;"Solicitação de desligamento do curso";RA;1;2021-12-13;;;;;FQ;FQ0734_rev01_2021.docx;"Área do aluno|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-07.37;"Controle de resíduos químicos";RA;2;2023-10-20;;;;;FQ;FQ0737_rev02_2023.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.40;"Certificado de disciplinas cursadas como aluno especial";RA;1;2016-07-04;;;;;FQ;FQ0740_rev01_2016.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.43;"Termo de sigilo e confidencialidade - Projeto de dissertação";RA;1;2023-11-21;;;;;FQ;FQ0743_rev01_2023.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.44;"Termo de responsabilidade de bens patrimoniais";RA;0;2019-04-22;;;;;FQ;FQ0744_rev00_2019.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.45;"Comunicado de invenção";RA;0;2019-06-07;;;;;FQ;FQ0745_rev00_2019.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.46;"Avaliação dos requisitos de patenteabilidade NIT";RA;0;2019-06-07;;;;;FQ;FQ0746_rev00_2019.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.47;"Formulário de submissão de solicitação de análise em Equipamento multiusuário (EMU) Fapesp";RA;0;2019-06-17;;;;;FQ;FQ0747_rev00_2019.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.48;"Controle de registro de projetos de dissertação";RA;2;2024-05-07;;;;;FQ;FQ0748_rev02_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.49;"Controle de transmissões ao vivo";RA;1;2024-01-02;;;;;FQ;FQ0749_rev01_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.50;"Registro de diplomas";RA;0;2020-09-21;;;;;FQ;FQ0750_rev00_2020.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.52;"Controle de termos e acordos";RA;1;2023-01-02;;;;;FQ;FQ0752_rev01_2023.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.53;"Controle de atendimentos via fale conosco, ouvidoria e SIC";RA;1;2022-04-27;;;;;FQ;FQ0753_rev01_2022.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.55;"Aprovação do certificado de calibração dos filtros";RA;1;2024-09-19;;;;;FQ;FQ0755_rev01_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.56;"Determinação do erro máximo do equipamento (EME) através da incerteza gerada pela curva de regressão";RA;2;2024-09-19;;;;;FQ;FQ0756_rev02_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.57;"Termo de Autorização - Dissertação";RA;1;2025-02-18;;;;;FQ;FQ0757_rev01_2025.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.58;"Termo de conhecimento, confidencialidade e imparcialidade - serviços prestados à Vigilância Sanitária";RA;1;2022-06-28;;;;;FQ;FQ0758_rev01_2022.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.59;"Termo de manifestação de conflito de interesses, impedimento e suspeição - serviços prestados à Vigilância Sanitária";RA;0;2021-12-13;;;;;FQ;FQ0759_rev00_2021.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.60;"Avaliação de conflito de interesse da instituição - serviços prestados à Vigilância Sanitária";RA;0;2021-12-13;;;;;FQ;FQ0760_rev00_2021.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.61;"Avaliação de conflito de interesse da equipe - serviços prestados à Vigilância Sanitária";RA;0;2021-12-13;;;;;FQ;FQ0761_rev00_2021.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.62;"Verificação da capacidade para realização de ensaio/análise";RA;1;2022-10-13;;;;;FQ;FQ0762_rev01_2022.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.63;"Controle de estoque de produtos controlados";RA;1;2025-10-21;;;;;FQ;FQ0763_rev01_2025.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.64;"Solicitação de Coorientação";RA;0;2023-11-21;;;;;FQ;FQ0764_rev00_2023.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.65;"Monitoramento de saída e retorno de material permanente (FQ-07.17)";RA;0;2025-06-12;;;;;FQ;FQ0765_rev00_2025.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.03;"Pesquisa de satisfação de clientes";RA;16;2024-06-05;;;;;FQ;FQ0803_rev16_2024_PT.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.04;"Pesquisa clima organizacional - Funcionários (Acesso não liberado - entre em contato com Setor RA-DG)";RA;5;2024-06-05;;;;;FQ;;RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.05;"Programação de auditoria interna";RA;6;2024-02-16;;;;;FQ;FQ0805_rev06_2024.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.06;"Lista de verificação de auditoria interna";RA;42;2025-04-17;;;;;FQ;FQ0806_rev42_2025.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.09;"Informações sobre realização de produtos e serviços¹";RA;13;2025-02-03;;;;;FQ;FQ0809_rev13_2025.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.11;"Receita - Recursos captados (FA e FED)";RA;8;2022-08-01;;;;;FQ;FQ0811_rev08_2022.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.12;"Despesas Gesp e FA";RA;8;2022-08-01;;;;;FQ;FQ0812_rev08_2022.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.13;"Recursos Gesp (despesas e captação)";RA;6;2023-01-02;;;;;FQ;FQ0813_rev06_2023.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.14;"Controle de visitas";RA;9;2025-02-18;;;;;FQ;FQ0814_rev09_2025_PT.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.16;"Controle de estagiários";RA;13;2025-01-06;;;;;FQ;FQ0816_rev13_2025.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.18;"Avaliação do estágio realizado";RA;4;2025-02-03;;;;;FQ;FQ0818_rev04_2025.doc;"Google Drive|Intranet|RA-25|RA-56"
+ATIVO;DOCUMENTO;FQ-08.19;"Execução de recursos de agências de fomento";RA;6;2022-08-01;;;;;FQ;FQ0819_rev06_2022.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.21;"Relatório de auditoria interna";RA;5;2024-02-16;;;;;FQ;FQ0821_rev05_2024.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.23;"Metas dos indicadores";RA;3;2018-01-19;;;;;FQ;FQ0823_rev03_2018.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.24;"Análise de desempenho das Unidades - indicadores";RA;6;2024-01-02;;;;;FQ;FQ0824_rev06_2024.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.25;"Relatório de Avaliação de Evento e Treinamento/curso fechado (Acesso não liberado - entre em contato com Setor RA-DG)";RA;7;2024-01-31;;;;;FQ;;RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.26;"Plano de ação";RA;0;2014-02-17;;;;;FQ;FQ0826_rev00_2014.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.27;"Termo de confidencialidade externo";RA;2;2025-07-11;;;;;FQ;FQ0827_rev02_2025_PT.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.28;"Análise crítica de indicadores";RA;3;2024-01-02;;;;;FQ;FQ0828_rev03_2024.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.29;"Pesquisa de satisfação de alunos pós-graduação";RA;0;2015-05-18;;;;;FQ;FQ0829_rev00_2015.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.30;"Pesquisa de satisfação de cliente externo - Difusão do conhecimento";RA;2;2022-06-28;;;;;FQ;FQ0830_rev02_2022.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.32;"Relatório de satisfação dos alunos - Pós Graduação Ital";RA;1;2023-10-20;;;;;FQ;FQ0832_rev01_2023.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.33;"Indicadores do sistema de gestão da qualidade";RA;4;2024-06-05;;;;;FQ;FQ0833_rev04_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.34;"Resultados Financeiros - Índices de sustentabilidade financeira (arrecadação/despesa FA)";RA;2;2024-06-05;;;;;FQ;FQ0834_rev02_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.35;"Monitoramento de ocorrências - Fundação de apoio";RA;5;2024-01-02;;;;;FQ;FQ0835_rev05_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.36;"Registro de satisfação dos estagiários";RA;2;2023-01-02;;;;;FQ;FQ0836_rev02_2023.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.38;"Mapeamento para auditoria interna";RA;0;2021-01-25;;;;;FQ;FQ0838_rev00_2021.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.39;"Controle de eventos e treinamentos/cursos fechados";RA;0;2021-08-02;;;;;FQ;FQ0839_rev00_2021.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.40;"Controle de qualificação do corpo técnico (TNS e TNSE)";RA;0;2021-08-02;;;;;FQ;FQ0840_rev00_2021.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.41;"Controle de recebimentos e despesas via FED";RA;0;2022-07-08;;;;;FQ;FQ0841_rev00_2022.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.42;"Controle de transferências entre Unidades";RA;0;2022-07-08;;;;;FQ;FQ0842_rev00_2022.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.43;"Controle de auditoria de 2ª parte";RA;0;2023-07-18;;;;;FQ;FQ0843_rev00_2023.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.44;"Monitoramento de sustentabilidade Pós-Graduação Ital";RA;1;2024-09-19;;;;;FQ;FQ0844_rev01_2024.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-07.10;"Events Evaluation (Acesso não liberado - entre em contato com Setor RA-DG)";RA;11;2024-02-16;;;;;FQ;;RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.03;"Customer Satisfaction Survey";RA;16;2024-06-05;;;;;FQ;FQ0803_rev16_2024_ING.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.14;"Visitor control ";RA;9;2025-02-18;;;;;FQ;FQ0814_rev09_2025_ING.docx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.27;"Agreement External";RA;2;2025-07-11;;;;;FQ;FQ0827_rev02_2025_ING.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;DO-06;"Escopo ABNT NBR ISO 9001";"Diretora Geral";3;2018-05-24;;;;;DO;DO-06_escopo_abnt_nbr_iso_9001.pdf;"Manual da Qualidade|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+ATIVO;DOCUMENTO;IT-06.02.02;"Palestras e treinamentos internos ";RA;7;2025-12-16;2028-12-16;;;;IT;060202_rev07_2025_PT.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-07.01.10;"Orientação para cálculos de incerteza de medição";RA;3;2025-12-16;2028-12-16;;;;IT;it070110_rev03_2025.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;FQ-06.16;"Avaliação 5S - Áreas Externas";RA;9;2025-12-16;;;;;FQ;FQ0616_rev09_2025_PT.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.62;"Avaliação 5S - Estacionamento ";RA;0;2025-12-16;;;;;FQ;FQ0662_rev00_2025.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;DO-01;Missão;"Diretora Geral";6;2026-01-05;2029-01-05;;;;DO;DO-01_missao.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+ATIVO;DOCUMENTO;DO-02;Visão;"Diretora Geral";4;2026-01-05;2029-01-05;;;;DO;DO-02_visao.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+ATIVO;DOCUMENTO;DO-03;"Valores institucionais";"Diretora Geral";7;2026-01-05;2029-01-05;;;;DO;DO-03_valores_institucionais.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+ATIVO;DOCUMENTO;DO-04;"Política da qualidade";"Diretora Geral";8;2026-01-05;2029-01-05;;;;DO;DO-04_politica_da_qualidade.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+ATIVO;DOCUMENTO;DO-05;"Código de ética";"Diretora Geral";5;2026-01-05;2029-01-05;;;;DO;DO-05_codigo_de_etica.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+ATIVO;DOCUMENTO;PQ-04.02;"Controle de documentos";RA;38;2026-02-02;2029-02-02;;;;PQ;PQ0402_rev38_2026.pdf;Intranet|RA-110|RA-56
+ATIVO;DOCUMENTO;IT-06.01.15;"Recursos Humanos";"Diretora Geral";11;2026-02-02;2029-02-02;;;;IT;IT060115_rev11_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.02.01;"Matriz de versatilidade";RA;15;2026-02-02;2029-02-02;;;;IT;IT060201_rev15_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;FQ-07.54;"Controle de projetos, bolsas e demais auxílios (fomento e outros recursos)";RA;3;2026-02-02;;;;;FQ;fq0754_rev03_2026.xlsm;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.15;"Análise financeira de evento";RA;11;2026-02-02;;;;;FQ;FQ0815_rev11_2026.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-08.17;"Avaliação de auditoria interna";RA;5;2026-02-23;;;;;FQ;FQ0817_rev05_2026.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;IT-04.02.01;"Elaboração de documentos do SGQ";RA;24;2026-02-23;2029-02-23;;;;IT;IT040201_rev24_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-08.01.03;"Programa e plano de auditorias";RA;25;2026-02-23;2029-02-23;;;;IT;IT080103_rev25_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;FQ-04.11;"Definições e siglas (Acesso não liberado - entre em contato com Setor RA-DG)";RA;1;2026-04-09;;;;;FQ;;RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-06.40;"Cadastro de Veículos";RA;7;2026-04-09;;;;;FQ;FQ0640_rev07_2026.doc;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;PQ-05.01;"Responsabilidade da alta direção";"Diretora Geral";33;2026-04-09;2029-04-09;;;;PQ;PQ0501_rev33_2026.pdf;Intranet|RA-110|RA-56
+ATIVO;DOCUMENTO;PQ-07.04;Aquisição;RA;34;2026-04-09;2029-04-09;;;;PQ;PQ0704_rev34_2026.pdf;Intranet|RA-110|RA-56
+ATIVO;DOCUMENTO;IT-06.01.02;"Conduta em caso de acidente e incidente";"Coordenador Time Segurança/Presidente Cipa ";16;2026-04-17;2029-04-17;;;;IT;IT060102_rev16_2026.pdf;"Área do aluno|Extranet|Intranet|RA-110"
+ATIVO;DOCUMENTO;IT-07.01.07;"Programa de Pós-Graduação stricto sensu";"Reitora da Pós-Graduação";21;2026-04-17;2029-04-17;;;;IT;IT070107_rev21_2026.pdf;"Área do aluno|Intranet|RA-110"
+ATIVO;DOCUMENTO;PQ-06.02;"Competência, conscientização e treinamento";RA;41;2026-04-17;2029-04-17;;;;PQ;PQ0602_rev41_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-08.01;Melhorias;RA;16;2026-04-17;2029-04-17;;;;PQ;PQ0801_rev16_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;PQ-04.05;"Gestão de Mudanças";RA;0;2026-05-15;2029-05-15;;;;PQ;PQ0405_rev00_2026.pdf;Intranet
+ATIVO;DOCUMENTO;PQ-04.01;"Sistema de Gestão da Qualidade";RA;20;2026-05-15;2029-05-15;;;;PQ;PQ0401_rev20_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-05.01.04;"Objetivos da qualidade e indicadores corrrelacionados";"Diretora Geral";16;2026-05-15;2029-05-15;;;;IT;IT050104_rev16_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;IT-06.01.09;"Programa 5S";"Coordenadora Time 5S";14;2026-05-15;2029-05-15;;;;IT;IT060109_rev14_2026.pdf;"Área do aluno|Extranet|Intranet|RA-110"
+ATIVO;DOCUMENTO;FQ-06.60;"Mapeamento e amostragem - Avaliação 5S";RA;2;2026-05-15;;;;;FQ;FQ0660_rev02_2026.xls;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;IT-07.01.12;"Curso EAD (Educação a Distância)";RA;0;2026-06-02;2029-06-02;;;;IT;IT070112_rev00_2026.pdf;Intranet|RA-110|RA-56
+ATIVO;DOCUMENTO;PQ-07.01;"Realização de produto e serviço";RA;31;2026-06-02;2029-06-02;;;;PQ;PQ0701_rev31_2026.pdf;Intranet|RA-110|RA-56
+ATIVO;DOCUMENTO;IT-07.01.03;"Difusão do conhecimento";"Analista de Eventos (Eventos - DG)";34;2026-06-02;2029-06-02;;;;IT;IT070103_rev34_2026.pdf;Intranet|RA-110|RA-56
+ATIVO;DOCUMENTO;FQ-07.15;"Programação de Eventos";RA;8;2026-06-02;;;;;FQ;FQ0715_rev08_2026.doc;Intranet|RA-56
+ATIVO;DOCUMENTO;IT-06.01.08;"Gestão e controle de recebimentos via fundo especial de despesas – FED";"Diretora do Centro de Atividades Administrativas";11;2026-06-12;2029-06-12;;;;IT;IT060108_rev11_2026.pdf;Intranet|RA-110
+ATIVO;DOCUMENTO;FQ-08.31;"Controle de Melhorias";RA;2;2026-06-12;;;;;FQ;FQ0831_rev02_2026.xlsx;Intranet|RA-25|RA-56
+ATIVO;DOCUMENTO;FQ-04.01;"Lista Mestra de 12/06/2026";RA;0;2026-06-12;;;;;LM;ListaMestra.pdf;Intranet
+OBSOLETO;DOCUMENTO;IT-06.02.02;"Palestras e treinamentos internos";RA;6;2024-10-16;2027-10-16;2025-12-16;;;IT;IT060202_rev06_2024.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;FQ-06.16;"Avaliação 5S - Áreas externas";RA;8;2022-09-01;0000-00-00;2025-12-16;;;FQ;FQ0616_rev08_2022.doc;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;IT-07.01.10;"Orientação para cálculos da incerteza de medição";RA;2;2025-02-18;2028-02-18;2025-12-16;;;IT;IT070110_rev02_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;FQ-04.01;"Lista mestra de documentos do sistema de gestão da qualidade";RA;8;2021-11-08;0000-00-00;2025-12-16;;;LM;ListaMestra.pdf;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;IT-05.01.04;"Objetivos da qualidade e indicadores correlacionados";"Diretora Geral";14;2024-01-26;2027-01-25;2026-01-05;"Nova revisão";"Cinthia Ronchesel";IT;IT050104_rev14_2024.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;DO-03;Valores;"Diretora Geral";6;2020-01-21;0000-00-00;2026-01-05;;;DO;DO-03_valores.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+OBSOLETO;DOCUMENTO;DO-02;Visão;"Diretora Geral";3;2020-01-21;0000-00-00;2026-01-05;;;DO;DO-02_visao.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+OBSOLETO;DOCUMENTO;DO-01;Missão;"Diretora Geral";5;2017-12-21;0000-00-00;2026-01-05;;;DO;DO-01_missao.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+OBSOLETO;DOCUMENTO;DO-05;"Código de ética";"Diretora Geral";4;2017-12-21;0000-00-00;2026-01-05;;;DO;DO-05_codigo_de_etica.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+OBSOLETO;DOCUMENTO;DO-04;Política;"Diretora Geral";7;2019-01-07;0000-00-00;2026-01-05;;;DO;DO-04_politica.pdf;"Intranet|Manual da Qualidade|Site do Ital|Treinamento Integração Alunos|Treinamento Integração Estagiários|Treinamento Integração Funcionários|Treinamento Integração Profissional Externo"
+OBSOLETO;DOCUMENTO;FQ-04.01;"Lista Mestra de 16/12/25";RA;0;2025-12-16;0000-00-00;2026-01-05;;;LM;ListaMestra.pdf;Intranet|RA-25
+OBSOLETO;DOCUMENTO;IT-05.01.04;"Objetivos da qualidade e indicadores correlacionados";"Diretora Geral";15;2026-01-05;2029-01-05;2026-01-01;;;IT;IT050104_rev15_2026_PT.pdf;Intranet|RA-25
+OBSOLETO;DOCUMENTO;IT-05.01.04;"Objetivos da qualidade e indicadores correlacionados";"Diretora Geral";14;2024-01-26;2027-01-26;2026-01-05;"nova revisão";"Cinthia Ronchesel";IT;IT050104_rev14_2024_PT.pdf;Intranet|RA-25
+OBSOLETO;DOCUMENTO;05.01.04;"Objetivos da qualidade e indicadores correlacionados";RA;15;2026-01-05;2029-01-05;2026-01-01;;;IT;050104_rev15_2026_PT.pdf;Intranet|RA-25
+OBSOLETO;DOCUMENTO;FQ-06.06;"Registro e relatório de investigação de acidente de trabalho";RA;6;2019-05-10;0000-00-00;2026-02-02;;;FQ;FQ0606_rev06_2019.xlsx;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-06.46;"Registro de incidente de trabalho";RA;0;2019-05-10;0000-00-00;2026-02-02;;;FQ;FQ0646_rev00_2019.docx;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-07.54;"Controle de projetos, bolsas e demais auxílios (fomento e outros recursos)";RA;2;2025-06-12;0000-00-00;2026-02-02;;;FQ;FQ0754_rev02_2025.xlsm;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-08.15;"Análise financeira de evento";RA;10;2024-07-05;0000-00-00;2026-02-02;;;FQ;FQ0815_rev10_2024.xls;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;IT-06.01.02;"Conduta em caso de acidente e incidente";"Coordenador Time SegurançaPresidente Cipa";14;2024-11-13;2027-11-13;2026-02-02;;;IT;IT060102_rev14_2024.pdf;Extranet|Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-06.01.15;"Recursos Humanos";"Diretora Geral";10;2024-10-16;2027-10-16;2026-02-02;;;IT;IT060115_rev10_2024.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-06.02.01;"Matriz de versatilidade";RA;14;2024-04-04;2027-04-04;2026-02-02;;;IT;IT060201_rev14_2024.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-07.01.07;"Programa de pós-graduação stricto sensu";"Reitora da Pós-Graduação";19;2025-07-11;2028-07-10;2026-02-02;;;IT;IT070107_rev19_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;PQ-04.02;"Controle de documentos";RA;37;2025-05-13;2028-05-12;2026-02-02;;;PQ;PQ0402_rev37_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;PQ-06.02;"Competência, conscientização e treinamento";RA;39;2025-09-23;2028-09-22;2026-02-02;;;PQ;PQ0602_rev39_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;FQ-04.01;"Lista Mestra - 05/01/2026";RA;0;2026-01-05;2029-01-05;2026-02-02;"Nova lista mestra disponível";"Daiana Guimarães Sousa";LM;ListaMestra.pdf;Intranet|RA-25
+OBSOLETO;DOCUMENTO;PQ-07.04;Aquisição;RA;32;2025-11-19;2028-11-18;2026-02-23;;;PQ;PQ0704_rev32_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;PQ-05.01;"Responsabilidade da alta direção";"Diretora Geral";31;2025-04-17;2028-04-16;2026-02-23;;;PQ;PQ0501_rev31_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-08.01.03;"Programa e plano de auditorias";RA;24;2023-07-18;2026-07-17;2026-02-23;;;IT;IT080103_rev24_2023.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-04.02.01;"Elaboração de documentos do SGQ";RA;23;2024-04-17;2027-04-17;2026-02-23;;;IT;IT040201_rev23_2024.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;FQ-08.17;"Avaliação de auditoria interna";RA;4;2011-10-13;0000-00-00;2026-02-23;;;FQ;FQ0817_rev04_2011.doc;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-04.01;"Lista Mestra de 02/02/2026";RA;0;2026-02-02;0000-00-00;2026-02-23;"Nova revisão ";"Daiana Guimarães Sousa";LM;ListaMestra.pdf;Intranet
+OBSOLETO;DOCUMENTO;PQ-07.04;Aquisição;RA;33;2026-02-23;2029-02-23;2026-04-09;;;PQ;PQ0704_rev33_2026.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;PQ-05.01;"Responsabilidade da alta direção";"Diretora Geral";32;2026-02-23;2029-02-23;2026-04-09;;;PQ;PQ0501_rev32_2026.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;FQ-08.31;"Controle de melhorias";RA;0;2017-12-15;0000-00-00;2026-04-09;;;FQ;FQ0831_rev00_2017.xls;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-06.40;"Cadastro de veículos";RA;6;2022-07-08;0000-00-00;2026-04-09;;;FQ;FQ0640_rev06_2022.doc;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-04.11;"Definições e siglas (Acesso não liberado - entre em contato com Setor RA-DG)";RA;0;2017-07-18;0000-00-00;2026-04-09;;;FQ;;RA-25|RA-56
+OBSOLETO;DOCUMENTO;LM;"Lista Mestra 23.02.26";RA;0;2026-02-23;0000-00-00;2026-04-09;"Nova revisão";"Daiana Guimarães Sousa";LM;ListaMestra.pdf;Intranet
+OBSOLETO;DOCUMENTO;IT-07.01.07;"Programa de Pós-Graduação stricto sensu";"Reitora da Pós-Graduação";20;2026-02-02;2029-02-02;2026-04-17;;;IT;IT070107_rev20_2026.pdf;"Área do aluno|Intranet|RA-110"
+OBSOLETO;DOCUMENTO;IT-06.01.02;"Conduta em caso de acidente e incidente";"Coordenador Time Segurança Presidente Cipa ";15;2026-02-02;2029-02-02;2026-04-17;;;IT;IT060102_rev15_2026.pdf;"Área do aluno|Extranet|Intranet|RA-110|RA-56"
+OBSOLETO;DOCUMENTO;PQ-06.02;"Competência, conscientização e treinamento";RA;40;2026-02-02;2029-02-02;2026-04-17;;;PQ;PQ0602_rev40_2026.pdf;Intranet|RA-110|RA-56
+OBSOLETO;DOCUMENTO;PQ-08.01;Melhorias;RA;15;2025-02-03;2028-02-03;2026-04-17;;;PQ;PQ0801_rev15_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-06.01.09;"Programa 5S";"CoordenadoraTime 5S";13;2024-09-19;2027-09-19;2026-05-15;;;IT;IT060109_rev13_2024.pdf;"Área do aluno|Extranet|Intranet|RA-110"
+OBSOLETO;DOCUMENTO;PQ-04.01;"Sistema de Gestão da Qualidade";RA;19;2025-02-18;2028-02-18;2026-05-15;;;PQ;PQ0401_rev19_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-05.01.04;"Objetivos da qualidade e indicadores correlacionados";RA;15;2026-01-05;2029-01-05;2026-05-15;;;IT;IT050104_rev15_2026_PT.pdf;Intranet|RA-25
+OBSOLETO;DOCUMENTO;FQ-06.60;"Mapeamento e amostragem - Avaliação 5S";RA;1;2024-09-19;0000-00-00;2026-05-15;;;FQ;FQ0660_rev01_2024.xls;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-04.01;"Lista Mestra de 17/04/2026";RA;0;2026-04-17;0000-00-00;2026-05-15;"Nova lista mestra em vigor em 15/05/2026";"Daiana Guimarães de Sousa";LM;ListaMestra.pdf;Intranet
+OBSOLETO;DOCUMENTO;PQ-07.01;"Realização de produto e serviço";RA;30;2025-06-12;2028-06-11;2026-06-02;;;PQ;PQ0701_rev30_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;FQ-07.15;"Programação de evento";RA;7;2024-06-21;0000-00-00;2026-06-02;;;FQ;FQ0715_rev07_2024.doc;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;IT-07.01.03;"Difusão do conhecimento";"Analista de eventos (Eventos - DG)";33;2025-02-18;2028-02-18;2026-06-02;;;IT;IT070103_rev33_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;IT-06.01.08;"Emissão de recibo do fundo especial de despesas - FED";"Diretora do Centro de Atividade Administrativa";10;2025-06-12;2028-06-11;2026-06-12;;;IT;IT060108_rev10_2025.pdf;Intranet|RA-110
+OBSOLETO;DOCUMENTO;FQ-08.31;"Controle de Melhorias";RA;1;2026-04-09;0000-00-00;2026-06-12;;;FQ;FQ0831_rev01_2026.xlsx;Intranet|RA-25|RA-56
+OBSOLETO;DOCUMENTO;FQ-04.01;"Lista Mestra de 15/05/2026";RA;0;2026-05-15;0000-00-00;2026-06-12;"nova lista mestra em vigor";"Daiana Guimarães de Sousa";LM;ListaMestra.pdf;Intranet
+OBSOLETO;DOCUMENTO;FQ-04.01;"Lista Mestra de 02/06/2026";RA;0;2026-06-02;0000-00-00;2026-06-12;"nova lista mestra em vigor";"Daiana Guimarães de Sousa";LM;ListaMestra.pdf;Intranet

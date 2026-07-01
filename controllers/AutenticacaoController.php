@@ -24,7 +24,7 @@ class AutenticacaoController {
 
             if (empty($login) || empty($senha)) {
                 $_SESSION['erro_login'] = "Por favor, preencha todos os campos.";
-                header("Location: ../views/login.php");
+                header("Location: ../views/login/login.php");
                 exit();
             }
 
@@ -43,7 +43,7 @@ class AutenticacaoController {
                 unset($usuario['senha_usuario']);
 
                 $_SESSION['usuario_logado'] = true;
-                $_SESSION['usuario_id']     = $usuario['id_usuario_qualidade'];
+                $_SESSION['usuario_id']     = $usuario['id_usuario_qualidade']; // Linha adicionada
                 $_SESSION['usuario_nome']   = utf8_encode($usuario['nome_usuario']);
                 $_SESSION['usuario_login']  = $usuario['login_usuario'];
                 $_SESSION['usuario_perfil'] = $usuario['nome_perfil'];
@@ -55,19 +55,19 @@ class AutenticacaoController {
                     unset($_SESSION['erro_login']);
                 }
 
-                header("Location: ../index.php");
+                header("Location: ../index.php?modulo=inicio");
                 exit();
             } else {
                 $_SESSION['erro_login'] = "Usuário ou senha incorretos.";
-                header("Location: ../views/login.php");
+                header("Location: ../views/login/login.php");
                 exit();
             }
         }
     }
 
     public function solicitarRedefinicao() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['email'])) {
-            header("Location: ../views/login.php");
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['email'])) { // Validação de segurança
+            header("Location: ../views/login/login.php");
             exit();
         }
 
@@ -82,8 +82,8 @@ class AutenticacaoController {
         $stmt->closeCursor();
 
         if (!$usuario) {
-            $_SESSION['status_redefinicao'] = array('tipo' => 'warning', 'mensagem' => 'Se o e-mail estiver em nossa base, um link de recuperação será enviado.');
-            header("Location: ../views/esqueci_senha.php");
+            $_SESSION['status_redefinicao'] = array('tipo' => 'warning', 'mensagem' => 'Se o e-mail estiver em nossa base, um link de recuperacao foi enviado.');
+            header("Location: ../views/login/esqueci_senha.php");
             exit();
         }
 
@@ -115,7 +115,7 @@ class AutenticacaoController {
         $mail->addAddress($email, $usuario['nome_usuario']);
         $mail->Subject = 'Redefinição de Senha - SGQ ITAL';
 
-        $link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/../views/redefinir_senha.php?token=" . $token;
+        $link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/../views/login/redefinir_senha.php?token=" . $token;
         $mail->Body = "Olá, " . $usuario['nome_usuario'] . ".\n\n";
         $mail->Body .= "Recebemos uma solicitação para redefinir sua senha. Clique no link abaixo para criar uma nova senha:\n";
         $mail->Body .= $link . "\n\n";
@@ -125,18 +125,18 @@ class AutenticacaoController {
 
         if (!$mail->send()) {
             // Em um ambiente de produção, seria bom logar o erro: error_log('Mailer Error: ' . $mail->ErrorInfo);
-            $_SESSION['status_redefinicao'] = array('tipo' => 'danger', 'mensagem' => 'Não foi possível enviar o e-mail. Tente novamente mais tarde.');
+            $_SESSION['status_redefinicao'] = array('tipo' => 'danger', 'mensagem' => 'Nao foi possivel enviar o e-mail. Tente novamente mais tarde.');
         } else {
-            $_SESSION['status_redefinicao'] = array('tipo' => 'success', 'mensagem' => 'Se o e-mail estiver em nossa base, um link de recuperação foi enviado.');
+            $_SESSION['status_redefinicao'] = array('tipo' => 'success', 'mensagem' => 'Se o e-mail estiver em nossa base, um link de recuperacao foi enviado.');
         }
 
-        header("Location: ../views/esqueci_senha.php");
+        header("Location: ../views/login/esqueci_senha.php");
         exit();
     }
 
     public function redefinirSenha() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: ../views/login.php");
+            header("Location: ../views/login/login.php");
             exit();
         }
 
@@ -145,8 +145,8 @@ class AutenticacaoController {
         $confirma_senha = $_POST['confirma_senha'];
 
         if ($nova_senha !== $confirma_senha) {
-            $_SESSION['status_redefinicao'] = array('tipo' => 'danger', 'mensagem' => 'As senhas não coincidem.');
-            header("Location: ../views/redefinir_senha.php?token=" . $token);
+            $_SESSION['status_redefinicao'] = array('tipo' => 'danger', 'mensagem' => 'As senhas nao coincidem.');
+            header("Location: ../views/login/redefinir_senha.php?token=" . $token);
             exit();
         }
 
@@ -159,8 +159,8 @@ class AutenticacaoController {
         $stmt->closeCursor();
 
         if (!$usuario) {
-            $_SESSION['status_redefinicao'] = array('tipo' => 'danger', 'mensagem' => 'Token inválido ou expirado. Por favor, solicite um novo link.');
-            header("Location: ../views/esqueci_senha.php");
+            $_SESSION['status_redefinicao'] = array('tipo' => 'danger', 'mensagem' => 'Token invalido ou expirado. Por favor, solicite um novo link.');
+            header("Location: ../views/login/esqueci_senha.php");
             exit();
         }
 
@@ -170,7 +170,7 @@ class AutenticacaoController {
         $stmt_update->execute(array(':senha' => $nova_senha_hash, ':id' => $usuario['id_usuario_qualidade']));
 
         $_SESSION['erro_login'] = "Sua senha foi redefinida com sucesso! Você já pode fazer o login."; // Usando a session de erro para mostrar msg de sucesso no login
-        header("Location: ../views/login.php");
+        header("Location: ../views/login/login.php");
         exit();
     }
 
@@ -196,7 +196,7 @@ class AutenticacaoController {
             );
         }
         session_destroy();
-        header("Location: ../views/login.php");
+        header("Location: ../views/login/login.php");
         exit();
     }
 }
