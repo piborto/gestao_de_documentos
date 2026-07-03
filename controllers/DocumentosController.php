@@ -17,12 +17,22 @@ class DocumentosController {
      */
     public function gerenciarListagem() {
         // Captura os filtros tratando a falta deles (Padrão PHP 5.2)
-        $id_status    = isset($_GET['status']) ? intval($_GET['status']) : 1; // 1 = Ativos por padrão
+        $id_status    = isset($_GET['status']) ? intval($_GET['status']) : 1; // Padrão alterado para 1 (Em Vigor/Ativos)
         $id_categoria = (isset($_GET['categoria']) && $_GET['categoria'] !== '') ? intval($_GET['categoria']) : null;
-        $busca        = (isset($_GET['busca']) && $_GET['busca'] !== '') ? trim($_GET['busca']) : null;
+        $busca        = isset($_GET['busca']) ? trim($_GET['busca']) : null;
+
+        // Lógica para tratar categorias pai
+        $ids_para_busca = array();
+        if ($id_categoria !== null) {
+            if ($this->model->isParentCategory($id_categoria)) {
+                $ids_para_busca = $this->model->getChildCategoryIds($id_categoria);
+            } else {
+                $ids_para_busca[] = $id_categoria;
+            }
+        }
 
         // Executa a busca no Model com os parâmetros parametrizados
-        return $this->model->listarDocumentos($id_status, $id_categoria, $busca);
+        return $this->model->listarDocumentos($id_status, $ids_para_busca, $busca);
     }
 
     /**
@@ -221,17 +231,78 @@ class DocumentosController {
             if (move_uploaded_file($fileData['arquivo_documento']['tmp_name'], $pasta_upload . $novo_nome_arquivo)) {
                 $postData['arquivo_documento'] = $novo_nome_arquivo;
             }
+        } else {
+            // Se nenhum arquivo novo foi enviado, mantém o nome do arquivo antigo.
+            $postData['arquivo_documento'] = $doc_atual['arquivo_documento'];
         }
+
+        // Adiciona o controle de manual (se existir) aos dados a serem salvos
+        $postData['controle_documento'] = (isset($postData['tipo_manual']) && $postData['tipo_manual'] === 'Controlado') ? 1 : 0;
 
         $sucesso = $this->model->atualizarDocumento($id_documento, $postData);
 
         if ($sucesso) {
             $this->model->logHistorico("Documento Editado", $justificativa, $id_usuario, $id_documento);
+            
+            // Atualiza os locais de distribuição, incluindo os números de cópia para manuais
+            $distribuicao = isset($postData['distribuicao']) ? $postData['distribuicao'] : array();
+            $numeros_copia = array();
+            if (isset($postData['numero_manual']) && is_array($postData['numero_manual'])) {
+                $numeros_copia = $postData['numero_manual'];
+            }
+            $this->model->vincularLocais($id_documento, $distribuicao, $numeros_copia);
+
             header('Location: index.php?modulo=documentos&sucesso=edicao');
         } else {
             header('Location: index.php?modulo=documentos_editar&id=' . $id_documento . '&erro=falha_db');
         }
         exit();
+    }
+
+    public function sincronizarArquivos() {
+        $pasta_base = dirname(__FILE__) . '/../uploads/documentos/';
+        $resultados = array(
+            'total_arquivos' => 0,
+            'sucesso' => 0,
+            'nao_encontrados' => 0,
+            'log_sucesso' => array(),
+            'log_nao_encontrados' => array()
+        );
+
+        if (!is_dir($pasta_base)) {
+            $_SESSION['sync_status'] = array('tipo' => 'danger', 'mensagem' => 'A pasta de uploads de documentos não existe.');
+            return $resultados;
+        }
+
+        // Itera recursivamente sobre as pastas e arquivos
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($pasta_base));
+
+        foreach ($iterator as $arquivo) {
+            if ($arquivo->isFile()) {
+                $resultados['total_arquivos']++;
+                $nome_arquivo = $arquivo->getFilename();
+
+                // Ignora arquivos de sistema como .DS_Store ou Thumbs.db
+                if ($nome_arquivo[0] === '.') {
+                    continue;
+                }
+
+                // Tenta encontrar o documento pelo nome do arquivo
+                $documento = $this->model->getDocumentoPorNomeArquivo($nome_arquivo);
+
+                if ($documento) {
+                    // Encontrou, agora atualiza o campo no banco
+                    $this->model->sincronizarArquivo($documento['id_documento'], $nome_arquivo);
+                    $resultados['sucesso']++;
+                    $resultados['log_sucesso'][] = "OK: Arquivo '{$nome_arquivo}' vinculado ao documento '{$documento['codigo_documento']}'.";
+                } else {
+                    // Não encontrou um registro correspondente
+                    $resultados['nao_encontrados']++;
+                    $resultados['log_nao_encontrados'][] = "AVISO: Nenhum registro encontrado para o arquivo '{$nome_arquivo}'.";
+                }
+            }
+        }
+        return $resultados;
     }
 
     public function tornarObsoleto() {

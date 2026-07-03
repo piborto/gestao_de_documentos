@@ -1,7 +1,7 @@
 <?php
 
 // Recupera os valores atuais dos filtros para manter os campos preenchidos após o submit
-$filtro_status    = isset($_GET['status']) ? intval($_GET['status']) : 1;
+$filtro_status    = isset($_GET['status']) ? intval($_GET['status']) : 1; // Padrão visual é "Em Vigor" (ID 1)
 $filtro_categoria = isset($_GET['categoria']) ? $_GET['categoria'] : '';
 $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '';
 ?>
@@ -12,7 +12,11 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
         <p class="text-muted">Consulte, filtre e acesse a lista de documentos do SGQ.</p>
     </div>
     <div class="col-auto">
+        <button type="button" class="btn btn-outline-danger fw-bold" onclick="abrirModalPdf()">
+            <i class="bi bi-file-earmark-pdf me-2"></i><span id="textoBotaoPdf">Gerar PDF</span>
+        </button>
         <a href="index.php?modulo=documentos_importar" class="btn btn-outline-success fw-bold"><i class="bi bi-cloud-upload me-2"></i>Importar CSV</a>
+        <a href="index.php?modulo=documentos_sincronizar" class="btn btn-outline-info fw-bold"><i class="bi bi-arrow-repeat me-2"></i>Sincronizar Arquivos</a>
         <a href="index.php?modulo=documentos_cadastrar" class="btn btn-primary fw-bold">
             <i class="bi bi-plus-circle me-2"></i>Cadastrar Documento
         </a>
@@ -25,17 +29,17 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
             <input type="hidden" name="modulo" value="documentos">
 
             <div class="col-md-2">
-                <label class="form-label text-muted small fw-bold">Status</label>
-                <select name="status" class="form-select form-select-sm">
-                    <option value="1" <?php echo $filtro_status === 1 ? 'selected' : ''; ?>>Ativos</option>
-                    <option value="2" <?php echo $filtro_status === 2 ? 'selected' : ''; ?>>Em Revisão</option>
+                <label for="filtroStatus" class="form-label text-muted small fw-bold">Status</label>
+                <select name="status" id="filtroStatus" class="form-select form-select-sm">
+                    <option value="1" <?php echo $filtro_status === 1 ? 'selected' : ''; ?>>Em Vigor</option>
+                    <option value="2" <?php echo $filtro_status === 2 ? 'selected' : ''; ?>>Agendado / Em Revisão</option>
                     <option value="3" <?php echo $filtro_status === 3 ? 'selected' : ''; ?>>Obsoletos</option>
                 </select>
             </div>
 
             <div class="col-md-3">
-                <label class="form-label text-muted small fw-bold">Categoria</label>
-                <select name="categoria" class="form-select form-select-sm">
+                <label for="filtroCategoria" class="form-label text-muted small fw-bold">Categoria</label>
+                <select name="categoria" id="filtroCategoria" class="form-select form-select-sm" onchange="atualizarBotaoPdf()">
                     <option value="">Todas as Categorias</option>
                     <?php foreach ($listaCategorias as $categoria): ?>
                         <option value="<?php echo $categoria['id_categoria']; ?>" <?php echo $filtro_categoria == $categoria['id_categoria'] ? 'selected' : ''; ?>>
@@ -97,6 +101,11 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
                                 <td class="fw-bold text-primary"><?php echo htmlspecialchars($doc['codigo_documento']); ?></td>
                                 <td>
                                     <?php echo htmlspecialchars($doc['nome_documento']); ?>
+                                    <?php if (isset($doc['controle_documento']) && ($doc['controle_documento'] !== null) && in_array($doc['sigla_categoria'], array('MQ', 'MS'))): ?>
+                                        <span class="badge bg-<?php echo $doc['controle_documento'] == 1 ? 'primary' : 'secondary'; ?> ms-2">
+                                            <?php echo $doc['controle_documento'] == 1 ? 'Controlado' : 'Não Controlado'; ?>
+                                        </span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-center">
                                     <?php if (!empty($doc['arquivo_documento'])): ?><i class="bi bi-file-earmark-text text-secondary"></i><?php endif; ?>
@@ -200,6 +209,35 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
   </div>
 </div>
 
+<!-- Modal Gerar PDF -->
+<div class="modal fade" id="modalPdfData" tabindex="-1" aria-labelledby="modalPdfDataLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalPdfDataLabel"><i class="bi bi-file-pdf me-2"></i>Gerar Lista Mestra</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="views/documentos/gerar_pdf.php" method="GET" target="_blank" onsubmit="fecharModalAposClick()">
+                <div class="modal-body">
+                    <div id="avisoExclusaoGeral" class="alert alert-info small" style="display:none;">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        <strong>Nota:</strong> Ao gerar a lista geral, algumas categorias como DO, Manuais e Relatórios não são incluídas e devem ser geradas individualmente.
+                    </div>
+                    <div class="mb-3">
+                        <label for="rodape_pdf" class="form-label fw-bold small text-muted">Texto do Rodapé:</label>
+                        <input type="text" id="rodape_pdf" name="rodape" class="form-control" value="FQ-04.01 (anexo ao PQ-04.02) - RA - revisão 08 de 08/11/21">
+                    </div>
+                    <input type="hidden" name="categoria" id="idCategoriaPdf" value="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-printer me-2"></i>Gerar PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Excluir -->
 <div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -255,5 +293,27 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('id-documento-excluir').value = button.getAttribute('data-id');
         document.getElementById('nome-documento-excluir').textContent = button.getAttribute('data-nome');
     });
+
+    // Funções para o Modal de PDF
+    window.atualizarBotaoPdf = function() {
+        var cat = document.getElementById('filtroCategoria').value;
+        var textoSpan = document.getElementById('textoBotaoPdf');
+        textoSpan.textContent = (cat === "") ? "Gerar Lista Geral" : "Gerar PDF da Categoria";
+    }
+
+    window.abrirModalPdf = function() {
+        var idCategoria = document.getElementById('filtroCategoria').value;
+        document.getElementById('idCategoriaPdf').value = idCategoria;
+        document.getElementById('avisoExclusaoGeral').style.display = (!idCategoria) ? 'block' : 'none';
+        var modalPdf = new bootstrap.Modal(document.getElementById('modalPdfData'));
+        modalPdf.show();
+    }
+
+    window.fecharModalAposClick = function() {
+        setTimeout(function() {
+            var modalPdfInstance = bootstrap.Modal.getInstance(document.getElementById('modalPdfData'));
+            if (modalPdfInstance) modalPdfInstance.hide();
+        }, 500);
+    }
 });
 </script>

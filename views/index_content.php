@@ -37,7 +37,7 @@
                 </a>
             </div>
             <div class="col-md-6 mb-4">
-                <a href="#" class="card card-panel text-center h-100 text-decoration-none">
+                <a href="index.php?modulo=siglas" class="card card-panel text-center h-100 text-decoration-none">
                     <div class="card-body">
                         <i class="bi bi-card-heading card-icon text-info"></i>
                         <h5 class="card-title mt-3">Siglas</h5>

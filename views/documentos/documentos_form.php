@@ -41,7 +41,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                     <label for="tipo_manual" class="form-label text-primary fw-bold">Tipo de Manual</label>
                     <select id="tipo_manual" name="tipo_manual" class="form-select border-primary">
                         <option value="Controlado" <?php echo ($is_edit && $documento['controle_documento'] == 1) ? 'selected' : ''; ?>>Controlado</option>
-                        <option value="Nao_Controlado">Não Controlado</option>
+                        <option value="Nao_Controlado" <?php echo ($is_edit && $documento['controle_documento'] == 0) ? 'selected' : ''; ?>>Não Controlado</option>
                     </select>
                 </div>
 
@@ -122,7 +122,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                             <div class="col-md-4 div-checkbox-loc" data-nome="<?php echo htmlspecialchars($loc['nome_local']); ?>">
                                 <div class="input-group input-group-sm mb-2">
                                     <div class="input-group-text"><input class="form-check-input mt-0 check-dist-manual" type="checkbox" name="distribuicao[]" value="<?php echo $loc['id_local']; ?>"></div>
-                                    <span class="input-group-text bg-white flex-grow-1 small"><?php echo htmlspecialchars($loc['nome_local']); ?></span>
+                                    <label class="input-group-text bg-white flex-grow-1 small" for="loc_<?php echo $loc['id_local']; ?>"><?php echo htmlspecialchars($loc['nome_local']); ?></label>
                                     <input type="number" name="numero_manual[<?php echo $loc['id_local']; ?>]" class="form-control input-num-manual" value="1" style="max-width: 60px; display:none;" title="Nº da cópia" disabled>
                                 </div>
                             </div>
@@ -224,6 +224,31 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('nome-documento-excluir').textContent = button.getAttribute('data-nome');
         });
     }
+
+    // Preenche os locais de distribuição e números de cópia ao editar
+    <?php if ($is_edit && !empty($documento['locais_distribuicao_ids'])): ?>
+        var locaisVinculados = <?php echo json_encode($documento['locais_distribuicao_ids']); ?>;
+        
+        // Para distribuição padrão
+        document.querySelectorAll('#div-distribuicao input[type="checkbox"]').forEach(function(checkbox) {
+            if (locaisVinculados.hasOwnProperty(checkbox.value)) {
+                checkbox.checked = true;
+            }
+        });
+
+        // Para distribuição de manuais
+        document.querySelectorAll('#div-distribuicao_manual .check-dist-manual').forEach(function(checkbox) {
+            if (locaisVinculados.hasOwnProperty(checkbox.value)) {
+                checkbox.checked = true;
+                var inputNum = document.querySelector('input[name="numero_manual[' + checkbox.value + ']"]');
+                if (inputNum) {
+                    inputNum.value = locaisVinculados[checkbox.value] || '1';
+                    inputNum.style.display = 'block'; // Torna o campo visível
+                    inputNum.disabled = false; // Habilita o campo para edição
+                }
+            }
+        });
+    <?php endif; ?>
 });
 </script>
 <?php endif; ?>

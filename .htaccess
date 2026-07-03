@@ -1,34 +1,5 @@
-# ==============================================================================
-# SGQ - .htaccess
-# ==============================================================================
-
-# Habilita o motor de reescrita de URL do Apache/LiteSpeed
+# Ativa a reescrita de URL (útil para futuras URLs amigáveis)
 RewriteEngine On
 
-# Define o diretório base para as regras de reescrita.
-# Se o site estiver em um subdiretório (ex: http://localhost/meu_projeto/),
-# mude para RewriteBase /meu_projeto/
-RewriteBase /
-
-# ------------------------------------------------------------------------------
-# SEGURANÇA
-# ------------------------------------------------------------------------------
-
-# Bloqueia a listagem de conteúdo de diretórios
-Options -Indexes
-
-# Bloqueia o acesso direto a arquivos de configuração, versionamento e outros
-<FilesMatch "\.(git|gitignore|md|sql|yml|env|log)$">
-    Require all denied
-</FilesMatch>
-
-# ------------------------------------------------------------------------------
-# ROTEAMENTO (Front-Controller Pattern)
-# ------------------------------------------------------------------------------
-
-# Se a requisição não for para um arquivo que existe fisicamente...
-RewriteCond %{REQUEST_FILENAME} !-f
-# E se a requisição não for para um diretório que existe fisicamente...
-RewriteCond %{REQUEST_FILENAME} !-d
-# ...então, redireciona internamente para o index.php para que ele possa tratar a rota.
-RewriteRule ^ index.php [L]
+# Força o PHP a usar a biblioteca mbstring para manipulação de strings
+php_value mbstring.func_overload 2

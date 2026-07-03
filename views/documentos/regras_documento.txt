@@ -22,3 +22,35 @@ Nome do Documento:, Publicação: dd/mm/aaaa, Arquivo:
 
 PR- PROCESSOS
 Categoria: PR - Processos, Nome do Documento:, Publicação: dd/mm/aaaa, Arquivo:
+
+# REGRAS LISTA MESTRA - PDF (Documentação de Estilo e Lógica)
+
+Os documentos na Lista Mestra são gerados dinamicamente via biblioteca FPDF, e possuem regras rigorosas de cabeçalho, distribuição e espaçamento, divididos em categorias.
+
+## 1. Regras Gerais (Comuns a todas as listas)
+* **Data de Atualização no Cabeçalho:** O texto "Data da última atualização das informações" não exibe a data do dia em que o PDF foi gerado (a menos que a tabela esteja vazia). O sistema obrigatoriamente faz uma busca no banco de dados para encontrar a data de entrada em vigor mais recente (`MAX(vigor_doc)` ou `MAX(vigor_data_manual)`) entre os documentos daquela lista, usando esta data no cabeçalho.
+* **Rodapé:** O rodapé padrão carrega o texto "FQ-04.01 (anexo ao PQ-04.02) - RA - revisão 08 de 08/11/21 - Página 1/1 (versão eletrônica)", a não ser que um texto diferente seja enviado via URL (parâmetro GET `rodape`).
+* **Texto Inclinado:** O nome dos locais de distribuição no cabeçalho da tabela é impresso com rotação de 90 graus para economizar espaço horizontal.
+
+## 2. Regras Específicas: Lista Mestra Geral (FQ, IT, PQ)
+Esta lista abrange os Formulários da Qualidade (FQ), Instruções de Trabalho (IT) e Procedimentos da Qualidade (PQ).
+* **Altura Dinâmica do Cabeçalho:** Diferente de outros relatórios, a altura do bloco onde ficam os locais de distribuição rotacionados não é fixa. O sistema calcula a largura da maior string (nome de local mais longo) e define a altura dinamicamente (`$max_w_text + 9`), garantindo que o texto nunca vaze do quadro. A altura mínima de segurança é de 35.
+* **Colunas de Distribuição Fixas:** As colunas variam por sigla:
+    * **FQ:** Intranet, Extranet, Área do aluno, RA-25, RA-56, Google Drive.
+    * **PQ e IT:** Intranet, Extranet, Área do aluno, CCQA, Cereal Chocotec, Cetea, CTC, DG, Fruthotec, Tecnolat, RA-25, RA-110.
+* **Preenchimento da Distribuição:** A presença de um documento em um local de distribuição é representada exclusivamente pela letra "x" em minúsculo e negrito. Se não houver distribuição, imprime-se um traço "-" em cinza.
+* **Autor:** O nome do autor é puxado dinamicamente do banco de dados (coluna `autor_doc`) e o sistema calcula a quebra de linha se o nome for longo.
+
+## 3. Regras Específicas: Diretrizes Organizacionais (DO)
+* **Geração Isolada:** A categoria DO é excluída da consulta que gera a lista mestra geral (`WHERE cat_sigla NOT IN ('DO', 'LM')`) e é gerada isoladamente quando solicitada.
+* **Colunas Customizadas:** Possui as colunas de distribuição mais extensas do sistema: Intranet, Site do Ital, Manual da Qualidade, Treinamento Integração Funcionários, Treinamento Integração Estagiários, Treinamento Integração Alunos, Treinamento Integração Profissional Externo.
+
+## 4. Regras Específicas: Manuais (MQ e MS)
+Os Manuais rodam sob um script inteiramente separado e com regras engessadas.
+* **Separação por Controle:** A lista é dividida em duas seções impressas no mesmo PDF: "MANUAIS CONTROLADOS" e "MANUAIS NÃO CONTROLADOS".
+* **Altura Fixa do Cabeçalho:** O cabeçalho dos manuais possui altura chumbada em 45 (`$pdf->h_height = 45;`), não sendo calculado dinamicamente.
+* **Colunas de Distribuição Fixas:**
+    * **Controlados:** DG, RA, CCQA, Cereal Chocotec, CTC, Tecnolat, Cetea, Cial, Fruthotec, Intranet, Extranet, Área do aluno.
+    * **Não Controlados:** INMETRO, DQS.
+* **Preenchimento da Distribuição (Números):** Diferente dos outros documentos (que usam "x"), a distribuição dos manuais exibe a quantidade exata de cópias físicas (ex: "1", "2") recuperadas do banco de dados (`$dists_doc[$id_local]`).
+* **Autor Chumbado:** A coluna de autor não é lida do banco de dados. O valor é impresso de forma estática com o texto 'RA' para todos os manuais (`$pdf->Cell($w_autor, $h_real, 'RA', 0, 0, 'C');`).

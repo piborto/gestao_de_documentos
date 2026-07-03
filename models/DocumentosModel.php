@@ -52,10 +52,7 @@ class DocumentosModel {
     /**
      * Busca os documentos com filtros dinâmicos
      */
-    /**
-     * Busca os documentos com filtros dinâmicos
-     */
-    public function listarDocumentos($id_status, $id_categoria, $busca) {
+    public function listarDocumentos($id_status, $ids_categoria, $busca) {
         $params = array(':id_status' => $id_status);
 
         $sql_select_base = "SELECT d.*, c.sigla_categoria, GROUP_CONCAT(l.nome_local ORDER BY l.nome_local ASC SEPARATOR ', ') AS locais_distribuicao";
@@ -82,14 +79,21 @@ class DocumentosModel {
                 LEFT JOIN t_local l ON dl.id_local = l.id_local
                 WHERE d.id_status = :id_status";
 
-        if ($id_categoria !== null) {
-            $sql .= " AND d.id_categoria = :id_categoria";
-            $params[':id_categoria'] = $id_categoria;
+        if (!empty($ids_categoria)) {
+            // Usa placeholders nomeados para evitar misturar com os posicionais
+            $cat_placeholders = array();
+            foreach ($ids_categoria as $i => $id) {
+                $key = ':cat_' . $i;
+                $cat_placeholders[] = $key;
+                $params[$key] = $id;
+            }
+            $sql .= " AND d.id_categoria IN (" . implode(',', $cat_placeholders) . ")";
         }
         
-        if ($busca !== null) {
-            $sql .= " AND (d.codigo_documento LIKE :busca OR d.nome_documento LIKE :busca)";
-            $params[':busca'] = '%' . $busca . '%';
+        if (!empty($busca)) {
+            $sql .= " AND (d.codigo_documento LIKE :busca1 OR d.nome_documento LIKE :busca2)";
+            $params[':busca1'] = '%' . utf8_decode($busca) . '%';
+            $params[':busca2'] = '%' . utf8_decode($busca) . '%';
         }
 
         // GROUP BY é obrigatório agora para não duplicar linhas na tabela visual
@@ -103,6 +107,10 @@ class DocumentosModel {
         $documentos_utf8 = array();
         foreach ($documentos as $doc) {
             $doc['nome_documento'] = utf8_encode($doc['nome_documento']);
+            
+            // Adicionamos a conversão UTF-8 para o Autor também:
+            $doc['autor_documento'] = $doc['autor_documento'] ? utf8_encode($doc['autor_documento']) : null;
+            
             $doc['locais_distribuicao'] = $doc['locais_distribuicao'] ? utf8_encode($doc['locais_distribuicao']) : '-';
             if (isset($doc['responsavel_obsoleto'])) {
                 $doc['responsavel_obsoleto'] = utf8_encode($doc['responsavel_obsoleto']);
@@ -128,6 +136,26 @@ class DocumentosModel {
             $categorias_utf8[] = $categoria;
         }
         return $categorias_utf8;
+    }
+
+    /**
+     * Verifica se uma categoria é pai (possui filhos).
+     */
+    public function isParentCategory($id_categoria) {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM t_categoria WHERE id_categoria_pai = :id");
+        $stmt->execute(array(':id' => (int)$id_categoria));
+        return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Retorna um array com os IDs das categorias filhas de um pai.
+     */
+    public function getChildCategoryIds($id_categoria_pai) {
+        $stmt = $this->db->prepare("SELECT id_categoria FROM t_categoria WHERE id_categoria_pai = :id_pai");
+        $stmt->execute(array(':id_pai' => (int)$id_categoria_pai));
+        $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        // Garante que o retorno seja sempre um array, mesmo que vazio.
+        return $result ? $result : array();
     }
 
     /**
@@ -228,11 +256,39 @@ class DocumentosModel {
             $documento['autor_documento'] = utf8_encode($documento['autor_documento']);
 
             // Busca os locais de distribuição vinculados
-            $stmt_locais = $this->db->prepare("SELECT id_local FROM t_documento_local WHERE id_documento = :id");
+            $stmt_locais = $this->db->prepare("SELECT id_local, numero_copia FROM t_documento_local WHERE id_documento = :id");
             $stmt_locais->execute(array(':id' => $id_documento));
-            $documento['locais_distribuicao_ids'] = $stmt_locais->fetchAll(PDO::FETCH_COLUMN);
+            
+            $locais_vinculados = $stmt_locais->fetchAll();
+            $documento['locais_distribuicao_ids'] = array();
+            foreach ($locais_vinculados as $local) {
+                $documento['locais_distribuicao_ids'][$local['id_local']] = $local['numero_copia'];
+            }
         }
         return $documento;
+    }
+
+    public function getDocumentoPorNomeArquivo($nome_arquivo) {
+        $stmt = $this->db->prepare("SELECT id_documento, codigo_documento FROM t_documento WHERE arquivo_documento = :nome_arquivo LIMIT 1");
+        $stmt->execute(array(':nome_arquivo' => $nome_arquivo));
+        return $stmt->fetch();
+    }
+
+    public function sincronizarArquivo($id_documento, $nome_arquivo) {
+        // Esta função é um alias para a atualização, mas focada em apenas um campo.
+        // Poderia ser uma query mais simples, mas reutilizar a lógica de atualização é seguro.
+        $sql = "UPDATE t_documento SET arquivo_documento = :nome_arquivo WHERE id_documento = :id_documento";
+        $params = array(
+            ':nome_arquivo' => $nome_arquivo,
+            ':id_documento' => $id_documento
+        );
+        try {
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute($params);
+        } catch (PDOException $e) {
+            error_log("Erro ao sincronizar arquivo: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function atualizarDocumento($id_documento, $dados) {
@@ -244,7 +300,9 @@ class DocumentosModel {
             ':autor_documento' => isset($dados['autor_documento']) ? utf8_decode($dados['autor_documento']) : null,
             ':revisao_documento' => (isset($dados['revisao_documento']) && $dados['revisao_documento'] !== '') ? $dados['revisao_documento'] : null,
             ':data_vigor_documento' => isset($dados['data_vigor_documento']) ? $dados['data_vigor_documento'] : null,
-            ':data_analise_documento' => isset($dados['data_analise_documento']) ? $dados['data_analise_documento'] : null
+            ':data_analise_documento' => isset($dados['data_analise_documento']) ? $dados['data_analise_documento'] : null,
+            ':arquivo_documento' => isset($dados['arquivo_documento']) ? $dados['arquivo_documento'] : null,
+            ':controle_documento' => isset($dados['controle_documento']) ? $dados['controle_documento'] : 0
         );
 
         $sql = "UPDATE t_documento SET
@@ -254,7 +312,9 @@ class DocumentosModel {
                     autor_documento = :autor_documento,
                     revisao_documento = :revisao_documento,
                     data_vigor_documento = :data_vigor_documento,
-                    data_analise_documento = :data_analise_documento
+                    data_analise_documento = :data_analise_documento,
+                    arquivo_documento = :arquivo_documento,
+                    controle_documento = :controle_documento
                 WHERE id_documento = :id_documento";
 
         try {
@@ -350,6 +410,10 @@ class DocumentosModel {
      * Vincula um documento aos locais de distribuição
      */
     public function vincularLocais($id_documento, $locais, $numeros_copia) {
+        // Primeiro, remove todos os vínculos existentes para este documento para evitar duplicatas
+        $stmt_delete = $this->db->prepare("DELETE FROM t_documento_local WHERE id_documento = :id_documento");
+        $stmt_delete->execute(array(':id_documento' => $id_documento));
+
         $sql = "INSERT INTO t_documento_local (id_documento, id_local, numero_copia) VALUES (:id_documento, :id_local, :numero_copia)";
         $stmt = $this->db->prepare($sql);
 
