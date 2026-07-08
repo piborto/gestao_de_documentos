@@ -16,7 +16,10 @@ class SiglasController {
     public function gerenciarListagem() {
         $busca = isset($_GET['busca']) ? trim($_GET['busca']) : null;
         $id_status = isset($_GET['status']) ? intval($_GET['status']) : 1; // Padrão 'Em Vigor'
-        return $this->model->listarSiglas($busca, $id_status);
+        $data_de = isset($_GET['data_de']) && !empty($_GET['data_de']) ? $_GET['data_de'] : null;
+        $data_ate = isset($_GET['data_ate']) && !empty($_GET['data_ate']) ? $_GET['data_ate'] : null;
+
+        return $this->model->listarSiglas($busca, $id_status, $data_de, $data_ate);
     }
 
     public function exibirFormulario() {
@@ -63,8 +66,9 @@ class SiglasController {
 
     public function atualizarSigla($postData) {
         $id_sigla = isset($postData['id_sigla']) ? intval($postData['id_sigla']) : 0;
+        $justificativa = isset($postData['justificativa']) ? trim($postData['justificativa']) : '';
 
-        if ($id_sigla <= 0) {
+        if ($id_sigla <= 0 || empty($justificativa)) {
             header('Location: index.php?modulo=siglas&erro=dados_invalidos');
             exit();
         }
@@ -82,8 +86,21 @@ class SiglasController {
 
         if ($sucesso) {
             $this->model->renumerarSiglas();
-            header('Location: index.php?modulo=siglas&sucesso=edicao');
+
+            // Loga a ação de edição
+            $docsModel = new DocumentosModel($this->model->getDb());
+            $docsModel->logHistorico("Sigla Editada", $justificativa, $this->getUsuarioId(), null, $id_sigla);
+
+            // Reconstrói a URL de redirecionamento com os filtros
+            $query_params = http_build_query(array(
+                'status' => isset($postData['filtro_status']) ? $postData['filtro_status'] : '1',
+                'busca' => isset($postData['filtro_busca']) ? $postData['filtro_busca'] : '',
+                'data_de' => isset($postData['filtro_data_de']) ? $postData['filtro_data_de'] : '',
+                'data_ate' => isset($postData['filtro_data_ate']) ? $postData['filtro_data_ate'] : ''
+            ));
+            header('Location: index.php?modulo=siglas&sucesso=edicao&' . $query_params);
         } else {
+            // Mantém os filtros mesmo em caso de erro
             header('Location: index.php?modulo=siglas_editar&id=' . $id_sigla . '&erro=falha_db');
         }
         exit();
@@ -92,16 +109,64 @@ class SiglasController {
     public function excluirSigla() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_sigla = isset($_POST['id_sigla']) ? intval($_POST['id_sigla']) : 0;
+            $status_retorno = isset($_POST['filtro_status_retorno']) ? intval($_POST['filtro_status_retorno']) : 1;
+
             if ($id_sigla > 0) {
                 $sucesso = $this->model->excluirSigla($id_sigla);
                 if ($sucesso) {
                     $this->model->renumerarSiglas();
-                    header('Location: index.php?modulo=siglas&sucesso=excluido');
+                    header('Location: index.php?modulo=siglas&status=' . $status_retorno . '&sucesso=excluido');
                 } else {
-                    header('Location: index.php?modulo=siglas&erro=excluir');
+                    header('Location: index.php?modulo=siglas&status=' . $status_retorno . '&erro=excluir');
                 }
             } else {
-                header('Location: index.php?modulo=siglas&erro=dados_invalidos');
+                header('Location: index.php?modulo=siglas&status=' . $status_retorno . '&erro=dados_invalidos');
+            }
+            exit();
+        }
+    }
+
+    public function tornarObsoleto() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id_sigla = isset($_POST['id_sigla']) ? intval($_POST['id_sigla']) : 0;
+            $justificativa = isset($_POST['justificativa']) ? trim($_POST['justificativa']) : '';
+
+            if ($id_sigla > 0 && !empty($justificativa)) {
+                $sucesso = $this->model->tornarObsoleto($id_sigla);
+                if ($sucesso) {
+                    // Loga a ação
+                    $docsModel = new DocumentosModel($this->model->getDb());
+                    $docsModel->logHistorico("Sigla Tornou-se Obsoleta", $justificativa, $this->getUsuarioId(), null, $id_sigla);
+
+                    header('Location: index.php?modulo=siglas&status=3&sucesso=obsoleto'); // Redireciona para a aba de obsoletos
+                } else {
+                    header('Location: index.php?modulo=siglas&status=1&erro=obsoleto');
+                }
+            } else {
+                header('Location: index.php?modulo=siglas&status=1&erro=dados_invalidos');
+            }
+            exit();
+        }
+    }
+
+    public function restaurarSigla() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id_sigla = isset($_POST['id_sigla']) ? intval($_POST['id_sigla']) : 0;
+
+            if ($id_sigla > 0) {
+                $sucesso = $this->model->restaurarSigla($id_sigla);
+                if ($sucesso) {
+                    // Loga a ação
+                    $docsModel = new DocumentosModel($this->model->getDb());
+                    $justificativa = "A sigla foi restaurada do status obsoleto para 'Em Vigor'.";
+                    $docsModel->logHistorico("Sigla Restaurada", $justificativa, $this->getUsuarioId(), null, $id_sigla);
+
+                    header('Location: index.php?modulo=siglas&status=1&sucesso=restaurado'); // Redireciona para a aba Em Vigor
+                } else {
+                    header('Location: index.php?modulo=siglas&status=3&erro=restaurar');
+                }
+            } else {
+                header('Location: index.php?modulo=siglas&status=3&erro=dados_invalidos');
             }
             exit();
         }

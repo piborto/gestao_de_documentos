@@ -20,6 +20,7 @@ class DocumentosController {
         $id_status    = isset($_GET['status']) ? intval($_GET['status']) : 1; // Padrão alterado para 1 (Em Vigor/Ativos)
         $id_categoria = (isset($_GET['categoria']) && $_GET['categoria'] !== '') ? intval($_GET['categoria']) : null;
         $busca        = isset($_GET['busca']) ? trim($_GET['busca']) : null;
+        $id_distribuicao = (isset($_GET['distribuicao']) && $_GET['distribuicao'] !== '') ? intval($_GET['distribuicao']) : null;
 
         // Lógica para tratar categorias pai
         $ids_para_busca = array();
@@ -32,7 +33,11 @@ class DocumentosController {
         }
 
         // Executa a busca no Model com os parâmetros parametrizados
-        return $this->model->listarDocumentos($id_status, $ids_para_busca, $busca);
+        return array(
+            'documentos' => $this->model->listarDocumentos($id_status, $ids_para_busca, $busca, $id_distribuicao),
+            'listaCategorias' => $this->model->listarCategorias(),
+            'listaLocais' => $this->model->listarLocais()
+        );
     }
 
     /**
@@ -65,9 +70,22 @@ class DocumentosController {
      * Busca os dados para os cards de notificação do painel principal.
      */
     public function obterNotificacoes() {
+        $agendados = $this->model->listarItensAgendados();
+        $agendados_utf8 = array();
+        foreach ($agendados as $item) {
+            $item['codigo'] = utf8_encode($item['codigo']);
+            $item['nome'] = utf8_encode($item['nome']);
+            // Limita o nome para não quebrar o layout
+            if (strlen($item['nome']) > 50) {
+                $item['nome'] = substr($item['nome'], 0, 50) . '...';
+            }
+            $agendados_utf8[] = $item;
+        }
+
         return array(
             'vencidos' => $this->model->listarDocumentosVencidos(),
-            'proximos' => $this->model->listarDocumentosProximosVencimento()
+            'proximos' => $this->model->listarDocumentosProximosVencimento(),
+            'agendados' => $agendados_utf8
         );
     }
 
@@ -77,13 +95,23 @@ class DocumentosController {
      * @return string
      */
     private function limparNomeArquivo($nome) {
-        $nome = preg_replace(
-            array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/","/(ç)/","/(Ç)/"),
-            explode(" ","a A e E i I o O u U n N c C"),
-            $nome
+        // Mapa de caracteres para substituição (robusto para PHP 5.2)
+        $mapa = array(
+            'á' => 'a', 'à' => 'a', 'ã' => 'a', 'â' => 'a', 'ä' => 'a',
+            'Á' => 'A', 'À' => 'A', 'Ã' => 'A', 'Â' => 'A', 'Ä' => 'A',
+            'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+            'É' => 'E', 'È' => 'E', 'Ê' => 'E', 'Ë' => 'E',
+            'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+            'Í' => 'I', 'Ì' => 'I', 'Î' => 'I', 'Ï' => 'I',
+            'ó' => 'o', 'ò' => 'o', 'õ' => 'o', 'ô' => 'o', 'ö' => 'o',
+            'Ó' => 'O', 'Ò' => 'O', 'Õ' => 'O', 'Ô' => 'O', 'Ö' => 'O',
+            'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
+            'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U',
+            'ñ' => 'n', 'Ñ' => 'N', 'ç' => 'c', 'Ç' => 'C', ' ' => '_'
         );
-        $nome = preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $nome);
-        return strtolower($nome);
+        $nome_sem_acentos = strtr($nome, $mapa);
+        $nome_limpo = preg_replace('/[^a-zA-Z0-9_]/', '', $nome_sem_acentos);
+        return strtolower($nome_limpo);
     }
 
     /**
@@ -104,6 +132,11 @@ class DocumentosController {
         }
         $cat_sigla = $categoriaInfo['sigla_categoria'];
 
+        // Força o código 'CA' para a categoria Calendário no backend para garantir a regra de negócio
+        if ($cat_sigla === 'CA') {
+            $postData['codigo_documento'] = 'CA';
+        }
+
         // --- 3. Handle File Upload & Renaming ---
         $nome_arquivo_salvo = null;
         $pasta_upload = dirname(__FILE__) . '/../uploads/documentos/' . $cat_sigla . '/';
@@ -119,14 +152,13 @@ class DocumentosController {
         if ($cat_sigla_check == 'LM') {
             $nome_final_padronizado = "ListaMestra." . $extensao;
         } elseif ($cat_sigla_check == 'DO') {
-            $cod_do = strtoupper(preg_replace('/[^a-zA-Z0-9\-]/', '', $postData['codigo_documento']));
+            $cod_limpo = strtoupper(preg_replace('/[^a-zA-Z0-9\-]/', '', $postData['codigo_documento']));
             $nome_sanitizado = $this->limparNomeArquivo($postData['nome_documento']);
-            $nome_final_padronizado = $cod_do . "_" . $nome_sanitizado . "." . $extensao;
+            $nome_final_padronizado = $cod_limpo . "_" . $nome_sanitizado . "." . $extensao;
         } elseif ($cat_sigla_check == 'MQ' || $cat_sigla_check == 'MS') {
             // Lógica específica para Manuais
             $cod_limpo = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $postData['codigo_documento']));
-            $revisao = isset($postData['revisao_documento']) ? $postData['revisao_documento'] : '0';
-            $rev_pad = str_pad($revisao, 2, '0', STR_PAD_LEFT);
+            $revisao = isset($postData['revisao_documento']) ? (int)$postData['revisao_documento'] : 0;
             $ano_vigor = date('Y', strtotime($postData['data_vigor_documento']));
             $str_local = '';
 
@@ -134,9 +166,9 @@ class DocumentosController {
             if (isset($postData['distribuicao']) && count($postData['distribuicao']) === 1) {
                 $id_local_unico = $postData['distribuicao'][0];
                 $nome_local = $this->model->getNomeLocalPorId($id_local_unico);
-                $str_local = "_" . strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $nome_local));
+                $str_local = "_" . $this->limparNomeArquivo($nome_local);
             }
-            $nome_final_padronizado = $cod_limpo . $str_local . "_rev" . $rev_pad . "_" . $ano_vigor . "." . $extensao;
+            $nome_final_padronizado = $cod_limpo . $str_local . "_rev" . $revisao . "_" . $ano_vigor . "." . $extensao;
         } else { // Default for PQ, IT, FQ, MQ, MS, etc.
             $cod_limpo = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $postData['codigo_documento']));
             $revisao = isset($postData['revisao_documento']) ? $postData['revisao_documento'] : '0';
@@ -189,6 +221,24 @@ class DocumentosController {
              exit();
         }
 
+        // Força o código 'CA' para a categoria Calendário no backend para garantir a regra de negócio
+        if ($doc_atual['sigla_categoria'] === 'CA') {
+            $postData['codigo_documento'] = 'CA';
+        }
+
+        // Lógica para remover o arquivo se a checkbox for marcada
+        $remover_arquivo = isset($postData['remover_arquivo']) && $postData['remover_arquivo'] == '1';
+        if ($remover_arquivo && !empty($doc_atual['arquivo_documento'])) {
+            $pasta_arquivo_antigo = dirname(__FILE__) . '/../uploads/documentos/' . $doc_atual['sigla_categoria'] . '/';
+            $caminho_arquivo_antigo = $pasta_arquivo_antigo . $doc_atual['arquivo_documento'];
+            if (file_exists($caminho_arquivo_antigo)) {
+                unlink($caminho_arquivo_antigo);
+            }
+            // Prepara o campo para ser salvo como nulo no banco
+            $postData['arquivo_documento'] = null;
+            $doc_atual['arquivo_documento'] = null; // Atualiza a variável local para a lógica a seguir
+        }
+
         // Lógica para upload e substituição de arquivo, se um novo for enviado
         if (isset($fileData['arquivo_documento']) && $fileData['arquivo_documento']['error'] === UPLOAD_ERR_OK) {
             $pasta_upload = dirname(__FILE__) . '/../uploads/documentos/' . $doc_atual['sigla_categoria'] . '/';
@@ -201,23 +251,23 @@ class DocumentosController {
                 unlink($pasta_upload . $doc_atual['arquivo_documento']);
             }
 
-            // Salva o novo arquivo (a lógica de renomear pode ser adicionada aqui se necessário)
+            // Lógica de renomeação replicada do cadastro para garantir consistência
             $extensao = strtolower(pathinfo($fileData['arquivo_documento']['name'], PATHINFO_EXTENSION));
             $cat_sigla_check = strtoupper(trim($doc_atual['sigla_categoria']));
-
-            // Lógica de renomeação replicada do cadastro para garantir consistência
+            $nome_final_padronizado = '';
+            
             if ($cat_sigla_check == 'LM') {
                 $nome_final_padronizado = "ListaMestra." . $extensao;
             } elseif ($cat_sigla_check == 'DO') {
-                $cod_do = strtoupper(preg_replace('/[^a-zA-Z0-9\-]/', '', $postData['codigo_documento']));
+                $cod_limpo = strtoupper(preg_replace('/[^a-zA-Z0-9\-]/', '', $postData['codigo_documento']));
                 $nome_sanitizado = $this->limparNomeArquivo($postData['nome_documento']);
-                $nome_final_padronizado = $cod_do . "_" . $nome_sanitizado . "." . $extensao;
+                $nome_final_padronizado = $cod_limpo . "_" . $nome_sanitizado . "." . $extensao;
             } elseif ($cat_sigla_check == 'MQ' || $cat_sigla_check == 'MS') {
                 $cod_limpo = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $postData['codigo_documento']));
-                $rev_pad = str_pad($postData['revisao_documento'], 2, '0', STR_PAD_LEFT);
+                $revisao = (int)$postData['revisao_documento'];
                 $ano_vigor = date('Y', strtotime($postData['data_vigor_documento']));
-                $str_local = (isset($postData['distribuicao']) && count($postData['distribuicao']) === 1) ? "_" . strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $this->model->getNomeLocalPorId($postData['distribuicao'][0]))) : '';
-                $nome_final_padronizado = $cod_limpo . $str_local . "_rev" . $rev_pad . "_" . $ano_vigor . "." . $extensao;
+                $str_local = (isset($postData['distribuicao']) && count($postData['distribuicao']) === 1) ? "_" . $this->limparNomeArquivo($this->model->getNomeLocalPorId($postData['distribuicao'][0])) : '';
+                $nome_final_padronizado = $cod_limpo . $str_local . "_rev" . $revisao . "_" . $ano_vigor . "." . $extensao;
             } else { // Padrão para PQ, IT, FQ, etc.
                 $cod_limpo = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $postData['codigo_documento']));
                 $rev_pad = str_pad($postData['revisao_documento'], 2, '0', STR_PAD_LEFT);
@@ -227,9 +277,8 @@ class DocumentosController {
                 $nome_final_padronizado = $cod_limpo . "_rev" . $rev_pad . "_" . $ano_vigor . $str_sufixo . "." . $extensao;
             }
 
-            $novo_nome_arquivo = $nome_final_padronizado;
-            if (move_uploaded_file($fileData['arquivo_documento']['tmp_name'], $pasta_upload . $novo_nome_arquivo)) {
-                $postData['arquivo_documento'] = $novo_nome_arquivo;
+            if (move_uploaded_file($fileData['arquivo_documento']['tmp_name'], $pasta_upload . $nome_final_padronizado)) {
+                $postData['arquivo_documento'] = $nome_final_padronizado;
             }
         } else {
             // Se nenhum arquivo novo foi enviado, mantém o nome do arquivo antigo.
@@ -252,54 +301,154 @@ class DocumentosController {
             }
             $this->model->vincularLocais($id_documento, $distribuicao, $numeros_copia);
 
-            header('Location: index.php?modulo=documentos&sucesso=edicao');
+            // Reconstrói a URL de redirecionamento com os filtros
+            $query_params = http_build_query(array(
+                'status' => isset($postData['filtro_status']) ? $postData['filtro_status'] : '1',
+                'categoria' => isset($postData['filtro_categoria']) ? $postData['filtro_categoria'] : '',
+                'busca' => isset($postData['filtro_busca']) ? $postData['filtro_busca'] : '',
+                'distribuicao' => isset($postData['filtro_distribuicao']) ? $postData['filtro_distribuicao'] : ''
+            ));
+
+            header('Location: index.php?modulo=documentos&sucesso=edicao&' . $query_params);
         } else {
-            header('Location: index.php?modulo=documentos_editar&id=' . $id_documento . '&erro=falha_db');
+            // Mantém os filtros mesmo em caso de erro
+            header('Location: index.php?modulo=documentos_editar&id=' . $id_documento . '&erro=falha_db&' . http_build_query($_GET));
         }
         exit();
     }
 
-    public function sincronizarArquivos() {
-        $pasta_base = dirname(__FILE__) . '/../uploads/documentos/';
-        $resultados = array(
-            'total_arquivos' => 0,
-            'sucesso' => 0,
-            'nao_encontrados' => 0,
-            'log_sucesso' => array(),
-            'log_nao_encontrados' => array()
-        );
+    /**
+     * Gera o nome de arquivo padronizado com base nas regras de negócio.
+     * Reutiliza a lógica de cadastro/edição.
+     */
+    private function _gerarNomeArquivoPadronizado($documento, $extensao, $nome_arquivo_original = null) {
+        $cat_sigla_check = strtoupper(trim($documento['sigla_categoria']));
 
-        if (!is_dir($pasta_base)) {
-            $_SESSION['sync_status'] = array('tipo' => 'danger', 'mensagem' => 'A pasta de uploads de documentos não existe.');
-            return $resultados;
+        if ($cat_sigla_check == 'LM') {
+            return "ListaMestra." . $extensao;
         }
 
-        // Itera recursivamente sobre as pastas e arquivos
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($pasta_base));
+        $cod_limpo = strtoupper(preg_replace('/[^a-zA-Z0-9\-]/', '', $documento['codigo_documento']));
 
-        foreach ($iterator as $arquivo) {
-            if ($arquivo->isFile()) {
-                $resultados['total_arquivos']++;
-                $nome_arquivo = $arquivo->getFilename();
+        if ($cat_sigla_check == 'DO') {
+            $nome_sanitizado = $this->limparNomeArquivo($documento['nome_documento']);
+            return $cod_limpo . "_" . $nome_sanitizado . "." . $extensao;
+        }
 
-                // Ignora arquivos de sistema como .DS_Store ou Thumbs.db
-                if ($nome_arquivo[0] === '.') {
-                    continue;
+        // Lógica de extração para sincronização
+        $revisao = '0';
+        $ano_vigor = date('Y', strtotime($documento['data_vigor_documento']));
+
+        if ($nome_arquivo_original) {
+            if (preg_match('/rev(\d+)/i', $nome_arquivo_original, $rev_match)) {
+                $revisao = (int)$rev_match[1];
+            }
+            if (preg_match('/(\d{4})/', $nome_arquivo_original, $ano_match)) {
+                $ano_vigor_extraido = (int)$ano_match[1];
+                if ($ano_vigor_extraido > 1990 && $ano_vigor_extraido < 2100) {
+                    $ano_vigor = $ano_vigor_extraido;
                 }
+            }
+        }
 
-                // Tenta encontrar o documento pelo nome do arquivo
-                $documento = $this->model->getDocumentoPorNomeArquivo($nome_arquivo);
+        if ($cat_sigla_check == 'MQ' || $cat_sigla_check == 'MS') {
+            $rev_str = (int)$revisao; // Sem padding para manuais
+            return $cod_limpo . "_rev" . $rev_str . "_" . $ano_vigor . "." . $extensao;
+        }
 
-                if ($documento) {
-                    // Encontrou, agora atualiza o campo no banco
-                    $this->model->sincronizarArquivo($documento['id_documento'], $nome_arquivo);
-                    $resultados['sucesso']++;
-                    $resultados['log_sucesso'][] = "OK: Arquivo '{$nome_arquivo}' vinculado ao documento '{$documento['codigo_documento']}'.";
-                } else {
-                    // Não encontrou um registro correspondente
-                    $resultados['nao_encontrados']++;
-                    $resultados['log_nao_encontrados'][] = "AVISO: Nenhum registro encontrado para o arquivo '{$nome_arquivo}'.";
+        // Padrão para PQ, IT, FQ, etc.
+        $sufixo = isset($documento['sufixo_documento']) ? strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $documento['sufixo_documento'])) : '';
+        $str_sufixo = !empty($sufixo) ? "_" . $sufixo : "";
+        $rev_pad = str_pad($revisao, 2, '0', STR_PAD_LEFT);
+        return $cod_limpo . "_rev" . $rev_pad . "_" . $ano_vigor . $str_sufixo . "." . $extensao;
+    }
+
+    /**
+     * Extrai o código do documento de um nome de arquivo com padrões variados.
+     */
+    private function _extrairCodigoDoNomeArquivo($nome_arquivo) {
+        // Padrão 1: FQ-01, PQ-01.01, DO-01
+        if (preg_match('/^([A-Z]{2}-[\d\.]+)/i', $nome_arquivo, $matches)) {
+            return $matches[1];
+        }
+        // Padrão 2: MQ_rev, MS_Intranet_rev
+        if (preg_match('/^(MQ|MS)/i', $nome_arquivo, $matches)) {
+            // Para manuais, o código é apenas a sigla.
+            return strtoupper($matches[1]);
+        }
+        // Padrão 3: FQ0401, PQ0101
+        if (preg_match('/^([A-Z]{2,3}[\d]+)/i', $nome_arquivo, $matches)) {
+            // Tenta formatar para o padrão com hífen, ex: FQ0401 -> FQ-0401
+            $sigla = substr($matches[1], 0, 2);
+            $numero = substr($matches[1], 2);
+            if (strlen($numero) == 6 && strpos($numero, '.') === false) {
+                // Formata IT040201 -> 04.02.01
+                $parte1 = substr($numero, 0, 2);
+                $parte2 = substr($numero, 2, 2);
+                $parte3 = substr($numero, 4, 2);
+                $numero = $parte1 . '.' . $parte2 . '.' . $parte3;
+            } elseif (strlen($numero) == 4 && strpos($numero, '.') === false) {
+                // Formata FQ0401 -> 04.01
+                $parte1 = substr($numero, 0, 2);
+                $parte2 = substr($numero, 2);
+                $numero = $parte1 . '.' . $parte2;
+            }
+            return $sigla . '-' . $numero;
+        }
+        return null;
+    }
+
+    public function sincronizarArquivos() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['arquivos'])) {
+            return null; // Não exibe resultados se a página for acessada via GET
+        }
+
+        $resultados = array(
+            'sucesso' => array(),
+            'falha' => array()
+        );
+
+        $arquivos = $_FILES['arquivos'];
+        $total_arquivos = count($arquivos['name']);
+
+        for ($i = 0; $i < $total_arquivos; $i++) {
+            $nome_arquivo = $arquivos['name'][$i];
+            $tmp_name = $arquivos['tmp_name'][$i];
+            $error = $arquivos['error'][$i];
+
+            if ($error !== UPLOAD_ERR_OK || empty($nome_arquivo)) {
+                if (!empty($nome_arquivo)) {
+                    $resultados['falha'][] = "Erro no upload do arquivo '{$nome_arquivo}'.";
                 }
+                continue;
+            }
+
+            // Lógica de busca flexível: extrai o código do nome do arquivo
+            $codigo_documento = $this->_extrairCodigoDoNomeArquivo($nome_arquivo);
+            $documento = $this->model->getDocumentoPorCodigo($codigo_documento);
+
+            if (!$documento) {
+                $resultados['falha'][] = "Nenhum registro de documento encontrado para o arquivo '{$nome_arquivo}' (código extraído: " . ($codigo_documento ? $codigo_documento : 'N/A') . ").";
+                continue;
+            }
+
+            // Gera o novo nome padronizado para o arquivo
+            $extensao = strtolower(pathinfo($nome_arquivo, PATHINFO_EXTENSION));
+            $nome_final_padronizado = $this->_gerarNomeArquivoPadronizado($documento, $extensao, $nome_arquivo);
+
+            $pasta_destino = dirname(__FILE__) . '/../uploads/documentos/' . $documento['sigla_categoria'] . '/';
+            if (!is_dir($pasta_destino)) {
+                mkdir($pasta_destino, 0775, true);
+            }
+            $caminho_final = $pasta_destino . $nome_final_padronizado;
+
+            // Move o arquivo enviado para o destino JÁ COM O NOME CORRETO
+            if (move_uploaded_file($tmp_name, $caminho_final)) {
+                // Atualiza o banco de dados com o novo nome padronizado
+                $this->model->vincularArquivo($documento['id_documento'], $nome_final_padronizado);
+                $resultados['sucesso'][] = "Arquivo '{$nome_arquivo}' vinculado e renomeado para '{$nome_final_padronizado}' (Doc: {$documento['codigo_documento']}).";
+            } else {
+                $resultados['falha'][] = "Falha ao mover o arquivo '{$nome_arquivo}' para a pasta de destino.";
             }
         }
         return $resultados;
@@ -314,7 +463,7 @@ class DocumentosController {
             if ($id_documento > 0 && !empty($justificativa)) {
                 $sucesso = $this->model->tornarObsoleto($id_documento, $justificativa, $id_usuario);
                 if ($sucesso) {
-                    header('Location: index.php?modulo=documentos&status=3&sucesso=obsoleto');
+                    header('Location: index.php?modulo=documentos&status=3&sucesso=obsoleto'); // status 3 = Obsoletos
                 } else {
                     header('Location: index.php?modulo=documentos&erro=obsoleto');
                 }
@@ -325,13 +474,36 @@ class DocumentosController {
         }
     }
 
+    public function restaurarDocumento() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id_documento = isset($_POST['id_documento']) ? intval($_POST['id_documento']) : 0;
+            $id_usuario = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : 1;
+
+            if ($id_documento > 0) {
+                $sucesso = $this->model->restaurarDocumento($id_documento, $id_usuario);
+                if ($sucesso) {
+                    header('Location: index.php?modulo=documentos&status=1&sucesso=restaurado'); // status 1 = Em Vigor
+                } else {
+                    header('Location: index.php?modulo=documentos&status=3&erro=restaurar');
+                }
+            } else {
+                header('Location: index.php?modulo=documentos&status=3&erro=dados_invalidos');
+            }
+            exit();
+        }
+    }
+
     public function excluirDocumento() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_documento = isset($_POST['id_documento']) ? intval($_POST['id_documento']) : 0;
+            $status_retorno = isset($_POST['filtro_status_retorno']) ? intval($_POST['filtro_status_retorno']) : 1;
+
             if ($id_documento > 0) {
                 $this->model->excluirDocumento($id_documento);
             }
-            header('Location: index.php?modulo=documentos&sucesso=excluido');
+
+            // Redireciona de volta para a aba correta (Em Vigor ou Obsoletos)
+            header('Location: index.php?modulo=documentos&status=' . $status_retorno . '&sucesso=excluido');
             exit();
         }
     }

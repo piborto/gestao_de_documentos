@@ -1,5 +1,0 @@
-# Ignorar a pasta de uploads dos usuários
-/uploads/
-
-# Ignorar arquivos de configuração local (se houver no futuro)
-config.local.php

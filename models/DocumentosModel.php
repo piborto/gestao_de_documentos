@@ -52,7 +52,7 @@ class DocumentosModel {
     /**
      * Busca os documentos com filtros dinâmicos
      */
-    public function listarDocumentos($id_status, $ids_categoria, $busca) {
+    public function listarDocumentos($id_status, $ids_categoria, $busca, $id_distribuicao) {
         $params = array(':id_status' => $id_status);
 
         $sql_select_base = "SELECT d.*, c.sigla_categoria, GROUP_CONCAT(l.nome_local ORDER BY l.nome_local ASC SEPARATOR ', ') AS locais_distribuicao";
@@ -94,6 +94,12 @@ class DocumentosModel {
             $sql .= " AND (d.codigo_documento LIKE :busca1 OR d.nome_documento LIKE :busca2)";
             $params[':busca1'] = '%' . utf8_decode($busca) . '%';
             $params[':busca2'] = '%' . utf8_decode($busca) . '%';
+        }
+
+        if (!empty($id_distribuicao)) {
+            // Adiciona uma subquery para garantir que o documento está vinculado ao local de distribuição
+            $sql .= " AND d.id_documento IN (SELECT id_documento FROM t_documento_local WHERE id_local = :id_distribuicao)";
+            $params[':id_distribuicao'] = $id_distribuicao;
         }
 
         // GROUP BY é obrigatório agora para não duplicar linhas na tabela visual
@@ -254,6 +260,7 @@ class DocumentosModel {
             // Converte para UTF-8
             $documento['nome_documento'] = utf8_encode($documento['nome_documento']);
             $documento['autor_documento'] = utf8_encode($documento['autor_documento']);
+            $documento['sufixo_documento'] = utf8_encode($documento['sufixo_documento']);
 
             // Busca os locais de distribuição vinculados
             $stmt_locais = $this->db->prepare("SELECT id_local, numero_copia FROM t_documento_local WHERE id_documento = :id");
@@ -269,8 +276,28 @@ class DocumentosModel {
     }
 
     public function getDocumentoPorNomeArquivo($nome_arquivo) {
-        $stmt = $this->db->prepare("SELECT id_documento, codigo_documento FROM t_documento WHERE arquivo_documento = :nome_arquivo LIMIT 1");
+        $stmt = $this->db->prepare("SELECT d.id_documento, d.codigo_documento, c.sigla_categoria 
+                                    FROM t_documento d
+                                    JOIN t_categoria c ON d.id_categoria = c.id_categoria
+                                    WHERE d.arquivo_documento = :nome_arquivo 
+                                    LIMIT 1");
         $stmt->execute(array(':nome_arquivo' => $nome_arquivo));
+        return $stmt->fetch();
+    }
+
+    public function getDocumentoPorCodigo($codigo_documento) {
+        if (empty($codigo_documento)) {
+            return false;
+        }
+        // CORREÇÃO: Adicionado campos essenciais para a geração do nome do arquivo.
+        $stmt = $this->db->prepare("SELECT d.id_documento, d.codigo_documento, d.nome_documento, 
+                                           d.revisao_documento, d.data_vigor_documento, d.sufixo_documento,
+                                           c.sigla_categoria 
+                                    FROM t_documento d
+                                    JOIN t_categoria c ON d.id_categoria = c.id_categoria
+                                    WHERE d.codigo_documento = :codigo_documento
+                                    LIMIT 1");
+        $stmt->execute(array(':codigo_documento' => $codigo_documento));
         return $stmt->fetch();
     }
 
@@ -291,6 +318,16 @@ class DocumentosModel {
         }
     }
 
+    public function vincularArquivo($id_documento, $nome_arquivo) {
+        if ($id_documento > 0 && !empty($nome_arquivo)) {
+            $sql = "UPDATE t_documento SET arquivo_documento = :nome_arquivo WHERE id_documento = :id_documento";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(array(':nome_arquivo' => $nome_arquivo, ':id_documento' => $id_documento));
+            return $stmt->rowCount() > 0;
+        }
+        return false;
+    }
+
     public function atualizarDocumento($id_documento, $dados) {
         $params = array(
             ':id_documento' => $id_documento,
@@ -302,6 +339,7 @@ class DocumentosModel {
             ':data_vigor_documento' => isset($dados['data_vigor_documento']) ? $dados['data_vigor_documento'] : null,
             ':data_analise_documento' => isset($dados['data_analise_documento']) ? $dados['data_analise_documento'] : null,
             ':arquivo_documento' => isset($dados['arquivo_documento']) ? $dados['arquivo_documento'] : null,
+            ':sufixo_documento' => isset($dados['sufixo']) ? utf8_decode($dados['sufixo']) : null,
             ':controle_documento' => isset($dados['controle_documento']) ? $dados['controle_documento'] : 0
         );
 
@@ -314,6 +352,7 @@ class DocumentosModel {
                     data_vigor_documento = :data_vigor_documento,
                     data_analise_documento = :data_analise_documento,
                     arquivo_documento = :arquivo_documento,
+                    sufixo_documento = :sufixo_documento,
                     controle_documento = :controle_documento
                 WHERE id_documento = :id_documento";
 
@@ -461,6 +500,34 @@ class DocumentosModel {
     }
 
     /**
+     * Busca documentos e siglas agendados para os próximos 30 dias.
+     */
+    public function listarItensAgendados() {
+        $sql = "(SELECT 
+                    'Documento' as tipo, 
+                    codigo_documento as codigo, 
+                    nome_documento as nome, 
+                    data_vigor_documento as data_vigor 
+                FROM t_documento 
+                WHERE id_status = 2 AND data_vigor_documento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY))
+                UNION
+                (SELECT 
+                    'Sigla' as tipo, 
+                    nome_sigla as codigo, 
+                    definicao_sigla as nome, 
+                    data_sigla as data_vigor 
+                FROM t_sigla 
+                WHERE id_status = 2 AND data_sigla BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY))
+                ORDER BY data_vigor ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        // A conversão para UTF-8 já é feita no controller que chama esta função.
+        return $stmt->fetchAll();
+    }
+
+
+    /**
      * Registra uma ação no histórico geral (t_historico).
      * @param string $acao Ação realizada (ex: "Documento Obsoleto Importado").
      * @param string $justificativa Detalhes da ação.
@@ -522,6 +589,26 @@ class DocumentosModel {
         } catch (PDOException $e) {
             $this->db->rollBack();
             error_log("Erro ao tornar obsoleto: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Altera o status de um documento para Em Vigor (1) e registra no histórico.
+     */
+    public function restaurarDocumento($id_documento, $id_usuario) {
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare("UPDATE t_documento SET id_status = 1 WHERE id_documento = :id");
+            $stmt->execute(array(':id' => $id_documento));
+
+            $this->logHistorico("Documento Restaurado", "O documento foi restaurado do status obsoleto para 'Em Vigor'.", $id_usuario, $id_documento);
+
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            error_log("Erro ao restaurar documento: " . $e->getMessage());
             return false;
         }
     }

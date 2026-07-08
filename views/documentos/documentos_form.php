@@ -1,5 +1,12 @@
 <?php
 // Garante que o controller já foi carregado pelo index.php e as variáveis $listaCategorias e $documento estão disponíveis.
+$back_link_params = array('modulo' => 'documentos');
+if (isset($_GET['status'])) $back_link_params['status'] = $_GET['status'];
+if (isset($_GET['categoria'])) $back_link_params['categoria'] = $_GET['categoria'];
+if (isset($_GET['distribuicao'])) $back_link_params['distribuicao'] = $_GET['distribuicao'];
+if (isset($_GET['busca'])) $back_link_params['busca'] = $_GET['busca'];
+$back_link = 'index.php?' . http_build_query(array_filter($back_link_params));
+
 $is_edit = isset($documento) && !empty($documento);
 $form_action = $is_edit ? 'documentos_editar' : 'documentos_cadastrar';
 $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
@@ -11,7 +18,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
         <p class="text-muted">Preencha os campos abaixo para <?php echo $is_edit ? 'atualizar o' : 'adicionar um novo'; ?> documento.</p>
     </div>
     <div class="col-auto">
-        <a href="index.php?modulo=documentos" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Voltar para a Lista</a>
+        <a href="<?php echo $back_link; ?>" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Voltar para a Lista</a>
     </div>
 </div>
 
@@ -20,13 +27,18 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
         <form id="form-documento" method="POST" action="index.php?modulo=<?php echo $form_action; ?><?php echo $is_edit ? '&id=' . $documento['id_documento'] : ''; ?>" enctype="multipart/form-data">
             <?php if ($is_edit): ?>
                 <input type="hidden" name="id_documento" value="<?php echo htmlspecialchars($documento['id_documento']); ?>">
+                <!-- Campos ocultos para manter o estado dos filtros -->
+                <input type="hidden" name="filtro_status" value="<?php echo isset($_GET['status']) ? htmlspecialchars($_GET['status']) : '1'; ?>">
+                <input type="hidden" name="filtro_categoria" value="<?php echo isset($_GET['categoria']) ? htmlspecialchars($_GET['categoria']) : ''; ?>">
+                <input type="hidden" name="filtro_distribuicao" value="<?php echo isset($_GET['distribuicao']) ? htmlspecialchars($_GET['distribuicao']) : ''; ?>">
+                <input type="hidden" name="filtro_busca" value="<?php echo isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : ''; ?>">
             <?php endif; ?>
 
             <div class="row g-3">
                 <!-- Categoria (Sempre visível) -->
                 <div class="col-md-6">
                     <label for="id_categoria" class="form-label">Categoria <span class="text-danger">*</span></label>
-                    <select id="id_categoria" name="id_categoria" class="form-select" required>
+                    <select id="id_categoria" name="id_categoria" class="form-select" required onchange="atualizarCamposDinamicos()">
                         <option value="">Selecione...</option>
                         <?php foreach ($listaCategorias as $categoria): ?>
                             <option value="<?php echo $categoria['id_categoria']; ?>" data-sigla="<?php echo htmlspecialchars($categoria['sigla_categoria']); ?>" <?php echo ($is_edit && $documento['id_categoria'] == $categoria['id_categoria']) ? 'selected' : ''; ?>>
@@ -78,7 +90,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                 <!-- Ano (RE, CA, PR) -->
                 <div class="col-md-2 campo-dinamico" id="div-ano" style="display: none;">
                     <label for="ano" class="form-label">Ano</label>
-                    <input type="number" class="form-control" id="ano" name="ano" value="<?php echo $is_edit ? htmlspecialchars($documento['ano_documento']) : date('Y'); ?>">
+                    <input type="number" class="form-control" id="ano" name="ano_documento" value="<?php echo $is_edit ? htmlspecialchars($documento['ano_documento']) : date('Y'); ?>">
                 </div>
 
                 <!-- Data de Vigor/Publicação -->
@@ -98,7 +110,13 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                     <label for="arquivo_documento" class="form-label">Anexar Documento <?php if (!$is_edit) echo '<span class="text-danger">*</span>'; ?></label>
                     <input class="form-control" type="file" id="arquivo_documento" name="arquivo_documento" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" <?php if (!$is_edit) echo 'required'; ?>>
                     <?php if ($is_edit && !empty($documento['arquivo_documento'])): ?>
-                        <div class="form-text">Arquivo atual: <a href="/uploads/documentos/<?php echo htmlspecialchars($documento['sigla_categoria']); ?>/<?php echo htmlspecialchars($documento['arquivo_documento']); ?>" target="_blank"><?php echo htmlspecialchars($documento['arquivo_documento']); ?></a>. Envie um novo para substituir.</div>
+                        <div class="form-text text-muted">
+                            Arquivo atual: <a href="uploads/documentos/<?php echo htmlspecialchars($documento['sigla_categoria']); ?>/<?php echo urlencode($documento['arquivo_documento']); ?>" target="_blank"><?php echo htmlspecialchars($documento['arquivo_documento']); ?></a>.
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="remover_arquivo" name="remover_arquivo" value="1">
+                                <label class="form-check-label text-danger" for="remover_arquivo">Remover arquivo atual</label>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -248,6 +266,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+
+        // Garante que os campos sejam atualizados no carregamento da página em modo de edição
+        atualizarCamposDinamicos();
     <?php endif; ?>
 });
 </script>

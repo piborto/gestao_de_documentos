@@ -1,6 +1,7 @@
 <?php
 class SiglasModel {
     private $db;
+    private $documentosModel;
 
     public function __construct($conexao) {
         $this->db = $conexao;
@@ -10,20 +11,44 @@ class SiglasModel {
         return $this->db;
     }
 
-    public function listarSiglas($busca = null, $id_status = 1) {
-        $sql = "SELECT * FROM t_sigla WHERE id_status = :id_status";
+    /**
+     * Busca a data da última atualização de uma sigla em vigor.
+     */
+    public function getUltimaAtualizacao() {
+        $stmt = $this->db->prepare("SELECT MAX(data_sigla) as ultima_atualizacao FROM t_sigla WHERE id_status = 1");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return $result ? $result['ultima_atualizacao'] : null;
+    }
+
+    /**
+     * Lista todas as siglas com base nos filtros.
+     */
+    public function listarSiglas($busca = null, $id_status = 1, $data_de = null, $data_ate = null) {
         $params = array(':id_status' => $id_status);
+        $sql = "SELECT * FROM t_sigla WHERE id_status = :id_status";
 
         if (!empty($busca)) {
             $sql .= " AND (nome_sigla LIKE :busca OR definicao_sigla LIKE :busca)";
-            $params[':busca'] = '%' . utf8_decode($busca) . '%';
+            $params[':busca'] = '%' . $busca . '%';
         }
 
-        // A ordenação agora é sempre alfabética, independente do número
-        $sql .= " ORDER BY nome_sigla ASC, definicao_sigla ASC";
+        if ($data_de && $data_ate) {
+            $sql .= " AND data_sigla BETWEEN :data_de AND :data_ate";
+            $params[':data_de'] = $data_de;
+            $params[':data_ate'] = $data_ate;
+        } elseif ($data_de) {
+            $sql .= " AND data_sigla >= :data_de";
+            $params[':data_de'] = $data_de;
+        } elseif ($data_ate) {
+            $sql .= " AND data_sigla <= :data_ate";
+            $params[':data_ate'] = $data_ate;
+        }
+
+        $sql .= " ORDER BY nome_sigla ASC";
         
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        $stmt->execute($this->encodeParams($params));
         $siglas = $stmt->fetchAll();
 
         $siglas_utf8 = array();
@@ -102,6 +127,39 @@ class SiglasModel {
         return $stmt->execute(array(':id' => $id));
     }
 
+    /**
+     * Altera o status de uma sigla para obsoleto (3).
+     */
+    public function tornarObsoleto($id_sigla) {
+        $sql = "UPDATE t_sigla SET id_status = 3, data_saida_sigla = CURDATE() WHERE id_sigla = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(array(':id' => $id_sigla));
+    }
+
+    /**
+     * Altera o status de uma sigla para Em Vigor (1).
+     */
+    public function restaurarSigla($id_sigla) {
+        $sql = "UPDATE t_sigla SET id_status = 1, data_saida_sigla = NULL WHERE id_sigla = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(array(':id' => $id_sigla));
+    }
+
+    /**
+     * Helper para converter parâmetros para latin1 antes de executar a query.
+     */
+    private function encodeParams($params) {
+        $encoded = array();
+        foreach ($params as $key => $value) {
+            if (is_string($value)) {
+                $encoded[$key] = utf8_decode($value);
+            } else {
+                $encoded[$key] = $value;
+            }
+        }
+        return $encoded;
+    }
+
     public function renumerarSiglas() {
         // 1. Pega todas as siglas em ordem alfabética
         $stmt = $this->db->prepare("SELECT id_sigla FROM t_sigla ORDER BY nome_sigla ASC, definicao_sigla ASC");
@@ -175,16 +233,6 @@ class SiglasModel {
             $historico_utf8[] = $item;
         }
         return $historico_utf8;
-    }
-
-    /**
-     * Busca a data de publicação mais recente entre as siglas ativas.
-     */
-    public function getUltimaAtualizacao() {
-        $stmt = $this->db->prepare("SELECT MAX(data_sigla) as ultima_atualizacao FROM t_sigla WHERE id_status = 1");
-        $stmt->execute();
-        $result = $stmt->fetch();
-        return $result ? $result['ultima_atualizacao'] : null;
     }
 }
 ?>

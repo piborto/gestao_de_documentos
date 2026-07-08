@@ -1,7 +1,7 @@
 <div class="card login-card p-4">
     <div class="card-body">
         <div class="text-center mb-4">
-            <h4 class="fw-bold text-secondary">SGQ</h4>
+            <h4 class="fw-bold text-black">SGQ</h4>
             <p class="text-muted small">Sistema de Gestão da Qualidade</p>
         </div>
 

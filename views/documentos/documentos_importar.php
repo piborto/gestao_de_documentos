@@ -3,6 +3,13 @@
 if (session_id() == "") {
     session_start();
 }
+
+$back_link_params = array('modulo' => 'documentos');
+if (isset($_GET['status'])) $back_link_params['status'] = $_GET['status'];
+if (isset($_GET['categoria'])) $back_link_params['categoria'] = $_GET['categoria'];
+if (isset($_GET['distribuicao'])) $back_link_params['distribuicao'] = $_GET['distribuicao'];
+if (isset($_GET['busca'])) $back_link_params['busca'] = $_GET['busca'];
+$back_link = 'index.php?' . http_build_query(array_filter($back_link_params));
 ?>
 <div class="row mb-4">
     <div class="col">
@@ -10,7 +17,7 @@ if (session_id() == "") {
         <p class="text-muted">Faça o upload do arquivo CSV gerado pelo sistema antigo para migrar os dados.</p>
     </div>
     <div class="col-auto">
-        <a href="index.php?modulo=documentos" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Voltar para a Lista</a>
+        <a href="<?php echo $back_link; ?>" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Voltar para a Lista</a>
     </div>
 </div>
 

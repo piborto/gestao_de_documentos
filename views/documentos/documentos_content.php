@@ -4,6 +4,11 @@
 $filtro_status    = isset($_GET['status']) ? intval($_GET['status']) : 1; // Padrão visual é "Em Vigor" (ID 1)
 $filtro_categoria = isset($_GET['categoria']) ? $_GET['categoria'] : '';
 $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '';
+$filtro_distribuicao = isset($_GET['distribuicao']) ? $_GET['distribuicao'] : '';
+
+// Constrói a query string com os filtros atuais para ser usada nos links de navegação
+$query_params_string = http_build_query(array_filter(array('status' => $filtro_status, 'categoria' => $filtro_categoria, 'distribuicao' => $filtro_distribuicao, 'busca' => $filtro_busca)));
+
 ?>
 
 <div class="row mb-4">
@@ -12,12 +17,12 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
         <p class="text-muted">Consulte, filtre e acesse a lista de documentos do SGQ.</p>
     </div>
     <div class="col-auto">
-        <button type="button" class="btn btn-outline-danger fw-bold" onclick="abrirModalPdf()">
+        <button type="button" class="btn btn-outline-danger fw-bold" onclick="abrirModalPdf()" id="btn-gerar-pdf">
             <i class="bi bi-file-earmark-pdf me-2"></i><span id="textoBotaoPdf">Gerar PDF</span>
         </button>
-        <a href="index.php?modulo=documentos_importar" class="btn btn-outline-success fw-bold"><i class="bi bi-cloud-upload me-2"></i>Importar CSV</a>
-        <a href="index.php?modulo=documentos_sincronizar" class="btn btn-outline-info fw-bold"><i class="bi bi-arrow-repeat me-2"></i>Sincronizar Arquivos</a>
-        <a href="index.php?modulo=documentos_cadastrar" class="btn btn-primary fw-bold">
+        <!--<a href="index.php?modulo=documentos_importar&<?php echo $query_params_string; ?>" class="btn btn-outline-success fw-bold"><i class="bi bi-cloud-upload me-2"></i>Importar CSV</a>
+        <a href="index.php?modulo=documentos_sincronizar&<?php echo $query_params_string; ?>" class="btn btn-outline-info fw-bold"><i class="bi bi-arrow-repeat me-2"></i>Sincronizar Arquivos</a>-->
+        <a href="index.php?modulo=documentos_cadastrar&<?php echo $query_params_string; ?>" class="btn btn-primary fw-bold">
             <i class="bi bi-plus-circle me-2"></i>Cadastrar Documento
         </a>
     </div>
@@ -25,21 +30,21 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-3">
-        <form method="GET" action="index.php" class="row g-2 align-items-end">
+        <form id="form-filtros" method="GET" action="index.php" class="row g-2 align-items-end">
             <input type="hidden" name="modulo" value="documentos">
 
             <div class="col-md-2">
                 <label for="filtroStatus" class="form-label text-muted small fw-bold">Status</label>
-                <select name="status" id="filtroStatus" class="form-select form-select-sm">
+                <select name="status" id="filtroStatus" class="form-select form-select-sm filtro-ajax">
                     <option value="1" <?php echo $filtro_status === 1 ? 'selected' : ''; ?>>Em Vigor</option>
                     <option value="2" <?php echo $filtro_status === 2 ? 'selected' : ''; ?>>Agendado / Em Revisão</option>
                     <option value="3" <?php echo $filtro_status === 3 ? 'selected' : ''; ?>>Obsoletos</option>
                 </select>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="filtroCategoria" class="form-label text-muted small fw-bold">Categoria</label>
-                <select name="categoria" id="filtroCategoria" class="form-select form-select-sm" onchange="atualizarBotaoPdf()">
+                <select name="categoria" id="filtroCategoria" class="form-select form-select-sm filtro-ajax" onchange="atualizarBotaoPdf()">
                     <option value="">Todas as Categorias</option>
                     <?php foreach ($listaCategorias as $categoria): ?>
                         <option value="<?php echo $categoria['id_categoria']; ?>" <?php echo $filtro_categoria == $categoria['id_categoria'] ? 'selected' : ''; ?>>
@@ -49,11 +54,23 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
                 </select>
             </div>
 
-            <div class="col-md-5">
+            <div class="col-md-3">
+                <label for="filtroDistribuicao" class="form-label text-muted small fw-bold">Distribuição</label>
+                <select name="distribuicao" id="filtroDistribuicao" class="form-select form-select-sm filtro-ajax">
+                    <option value="">Todos os Locais</option>
+                    <?php foreach ($listaLocais as $local): ?>
+                        <option value="<?php echo $local['id_local']; ?>" <?php echo $filtro_distribuicao == $local['id_local'] ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($local['nome_local']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-md-3">
                 <label class="form-label text-muted small fw-bold">Buscar por Código ou Nome</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
-                    <input type="text" name="busca" class="form-control" value="<?php echo $filtro_busca; ?>" placeholder="Ex: PQ-01 ou Manual de Termos...">
+                    <input type="text" name="busca" id="filtroBusca" class="form-control" value="<?php echo $filtro_busca; ?>" placeholder="Digite para pesquisar...">
                 </div>
             </div>
 
@@ -66,10 +83,10 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
 </div>
 
 <div class="card border-0 shadow-sm">
-    <div class="card-body p-0">
+    <div id="tabela-documentos-container" class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover table-striped align-middle">
-                <thead class="thead-custom">
+                <thead class="thead-custom" id="tabela-documentos-head">
                     <tr>
                         <th style="width: 10%;">Código</th>
                         <th style="width: 23%;">Nome</th>
@@ -90,7 +107,7 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
                         <th class="text-end pe-3" style="width: 4%;">Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tabela-documentos-body">
                     <?php if (empty($listaDocumentos)): ?>
                         <tr>
                             <td colspan="9" class="text-center py-5 text-muted">Nenhum documento encontrado com os filtros atuais.</td>
@@ -142,15 +159,21 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
                                         <?php if (!empty($doc['arquivo_documento'])): ?>
-                                            <a href="/uploads/documentos/<?php echo htmlspecialchars($doc['sigla_categoria']); ?>/<?php echo htmlspecialchars($doc['arquivo_documento']); ?>" target="_blank" class="btn btn-outline-secondary" title="Visualizar"><i class="bi bi-eye"></i></a>
+                                            <a href="uploads/documentos/<?php echo htmlspecialchars($doc['sigla_categoria']); ?>/<?php echo urlencode($doc['arquivo_documento']); ?>" target="_blank" class="btn btn-outline-secondary" title="Visualizar"><i class="bi bi-eye"></i></a>
                                         <?php else: ?>
                                             <button class="btn btn-sm btn-outline-secondary disabled" style="opacity: 0.3;"><i class="bi bi-eye-slash"></i></button>
                                         <?php endif; ?>
-                                        <button type="button" class="btn btn-outline-info" title="Histórico" data-bs-toggle="modal" data-bs-target="#modalHistorico" data-id="<?php echo $doc['id_documento']; ?>"><i class="bi bi-clock-history"></i></button>
+                                        <button type="button" class="btn btn-outline-info" title="Histórico" data-bs-toggle="modal" data-bs-target="#modalHistorico" data-id="<?php echo $doc['id_documento']; ?>"><i class="bi bi-clock-history"></i></button>                                        
                                         <?php if ($filtro_status == 3): // Ações para Obsoletos ?>
-                                            <button type="button" class="btn btn-outline-success" title="Restaurar Documento"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                            <button type="button" class="btn btn-outline-success" title="Restaurar Documento" data-bs-toggle="modal" data-bs-target="#modalRestaurar" data-id="<?php echo $doc['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($doc['nome_documento']); ?>"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                            <button type="button" class="btn btn-outline-danger" title="Excluir Permanentemente" data-bs-toggle="modal" data-bs-target="#modalExcluir" data-id="<?php echo $doc['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($doc['nome_documento']); ?>"><i class="bi bi-trash"></i></button>
                                         <?php else: // Ações para Ativos/Em Revisão ?>
-                                            <a href="index.php?modulo=documentos_editar&id=<?php echo $doc['id_documento']; ?>" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <?php
+                                            // Constrói a query string com os filtros atuais para manter o estado ao voltar
+                                            $query_params = http_build_query(array_filter(array('status' => $filtro_status, 'categoria' => $filtro_categoria, 'distribuicao' => $filtro_distribuicao, 'busca' => $filtro_busca)));
+                                            $edit_link = "index.php?modulo=documentos_editar&id=" . $doc['id_documento'] . "&" . $query_params;
+                                            ?>
+                                            <a href="<?php echo $edit_link; ?>" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
                                             <button type="button" class="btn btn-outline-warning" title="Tornar Obsoleto" data-bs-toggle="modal" data-bs-target="#modalObsoleto" data-id="<?php echo $doc['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($doc['nome_documento']); ?>"><i class="bi bi-archive"></i></button>
                                             <button type="button" class="btn btn-outline-danger" title="Excluir" data-bs-toggle="modal" data-bs-target="#modalExcluir" data-id="<?php echo $doc['id_documento']; ?>" data-nome="<?php echo htmlspecialchars($doc['nome_documento']); ?>"><i class="bi bi-trash"></i></button>
                                         <?php endif; ?>
@@ -238,6 +261,28 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
     </div>
 </div>
 
+<!-- Modal Restaurar -->
+<div class="modal fade" id="modalRestaurar" tabindex="-1" aria-labelledby="modalRestaurarLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="index.php?modulo=documentos_restaurar">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="modalRestaurarLabel"><i class="bi bi-arrow-counterclockwise me-2"></i>Restaurar Documento</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Tem certeza que deseja restaurar o documento <strong id="nome-documento-restaurar"></strong> para o status "Em Vigor"?</p>
+          <input type="hidden" name="id_documento" id="id-documento-restaurar">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Sim, Restaurar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Excluir -->
 <div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -251,6 +296,7 @@ $filtro_busca     = isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '
           <p>Tem certeza que deseja excluir permanentemente o documento <strong id="nome-documento-excluir"></strong>?</p>
           <p class="text-danger small"><strong>Atenção:</strong> Esta ação é irreversível e o documento será removido do banco de dados sem deixar registro no histórico.</p>
           <input type="hidden" name="id_documento" id="id-documento-excluir">
+          <input type="hidden" name="filtro_status_retorno" value="<?php echo $filtro_status; ?>">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -291,7 +337,18 @@ document.addEventListener('DOMContentLoaded', function () {
     modalExcluir.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;
         document.getElementById('id-documento-excluir').value = button.getAttribute('data-id');
+        // Garante que o status de retorno seja o da aba atual, mesmo após a busca AJAX
+        var statusAtual = document.getElementById('filtroStatus').value;
+        document.querySelector('#modalExcluir input[name="filtro_status_retorno"]').value = statusAtual;
         document.getElementById('nome-documento-excluir').textContent = button.getAttribute('data-nome');
+    });
+
+    // Modal de Restauração
+    var modalRestaurar = document.getElementById('modalRestaurar');
+    modalRestaurar.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        document.getElementById('id-documento-restaurar').value = button.getAttribute('data-id');
+        document.getElementById('nome-documento-restaurar').textContent = button.getAttribute('data-nome');
     });
 
     // Funções para o Modal de PDF
@@ -315,5 +372,70 @@ document.addEventListener('DOMContentLoaded', function () {
             if (modalPdfInstance) modalPdfInstance.hide();
         }, 500);
     }
+});
+
+// Script para pesquisa dinâmica (live search) com AJAX
+document.addEventListener('DOMContentLoaded', function () {
+    var searchInput = document.getElementById('filtroBusca');
+    var selectFilters = document.querySelectorAll('.filtro-ajax');
+    var form = document.getElementById('form-filtros'); // O formulário de filtros
+    var typingTimer;
+    var doneTypingInterval = 500; // 0.5 segundos
+    var container = document.getElementById('tabela-documentos-container');
+    var requestInFlight = false; // Flag para evitar múltiplas requisições simultâneas
+
+    searchInput.addEventListener('keyup', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    });
+
+    function doneTyping() {
+        if (requestInFlight) return; // Se uma requisição já está em andamento, não faz outra
+
+        requestInFlight = true;
+        var formData = new FormData(form);
+
+        // Atualiza a URL da página sem recarregar, para que os filtros possam ser compartilhados
+        var newUrl = window.location.pathname + '?' + new URLSearchParams(formData).toString();
+        window.history.pushState({path: newUrl}, '', newUrl);
+
+        // Converte FormData para uma string de parâmetros para o fetch
+        var params = new URLSearchParams(formData).toString();
+        
+        // Adiciona um indicador de carregamento
+        container.style.opacity = '0.5';
+
+        fetch('views/documentos/documentos_tabela_ajax.php?' + params)
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+                container.style.opacity = '1';
+                requestInFlight = false;
+                // Re-anexa os listeners dos modais que estão dentro da tabela
+                rebindModalListeners();
+            })
+            .catch(error => {
+                console.error('Erro ao buscar os dados:', error);
+                container.style.opacity = '1';
+                requestInFlight = false;
+            });
+    }
+
+    // Função para re-anexar listeners dos modais após a atualização da tabela via AJAX
+    function rebindModalListeners() {
+        // Histórico
+        document.querySelectorAll('[data-bs-target="#modalHistorico"]').forEach(button => {
+            button.addEventListener('click', function() {
+                var docId = this.getAttribute('data-id');
+                carregarHistorico(docId);
+            });
+        });
+        // Adicionar aqui para outros modais se necessário (obsoleto, excluir)
+    }
+
+    // Adiciona o gatilho de busca para os filtros de select
+    selectFilters.forEach(function(select) {
+        select.addEventListener('change', doneTyping);
+    });
 });
 </script>

@@ -6,16 +6,21 @@ if (session_id() == "") {
 // Usa dirname(__FILE__) para garantir que o caminho seja absoluto e à prova de falhas no PHP 5.2
 require_once dirname(__FILE__) . '/config/conexao.php';
 
+// Executa rotinas de verificação (ex: ativar documentos agendados)
+require_once dirname(__FILE__) . '/config/rotinas_diarias.php';
+
 $modulo = isset($_GET['modulo']) ? $_GET['modulo'] : 'inicio';
 
 switch ($modulo) {
     case 'documentos':
         require_once dirname(__FILE__) . '/controllers/DocumentosController.php';
         $documentosCtrl = new DocumentosController($conexao);
-        $listaDocumentos = $documentosCtrl->gerenciarListagem();        
-        $formData = $documentosCtrl->exibirFormulario(); // CORREÇÃO PHP 5.2: Variável temporária para receber o array antes de pegar a chave
-        $listaCategorias = $formData['listaCategorias']; // Pega a lista de categorias para o filtro
-
+        $dados_listagem = $documentosCtrl->gerenciarListagem();
+        
+        $listaDocumentos = $dados_listagem['documentos'];
+        $listaCategorias = $dados_listagem['listaCategorias'];
+        $listaLocais = $dados_listagem['listaLocais'];
+        
         $page_title = 'SGQ - Gestão de Documentos';
         $page_content_file = dirname(__FILE__) . '/views/documentos/documentos_content.php';
         break;
@@ -68,12 +73,31 @@ switch ($modulo) {
     case 'documentos_sincronizar':
         require_once dirname(__FILE__) . '/controllers/DocumentosController.php';
         $documentosCtrl = new DocumentosController($conexao);
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // A lógica de sincronização será chamada aqui e retornará os resultados
-            $resultados = $documentosCtrl->sincronizarArquivos();
-        }
+        // O controller lida com o POST e retorna os resultados para a view
+        $resultados = $documentosCtrl->sincronizarArquivos();
         $page_title = 'SGQ - Sincronizar Arquivos';
         $page_content_file = dirname(__FILE__) . '/views/documentos/documentos_sincronizar.php';
+        break;
+
+    case 'documentos_obsoleto':
+        require_once dirname(__FILE__) . '/controllers/DocumentosController.php';
+        $documentosCtrl = new DocumentosController($conexao);
+        // O método já lida com o POST e redireciona
+        $documentosCtrl->tornarObsoleto();
+        break;
+
+    case 'documentos_excluir':
+        require_once dirname(__FILE__) . '/controllers/DocumentosController.php';
+        $documentosCtrl = new DocumentosController($conexao);
+        // O método já lida com o POST e redireciona
+        $documentosCtrl->excluirDocumento();
+        break;
+
+    case 'documentos_restaurar':
+        require_once dirname(__FILE__) . '/controllers/DocumentosController.php';
+        $documentosCtrl = new DocumentosController($conexao);
+        // O método já lida com o POST e redireciona
+        $documentosCtrl->restaurarDocumento();
         break;
 
     case 'siglas':
@@ -113,6 +137,18 @@ switch ($modulo) {
         $siglasCtrl->excluirSigla(); // O método já lida com o POST e redireciona
         break;
 
+    case 'siglas_obsoleto':
+        require_once dirname(__FILE__) . '/controllers/SiglasController.php';
+        $siglasCtrl = new SiglasController($conexao);
+        $siglasCtrl->tornarObsoleto(); // O método já lida com o POST e redireciona
+        break;
+
+    case 'siglas_restaurar':
+        require_once dirname(__FILE__) . '/controllers/SiglasController.php';
+        $siglasCtrl = new SiglasController($conexao);
+        $siglasCtrl->restaurarSigla(); // O método já lida com o POST e redireciona
+        break;
+
     case 'siglas_importar':
         require_once dirname(__FILE__) . '/controllers/SiglasController.php';
         $siglasCtrl = new SiglasController($conexao);
@@ -145,6 +181,55 @@ switch ($modulo) {
         require_once dirname(__FILE__) . '/fpdf/fpdf.php';
         require_once dirname(__FILE__) . '/views/siglas/gerar_pdf.php';
         exit();
+        break;
+
+    case 'usuarios':
+        require_once dirname(__FILE__) . '/controllers/UsuariosController.php';
+        $usuariosCtrl = new UsuariosController($conexao);
+        $listaUsuarios = $usuariosCtrl->gerenciarListagem();
+
+        $page_title = 'SGQ - Gestão de Usuários';
+        $page_content_file = dirname(__FILE__) . '/views/usuarios/usuarios_content.php';
+        break;
+
+    case 'usuarios_cadastrar':
+        require_once dirname(__FILE__) . '/controllers/UsuariosController.php';
+        $usuariosCtrl = new UsuariosController($conexao);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuariosCtrl->salvarNovoUsuario($_POST);
+        }
+        $formData = $usuariosCtrl->exibirFormulario();
+        $listaPerfis = $formData['listaPerfis'];
+        $listaLocais = $formData['listaLocais'];
+        $page_title = 'SGQ - Cadastrar Usuário';
+        $page_content_file = dirname(__FILE__) . '/views/usuarios/usuarios_form.php';
+        break;
+
+    case 'usuarios_editar':
+        require_once dirname(__FILE__) . '/controllers/UsuariosController.php';
+        $usuariosCtrl = new UsuariosController($conexao);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuariosCtrl->atualizarUsuario($_POST);
+        }
+        $id_usuario = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        $formData = $usuariosCtrl->exibirFormularioEdicao($id_usuario);
+        $usuario = $formData['usuario'];
+        $listaPerfis = $formData['listaPerfis'];
+        $listaLocais = $formData['listaLocais'];
+        $page_title = 'SGQ - Editar Usuário';
+        $page_content_file = dirname(__FILE__) . '/views/usuarios/usuarios_form.php';
+        break;
+
+    case 'usuarios_status':
+        require_once dirname(__FILE__) . '/controllers/UsuariosController.php';
+        $usuariosCtrl = new UsuariosController($conexao);
+        $usuariosCtrl->alterarStatus(); // Lida com POST e redireciona
+        break;
+
+    case 'usuarios_excluir':
+        require_once dirname(__FILE__) . '/controllers/UsuariosController.php';
+        $usuariosCtrl = new UsuariosController($conexao);
+        $usuariosCtrl->excluirUsuario(); // Lida com POST e redireciona
         break;
 
     case 'inicio':

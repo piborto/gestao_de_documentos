@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__) . '/../../config/conexao.php';
 require_once dirname(__FILE__) . '/../../models/SiglasModel.php';
 
 $id_sigla = isset($_GET['id']) ? intval($_GET['id']) : 0;

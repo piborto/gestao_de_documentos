@@ -1,5 +1,9 @@
 <?php
 // As inclusões do Model e FPDF são gerenciadas pelo index.php na rota 'siglas_pdf'
+if (!class_exists('FPDF')) {
+    // Se a classe FPDF não foi carregada, interrompe para evitar erro fatal.
+    die('Erro: A biblioteca FPDF não foi carregada. Verifique a rota no index.php.');
+}
 
 // O objeto $conexao já está disponível a partir do index.php
 $siglasModel = new SiglasModel($conexao);
@@ -117,7 +121,11 @@ $pdf->AddPage();
 
 // 4. Busca os dados e preenche o PDF
 $busca = isset($_GET['busca']) ? trim($_GET['busca']) : null;
-$listaSiglas = $siglasModel->listarSiglas($busca);
+$data_de = isset($_GET['data_de']) && !empty($_GET['data_de']) ? $_GET['data_de'] : null;
+$data_ate = isset($_GET['data_ate']) && !empty($_GET['data_ate']) ? $_GET['data_ate'] : null;
+
+// Passa todos os filtros para a busca, garantindo que o PDF reflita a tela
+$listaSiglas = $siglasModel->listarSiglas($busca, 1, $data_de, $data_ate); // Força status 1 (Em Vigor) para o PDF de siglas
 
 $pdf->SetFont('Arial', '', 9);
 $pdf->SetLineWidth(0.1);
