@@ -52,7 +52,13 @@ class DocumentosModel {
     /**
      * Busca os documentos com filtros dinâmicos
      */
-    public function listarDocumentos($id_status, $ids_categoria, $busca, $id_distribuicao) {
+    public function listarDocumentos($id_status, $ids_categoria, $busca, $id_distribuicao, $id_perfil_usuario, $id_local_usuario) {
+        // Regra de Negócio: Perfil 3 (Colaborador) SEMPRE vê apenas documentos "Em Vigor" (status 1).
+        // Esta regra sobrescreve qualquer filtro de status da tela.
+        if ($id_perfil_usuario == 3) {
+            $id_status = 1;
+        }
+
         $params = array(':id_status' => $id_status);
 
         $sql_select_base = "SELECT d.*, c.sigla_categoria, GROUP_CONCAT(l.nome_local ORDER BY l.nome_local ASC SEPARATOR ', ') AS locais_distribuicao";
@@ -78,6 +84,12 @@ class DocumentosModel {
         $sql = $sql_select_base . " " . $sql_from_base . " LEFT JOIN t_documento_local dl ON d.id_documento = dl.id_documento
                 LEFT JOIN t_local l ON dl.id_local = l.id_local
                 WHERE d.id_status = :id_status";
+
+        // Regra de Negócio: Filtra por unidade para perfis locais (RQ e Colaborador)
+        if (($id_perfil_usuario == 2 || $id_perfil_usuario == 3) && !empty($id_local_usuario)) {
+            $sql .= " AND d.id_local = :id_local_usuario AND c.escopo_categoria = 'SGQ UNIDADE'";
+            $params[':id_local_usuario'] = $id_local_usuario;
+        }
 
         if (!empty($ids_categoria)) {
             // Usa placeholders nomeados para evitar misturar com os posicionais
@@ -130,12 +142,26 @@ class DocumentosModel {
     /**
      * Busca todas as categorias de documentos
      */
-    public function listarCategorias() {
-        $stmt = $this->db->prepare("SELECT * FROM t_categoria ORDER BY nome_categoria ASC");
-        $stmt->execute();
+    public function listarCategorias($escopo = null, $idLocal = null) {
+        $sql = "SELECT c.* FROM t_categoria c";
+        $params = array();
+
+        if ($escopo !== null) {
+            $sql .= " WHERE c.escopo_categoria = :escopo";
+            $params[':escopo'] = $escopo;
+        }
+
+        if ($idLocal !== null) {
+            $sql .= empty($params) ? " WHERE" : " AND";
+            $sql .= " (c.id_local IS NULL OR c.id_local = :categoria_local)";
+            $params[':categoria_local'] = $idLocal;
+        }
+
+        $sql .= " ORDER BY nome_categoria ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         $categorias = $stmt->fetchAll();
 
-        // Converte os nomes para UTF-8, já que o banco está em latin1
         $categorias_utf8 = array();
         foreach ($categorias as $categoria) {
             $categoria['nome_categoria'] = utf8_encode($categoria['nome_categoria']);
@@ -167,9 +193,14 @@ class DocumentosModel {
     /**
      * Busca todos os locais de distribuição
      */
-    public function listarLocais() {
-        $stmt = $this->db->prepare("SELECT * FROM t_local ORDER BY nome_local ASC");
-        $stmt->execute();
+    public function listarLocais($idPerfil = null, $idLocal = null) {
+        if ((int)$idPerfil === 2 && $idLocal !== null) {
+            $stmt = $this->db->prepare("SELECT * FROM t_local WHERE id_local = :id_local ORDER BY nome_local ASC");
+            $stmt->execute(array(':id_local' => $idLocal));
+        } else {
+            $stmt = $this->db->prepare("SELECT * FROM t_local ORDER BY nome_local ASC");
+            $stmt->execute();
+        }
         $locais = $stmt->fetchAll();
 
         // Converte os nomes para UTF-8, pois o banco está em latin1
@@ -245,12 +276,22 @@ class DocumentosModel {
         return $categoria;
     }
 
-    public function getDocumentoPorId($id_documento) {
+    public function getDocumentoPorId($id_documento, $idPerfil = null, $idLocal = null) {
         $stmt = $this->db->prepare("SELECT d.*, c.sigla_categoria 
                                     FROM t_documento d
                                     JOIN t_categoria c ON d.id_categoria = c.id_categoria
                                     WHERE d.id_documento = :id");
-        $stmt->execute(array(':id' => $id_documento));
+        $params = array(':id' => $id_documento);
+        if ((int)$idPerfil === 2 && $idLocal !== null) {
+            $stmt = $this->db->prepare("SELECT d.*, c.sigla_categoria
+                                        FROM t_documento d
+                                        JOIN t_categoria c ON d.id_categoria = c.id_categoria
+                                                                                WHERE d.id_documento = :id
+                                                                                    AND d.id_local = :id_local
+                                                                                    AND c.escopo_categoria = 'SGQ UNIDADE'");
+            $params[':id_local'] = $idLocal;
+        }
+        $stmt->execute($params);
         $documento = $stmt->fetch();
 
         // Fecha o cursor da consulta anterior para permitir que novas consultas sejam executadas.
@@ -339,7 +380,8 @@ class DocumentosModel {
             ':data_vigor_documento' => isset($dados['data_vigor_documento']) ? $dados['data_vigor_documento'] : null,
             ':data_analise_documento' => isset($dados['data_analise_documento']) ? $dados['data_analise_documento'] : null,
             ':arquivo_documento' => isset($dados['arquivo_documento']) ? $dados['arquivo_documento'] : null,
-            ':sufixo_documento' => isset($dados['sufixo']) ? utf8_decode($dados['sufixo']) : null,
+            ':sufixo_documento' => isset($dados['sufixo']) ? utf8_decode($dados['sufixo']) : null, // Mantém o nome do campo do form
+            ':id_local' => isset($dados['id_local']) ? $dados['id_local'] : null,
             ':controle_documento' => isset($dados['controle_documento']) ? $dados['controle_documento'] : 0
         );
 
@@ -353,6 +395,7 @@ class DocumentosModel {
                     data_analise_documento = :data_analise_documento,
                     arquivo_documento = :arquivo_documento,
                     sufixo_documento = :sufixo_documento,
+                    id_local = :id_local,
                     controle_documento = :controle_documento
                 WHERE id_documento = :id_documento";
 
@@ -383,17 +426,18 @@ class DocumentosModel {
             ':data_vigor_documento' => isset($dados['data_vigor_documento']) ? $dados['data_vigor_documento'] : null,
             ':data_analise_documento' => isset($dados['data_analise_documento']) ? $dados['data_analise_documento'] : null,
             ':arquivo_documento' => isset($dados['arquivo_documento']) ? $dados['arquivo_documento'] : null,
-            ':controle_documento' => (isset($dados['tipo_manual']) && $dados['tipo_manual'] === 'Controlado') ? 1 : 0
+            ':controle_documento' => (isset($dados['tipo_manual']) && $dados['tipo_manual'] === 'Controlado') ? 1 : 0,
+            ':id_local' => isset($dados['id_local']) ? $dados['id_local'] : null
         );
 
         $sql = "INSERT INTO t_documento (
                     id_categoria, id_status, codigo_documento, nome_documento, ano_documento, 
                     autor_documento, revisao_documento, sufixo_documento, data_vigor_documento, 
-                    data_analise_documento, arquivo_documento, controle_documento
+                    data_analise_documento, arquivo_documento, controle_documento, id_local
                 ) VALUES (
                     :id_categoria, :id_status, :codigo_documento, :nome_documento, :ano_documento, 
                     :autor_documento, :revisao_documento, :sufixo_documento, :data_vigor_documento, 
-                    :data_analise_documento, :arquivo_documento, :controle_documento
+                    :data_analise_documento, :arquivo_documento, :controle_documento, :id_local
                 )";
 
         try {
@@ -405,6 +449,61 @@ class DocumentosModel {
             error_log("Erro ao salvar documento: " . $e->getMessage());
             return false;
         }
+    }
+
+    public function salvarMetadadosDocumento($id_documento, $metadados) {
+        if ($id_documento <= 0 || !is_array($metadados)) {
+            return false;
+        }
+
+        try {
+            $estrutura = $this->db->query('DESCRIBE t_documento_metadados')->fetchAll(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            error_log('Não foi possível consultar a estrutura de t_documento_metadados: ' . $e->getMessage());
+            return false;
+        }
+
+        $idColumn = $this->primeiraColuna($estrutura, array('id_documento', 'documento_id'));
+        $nomeColumn = $this->primeiraColuna($estrutura, array('nome_campo_interno', 'campo_interno', 'nome_campo', 'campo'));
+        $valorColumn = $this->primeiraColuna($estrutura, array('valor_metadado', 'valor_campo', 'valor', 'conteudo'));
+        if (!$idColumn || !$nomeColumn || !$valorColumn) {
+            error_log('t_documento_metadados não possui colunas de documento, campo e valor compatíveis.');
+            return false;
+        }
+
+        $tipoColumn = $this->primeiraColuna($estrutura, array('tipo_campo', 'tipo_metadado', 'tipo'));
+        $this->db->beginTransaction();
+        try {
+            $stmtDelete = $this->db->prepare('DELETE FROM t_documento_metadados WHERE `' . $idColumn . '` = :id_documento');
+            $stmtDelete->execute(array(':id_documento' => $id_documento));
+
+            $columns = array('`' . $idColumn . '`', '`' . $nomeColumn . '`', '`' . $valorColumn . '`');
+            if ($tipoColumn) $columns[] = '`' . $tipoColumn . '`';
+            $placeholders = array(':id_documento', ':nome_campo', ':valor');
+            if ($tipoColumn) $placeholders[] = ':tipo';
+            $sql = 'INSERT INTO t_documento_metadados (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ')';
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($metadados as $nome => $valor) {
+                if (is_array($valor) || trim((string)$valor) === '') continue;
+                $params = array(':id_documento' => $id_documento, ':nome_campo' => $nome, ':valor' => utf8_decode((string)$valor));
+                if ($tipoColumn) $params[':tipo'] = 'text';
+                $stmt->execute($params);
+            }
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            error_log('Erro ao salvar metadados do documento: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function primeiraColuna($colunas, $candidatas) {
+        foreach ($candidatas as $candidata) {
+            if (in_array($candidata, $colunas)) return $candidata;
+        }
+        return null;
     }
 
     /**
@@ -470,7 +569,7 @@ class DocumentosModel {
      * Busca documentos com data de análise vencida.
      * Considera documentos com status Ativo (1) ou Em Revisão (2).
      */
-    public function listarDocumentosVencidos() {
+    public function listarDocumentosVencidos($idPerfil = null, $idLocal = null) {
         $sql = "SELECT codigo_documento, nome_documento, data_analise_documento
                 FROM t_documento
                 WHERE data_analise_documento < CURDATE()
@@ -478,8 +577,13 @@ class DocumentosModel {
                   AND data_analise_documento IS NOT NULL
                   AND id_status IN (1, 2)
                 ORDER BY data_analise_documento ASC";
+            $params = array();
+            if ((int)$idPerfil === 2 && $idLocal !== null) {
+                $sql = str_replace('ORDER BY data_analise_documento ASC', "AND id_local = :id_local AND id_categoria IN (SELECT id_categoria FROM t_categoria WHERE escopo_categoria = 'SGQ UNIDADE') ORDER BY data_analise_documento ASC", $sql);
+                $params[':id_local'] = $idLocal;
+            }
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+            $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
@@ -487,29 +591,51 @@ class DocumentosModel {
      * Busca documentos com data de análise nos próximos 6 meses.
      * Considera documentos com status Ativo (1) ou Em Revisão (2).
      */
-    public function listarDocumentosProximosVencimento() {
+    public function listarDocumentosProximosVencimento($idPerfil = null, $idLocal = null) {
         $sql = "SELECT codigo_documento, nome_documento, data_analise_documento
                 FROM t_documento
                 WHERE data_analise_documento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)
                   AND data_analise_documento IS NOT NULL
                   AND id_status IN (1, 2)
                 ORDER BY data_analise_documento ASC";
+            $params = array();
+            if ((int)$idPerfil === 2 && $idLocal !== null) {
+                $sql = str_replace('ORDER BY data_analise_documento ASC', "AND id_local = :id_local AND id_categoria IN (SELECT id_categoria FROM t_categoria WHERE escopo_categoria = 'SGQ UNIDADE') ORDER BY data_analise_documento ASC", $sql);
+                $params[':id_local'] = $idLocal;
+            }
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+            $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
     /**
      * Busca documentos e siglas agendados para os próximos 30 dias.
      */
-    public function listarItensAgendados() {
+    public function listarItensAgendados($idPerfil = null, $idLocal = null) {
+        if ((int)$idPerfil === 2 && $idLocal !== null) {
+            $sql = "SELECT
+                        'Documento' as tipo,
+                        codigo_documento as codigo,
+                        nome_documento as nome,
+                        data_vigor_documento as data_vigor
+                    FROM t_documento
+                    WHERE id_status = 2
+                      AND data_vigor_documento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                      AND id_local = :rq_local
+                      AND id_categoria IN (SELECT id_categoria FROM t_categoria WHERE escopo_categoria = 'SGQ UNIDADE')
+                    ORDER BY data_vigor ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(array(':rq_local' => $idLocal));
+            return $stmt->fetchAll();
+        }
+
         $sql = "(SELECT 
                     'Documento' as tipo, 
                     codigo_documento as codigo, 
                     nome_documento as nome, 
                     data_vigor_documento as data_vigor 
                 FROM t_documento 
-                WHERE id_status = 2 AND data_vigor_documento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY))
+                                WHERE id_status = 2 AND data_vigor_documento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY))
                 UNION
                 (SELECT 
                     'Sigla' as tipo, 
@@ -521,7 +647,7 @@ class DocumentosModel {
                 ORDER BY data_vigor ASC";
         
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+            $stmt->execute();
         // A conversão para UTF-8 já é feita no controller que chama esta função.
         return $stmt->fetchAll();
     }
@@ -616,5 +742,56 @@ class DocumentosModel {
     public function excluirDocumento($id_documento) {
         $stmt = $this->db->prepare("DELETE FROM t_documento WHERE id_documento = :id");
         return $stmt->execute(array(':id' => $id_documento));
+    }
+
+    /**
+     * Lista o status dos documentos agrupados por unidade para o dashboard.
+     */
+    public function listarStatusDocumentosPorUnidade($idPerfil = null, $idLocal = null) {
+        $sql = "SELECT 
+                    l.id_local,
+                    l.nome_local,
+                    COUNT(d.id_documento) AS total_docs,
+                    SUM(CASE WHEN d.id_status IN (1, 2) THEN 1 ELSE 0 END) AS docs_vigentes,
+                    SUM(CASE WHEN d.id_status = 3 THEN 1 ELSE 0 END) AS docs_obsoletos
+                FROM 
+                    t_local l
+                LEFT JOIN 
+                    t_documento d ON l.id_local = d.id_local
+                GROUP BY 
+                    l.id_local, l.nome_local
+                ORDER BY 
+                    l.nome_local ASC";
+        $params = array();
+        if ((int)$idPerfil === 2 && $idLocal !== null) {
+            $sql = str_replace('GROUP BY', 'WHERE l.id_local = :id_local GROUP BY', $sql);
+            $params[':id_local'] = $idLocal;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $unidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $unidades_utf8 = array();
+        foreach ($unidades as $unidade) {
+            $unidade['nome_local'] = utf8_encode($unidade['nome_local']);
+            $unidades_utf8[] = $unidade;
+        }
+        return $unidades_utf8;
+    }
+
+    /**
+     * Retorna o total de documentos com status "Em Vigor" (1).
+     */
+    public function getTotalDocumentosEmVigor($idPerfil = null, $idLocal = null) {
+        $sql = "SELECT COUNT(id_documento) FROM t_documento WHERE id_status = 1";
+        $params = array();
+        if ((int)$idPerfil === 2 && $idLocal !== null) {
+            $sql .= " AND id_local = :id_local AND id_categoria IN (SELECT id_categoria FROM t_categoria WHERE escopo_categoria = 'SGQ UNIDADE')";
+            $params[':id_local'] = $idLocal;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn();
     }
 }

@@ -234,5 +234,15 @@ class SiglasModel {
         }
         return $historico_utf8;
     }
+
+    /**
+     * Retorna o total de siglas com status "Em Vigor" (1).
+     */
+    public function getTotalSiglasEmVigor() {
+        $sql = "SELECT COUNT(id_sigla) FROM t_sigla WHERE id_status = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
 }
 ?>

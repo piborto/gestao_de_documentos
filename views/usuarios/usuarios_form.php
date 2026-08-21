@@ -28,7 +28,7 @@ $page_subtitle = $is_edit ? 'Editar Usuário' : 'Cadastrar Usuário';
                 </div>
 
                 <div class="col-md-4">
-                    <label for="login_usuario" class="form-label">Login de Rede <span class="text-danger">*</span></label>
+                    <label for="login_usuario" class="form-label">Nome Usuário <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="login_usuario" name="login_usuario" value="<?php echo $is_edit ? htmlspecialchars($usuario['login_usuario']) : ''; ?>" required>
                 </div>
 

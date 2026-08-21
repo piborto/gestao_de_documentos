@@ -18,6 +18,7 @@
                         <th style="width: 15%;">Perfil</th>
                         <th style="width: 15%;">Unidade / Local</th>
                         <th class="text-center" style="width: 5%;">Status</th>
+                        <th style="width: 15%;">Data de Cadastro</th>
                         <th class="text-end pe-3" style="width: 10%;">Ações</th>
                     </tr>
                 </thead>
@@ -40,6 +41,7 @@
                                         <span class="badge bg-danger">Inativo</span>
                                     <?php endif; ?>
                                 </td>
+                                <td><?php echo !empty($usuario['data_cadastro_usuario']) ? date('d/m/Y H:i', strtotime($usuario['data_cadastro_usuario'])) : '-'; ?></td>
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
                                         <a href="index.php?modulo=usuarios_editar&id=<?php echo $usuario['id_usuario_qualidade']; ?>" class="btn btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>

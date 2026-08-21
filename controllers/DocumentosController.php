@@ -3,13 +3,36 @@
 
 require_once dirname(__FILE__) . '/../config/conexao.php';
 require_once dirname(__FILE__) . '/../models/DocumentosModel.php';
+require_once dirname(__FILE__) . '/../models/ConfigCamposModel.php';
 
 class DocumentosController {
     private $model;
+    private $configModel;
 
     public function __construct($conexao) {
         // Inicializa o Model repassando a conexão PDO
         $this->model = new DocumentosModel($conexao);
+        $this->configModel = new ConfigCamposModel($conexao);
+    }
+
+    public function obterCamposConfiguradosAjax() {
+        $id_categoria = isset($_GET['id_categoria']) ? intval($_GET['id_categoria']) : 0;
+        $id_local = isset($_GET['id_local']) ? intval($_GET['id_local']) : 0;
+        $id_perfil = isset($_SESSION['id_perfil']) ? intval($_SESSION['id_perfil']) : 0;
+
+        if ($id_perfil == 2 || $id_perfil == 3) {
+            $id_local = isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : 0;
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+        if ($id_categoria <= 0 || $id_local <= 0 || (($id_perfil == 2 || $id_perfil == 3) && !$this->configModel->categoriaDisponivelParaLocal($id_categoria, $id_local))) {
+            echo json_encode(array('sucesso' => false, 'campos' => array()));
+            exit();
+        }
+
+        $campos = $this->configModel->getConfigCampos($id_local, $id_categoria);
+        echo json_encode(array('sucesso' => true, 'campos' => $campos));
+        exit();
     }
 
     /**
@@ -21,6 +44,10 @@ class DocumentosController {
         $id_categoria = (isset($_GET['categoria']) && $_GET['categoria'] !== '') ? intval($_GET['categoria']) : null;
         $busca        = isset($_GET['busca']) ? trim($_GET['busca']) : null;
         $id_distribuicao = (isset($_GET['distribuicao']) && $_GET['distribuicao'] !== '') ? intval($_GET['distribuicao']) : null;
+
+        // Captura o perfil e local do usuário logado para aplicar as regras de visibilidade
+        $id_perfil_usuario = isset($_SESSION['id_perfil']) ? intval($_SESSION['id_perfil']) : null;
+        $id_local_usuario = isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : null;
 
         // Lógica para tratar categorias pai
         $ids_para_busca = array();
@@ -34,9 +61,12 @@ class DocumentosController {
 
         // Executa a busca no Model com os parâmetros parametrizados
         return array(
-            'documentos' => $this->model->listarDocumentos($id_status, $ids_para_busca, $busca, $id_distribuicao),
-            'listaCategorias' => $this->model->listarCategorias(),
-            'listaLocais' => $this->model->listarLocais()
+            'documentos' => $this->model->listarDocumentos($id_status, $ids_para_busca, $busca, $id_distribuicao, $id_perfil_usuario, $id_local_usuario),
+            'listaCategorias' => $this->model->listarCategorias(
+                ($id_perfil_usuario == 2 || $id_perfil_usuario == 3) ? 'SGQ UNIDADE' : null,
+                ($id_perfil_usuario == 2 || $id_perfil_usuario == 3) ? $id_local_usuario : null
+            ),
+            'listaLocais' => $this->model->listarLocais($id_perfil_usuario, $id_local_usuario)
         );
     }
 
@@ -44,10 +74,22 @@ class DocumentosController {
      * Exibe o formulário de cadastro/edição
      */
     public function exibirFormulario() {
+        $escopo_categorias = null;
+        $id_local_categorias = null;
+        // Se for RQ da Unidade, só pode ver categorias do escopo da unidade
+        if (isset($_SESSION['id_perfil']) && $_SESSION['id_perfil'] == 2) {
+            $escopo_categorias = 'SGQ UNIDADE';
+            $id_local_categorias = isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : null;
+        } elseif (isset($_SESSION['id_perfil']) && $_SESSION['id_perfil'] == 3) {
+            $escopo_categorias = 'SGQ UNIDADE';
+            $id_local_categorias = isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : null;
+        }
+
         // Busca a lista de categorias para popular o <select> no formulário
         return array(
-            'listaCategorias' => $this->model->listarCategorias(),
-            'listaLocais' => $this->model->listarLocais()
+            // Passa o escopo para filtrar as categorias, se aplicável
+            'listaCategorias' => $this->model->listarCategorias($escopo_categorias, $id_local_categorias),
+            'listaLocais' => $this->model->listarLocais($this->getPerfilAtual(), $this->getLocalAtual())
         );
     }
 
@@ -56,9 +98,13 @@ class DocumentosController {
             header('Location: index.php?modulo=documentos&erro=id_invalido');
             exit();
         }
-        $documento = $this->model->getDocumentoPorId($id_documento);
+        $documento = $this->model->getDocumentoPorId($id_documento, $this->getPerfilAtual(), $this->getLocalAtual());
         if (!$documento) {
             header('Location: index.php?modulo=documentos&erro=nao_encontrado');
+            exit();
+        }
+        if (!$this->podeGerirDocumento($documento)) {
+            header('Location: index.php?modulo=documentos&erro=acesso_negado');
             exit();
         }
         $formData = $this->exibirFormulario();
@@ -70,7 +116,7 @@ class DocumentosController {
      * Busca os dados para os cards de notificação do painel principal.
      */
     public function obterNotificacoes() {
-        $agendados = $this->model->listarItensAgendados();
+        $agendados = $this->model->listarItensAgendados($this->getPerfilAtual(), $this->getLocalAtual());
         $agendados_utf8 = array();
         foreach ($agendados as $item) {
             $item['codigo'] = utf8_encode($item['codigo']);
@@ -82,11 +128,41 @@ class DocumentosController {
             $agendados_utf8[] = $item;
         }
 
+        $vencidos = $this->model->listarDocumentosVencidos($this->getPerfilAtual(), $this->getLocalAtual());
+        $vencidos_utf8 = array();
+        foreach ($vencidos as $doc) {
+            $doc['codigo_documento'] = utf8_encode($doc['codigo_documento']);
+            $doc['nome_documento'] = utf8_encode($doc['nome_documento']);
+            $vencidos_utf8[] = $doc;
+        }
+
+        $proximos = $this->model->listarDocumentosProximosVencimento($this->getPerfilAtual(), $this->getLocalAtual());
+        $proximos_utf8 = array();
+        foreach ($proximos as $doc) {
+            $doc['codigo_documento'] = utf8_encode($doc['codigo_documento']);
+            $doc['nome_documento'] = utf8_encode($doc['nome_documento']);
+            $proximos_utf8[] = $doc;
+        }
+
         return array(
-            'vencidos' => $this->model->listarDocumentosVencidos(),
-            'proximos' => $this->model->listarDocumentosProximosVencimento(),
+            'vencidos' => $vencidos_utf8,
+            'proximos' => $proximos_utf8,
             'agendados' => $agendados_utf8
         );
+    }
+
+    /**
+     * Busca os dados para o dashboard de unidades.
+     */
+    public function obterDadosDashboardUnidades() {
+        return $this->model->listarStatusDocumentosPorUnidade($this->getPerfilAtual(), $this->getLocalAtual());
+    }
+
+    /**
+     * Retorna o total de documentos em vigor.
+     */
+    public function getTotalDocumentosEmVigor() {
+        return $this->model->getTotalDocumentosEmVigor($this->getPerfilAtual(), $this->getLocalAtual());
     }
 
     /**
@@ -122,6 +198,14 @@ class DocumentosController {
         if (empty($postData['id_categoria']) || !isset($fileData['arquivo_documento']) || $fileData['arquivo_documento']['error'] !== UPLOAD_ERR_OK) {
             header('Location: index.php?modulo=documentos&erro=dados_invalidos');
             exit();
+        }
+
+        // Regra de Negócio: Força o id_local para o RQ da Unidade
+        if (isset($_SESSION['id_perfil']) && $_SESSION['id_perfil'] == 2) {
+            $postData['id_local'] = isset($_SESSION['id_local']) ? $_SESSION['id_local'] : null;
+            $postData = $this->limitarDistribuicaoRq($postData);
+        } else {
+            $postData['id_local'] = isset($postData['id_local']) && !empty($postData['id_local']) ? $postData['id_local'] : null;
         }
 
         // --- 2. Get Category Info ---
@@ -193,6 +277,7 @@ class DocumentosController {
         $id_documento = $this->model->salvarDocumento($postData);
 
         if ($id_documento) {
+            $this->salvarMetadadosDoFormulario($id_documento, $postData);
             if (!empty($postData['distribuicao'])) {
                 $this->model->vincularLocais($id_documento, $postData['distribuicao'], (isset($postData['numero_manual']) ? $postData['numero_manual'] : array()));
             }
@@ -215,10 +300,22 @@ class DocumentosController {
         }
 
         // Busca os dados atuais do documento para obter a sigla da categoria
-        $doc_atual = $this->model->getDocumentoPorId($id_documento);
+        $doc_atual = $this->model->getDocumentoPorId($id_documento, $this->getPerfilAtual(), $this->getLocalAtual());
         if (!$doc_atual) {
              header('Location: index.php?modulo=documentos&erro=nao_encontrado');
              exit();
+        }
+           if (!$this->podeGerirDocumento($doc_atual)) {
+               header('Location: index.php?modulo=documentos&erro=acesso_negado');
+               exit();
+           }
+
+        // Regra de Negócio: Força o id_local para o RQ da Unidade
+        if (isset($_SESSION['id_perfil']) && $_SESSION['id_perfil'] == 2) {
+            $postData['id_local'] = isset($_SESSION['id_local']) ? $_SESSION['id_local'] : null;
+            $postData = $this->limitarDistribuicaoRq($postData);
+        } else {
+            $postData['id_local'] = isset($postData['id_local']) && !empty($postData['id_local']) ? $postData['id_local'] : null;
         }
 
         // Força o código 'CA' para a categoria Calendário no backend para garantir a regra de negócio
@@ -291,6 +388,7 @@ class DocumentosController {
         $sucesso = $this->model->atualizarDocumento($id_documento, $postData);
 
         if ($sucesso) {
+            $this->salvarMetadadosDoFormulario($id_documento, $postData);
             $this->model->logHistorico("Documento Editado", $justificativa, $id_usuario, $id_documento);
             
             // Atualiza os locais de distribuição, incluindo os números de cópia para manuais
@@ -461,7 +559,8 @@ class DocumentosController {
             $id_usuario = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : 1; // 1 como fallback para 'Sistema'
 
             if ($id_documento > 0 && !empty($justificativa)) {
-                $sucesso = $this->model->tornarObsoleto($id_documento, $justificativa, $id_usuario);
+                $documento = $this->model->getDocumentoPorId($id_documento, $this->getPerfilAtual(), $this->getLocalAtual());
+                $sucesso = ($documento && $this->podeGerirDocumento($documento)) ? $this->model->tornarObsoleto($id_documento, $justificativa, $id_usuario) : false;
                 if ($sucesso) {
                     header('Location: index.php?modulo=documentos&status=3&sucesso=obsoleto'); // status 3 = Obsoletos
                 } else {
@@ -480,7 +579,8 @@ class DocumentosController {
             $id_usuario = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : 1;
 
             if ($id_documento > 0) {
-                $sucesso = $this->model->restaurarDocumento($id_documento, $id_usuario);
+                $documento = $this->model->getDocumentoPorId($id_documento, $this->getPerfilAtual(), $this->getLocalAtual());
+                $sucesso = ($documento && $this->podeGerirDocumento($documento)) ? $this->model->restaurarDocumento($id_documento, $id_usuario) : false;
                 if ($sucesso) {
                     header('Location: index.php?modulo=documentos&status=1&sucesso=restaurado'); // status 1 = Em Vigor
                 } else {
@@ -499,7 +599,10 @@ class DocumentosController {
             $status_retorno = isset($_POST['filtro_status_retorno']) ? intval($_POST['filtro_status_retorno']) : 1;
 
             if ($id_documento > 0) {
-                $this->model->excluirDocumento($id_documento);
+                $documento = $this->model->getDocumentoPorId($id_documento, $this->getPerfilAtual(), $this->getLocalAtual());
+                if ($documento && $this->podeGerirDocumento($documento)) {
+                    $this->model->excluirDocumento($id_documento);
+                }
             }
 
             // Redireciona de volta para a aba correta (Em Vigor ou Obsoletos)
@@ -627,6 +730,59 @@ class DocumentosController {
             return 'relatorios';
         }
         return 'documentos'; // Padrão
+    }
+
+    private function getPerfilAtual() {
+        return isset($_SESSION['id_perfil']) ? intval($_SESSION['id_perfil']) : null;
+    }
+
+    private function getLocalAtual() {
+        return isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : null;
+    }
+
+    private function podeGerirDocumento($documento) {
+        if ($this->getPerfilAtual() !== 2) {
+            return true;
+        }
+        return isset($documento['id_local']) && $documento['id_local'] !== null && (int)$documento['id_local'] === $this->getLocalAtual();
+    }
+
+    private function limitarDistribuicaoRq($postData) {
+        if ($this->getPerfilAtual() === 2 && $this->getLocalAtual() !== null) {
+            $postData['distribuicao'] = array($this->getLocalAtual());
+            $postData['numero_manual'] = isset($postData['numero_manual']) && is_array($postData['numero_manual']) && isset($postData['numero_manual'][$this->getLocalAtual()])
+                ? array($this->getLocalAtual() => $postData['numero_manual'][$this->getLocalAtual()]) : array();
+        }
+        return $postData;
+    }
+
+    private function salvarMetadadosDoFormulario($idDocumento, $postData) {
+        $idLocal = isset($postData['id_local']) ? intval($postData['id_local']) : $this->getLocalAtual();
+        $idCategoria = isset($postData['id_categoria']) ? intval($postData['id_categoria']) : 0;
+        if ($idDocumento <= 0 || $idLocal <= 0 || $idCategoria <= 0) return;
+
+        $camposConfigurados = $this->configModel->getConfigCampos($idLocal, $idCategoria);
+        $metadados = isset($postData['metadados']) && is_array($postData['metadados']) ? $postData['metadados'] : array();
+        $mapaValores = array(
+            'sufixo_documento' => 'sufixo',
+            'controle_documento' => 'tipo_manual'
+        );
+        foreach ($camposConfigurados as $campo) {
+            $nome = $campo['nome_campo_interno'];
+            if (isset($mapaValores[$nome])) {
+                $origem = $mapaValores[$nome];
+                if (isset($postData[$origem])) $metadados[$nome] = $postData[$origem];
+            } elseif (isset($postData[$nome])) {
+                $metadados[$nome] = $postData[$nome];
+            }
+        }
+        if (isset($postData['distribuicao']) && is_array($postData['distribuicao'])) {
+            $metadados['distribuicao'] = implode(',', $postData['distribuicao']);
+        }
+        if (isset($postData['arquivo_documento']) && is_string($postData['arquivo_documento'])) {
+            $metadados['arquivo_documento'] = $postData['arquivo_documento'];
+        }
+        $this->model->salvarMetadadosDocumento($idDocumento, $metadados);
     }
 
     private function mapearDadosLinha($data, $tipo) {

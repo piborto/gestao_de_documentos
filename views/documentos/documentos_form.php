@@ -38,7 +38,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                 <!-- Categoria (Sempre visível) -->
                 <div class="col-md-6">
                     <label for="id_categoria" class="form-label">Categoria <span class="text-danger">*</span></label>
-                    <select id="id_categoria" name="id_categoria" class="form-select" required onchange="atualizarCamposDinamicos()">
+                    <select id="id_categoria" name="id_categoria" class="form-select" required onchange="carregarCamposConfigurados()">
                         <option value="">Selecione...</option>
                         <?php foreach ($listaCategorias as $categoria): ?>
                             <option value="<?php echo $categoria['id_categoria']; ?>" data-sigla="<?php echo htmlspecialchars($categoria['sigla_categoria']); ?>" <?php echo ($is_edit && $documento['id_categoria'] == $categoria['id_categoria']) ? 'selected' : ''; ?>>
@@ -47,6 +47,8 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <div class="col-12" id="campos-dinamicos-container" aria-live="polite"></div>
 
                 <!-- Tipo de Manual (MQ, MS) -->
                 <div class="col-md-6 campo-dinamico" id="div-tipo_manual" style="display: none;">
@@ -170,6 +172,73 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
         </form>
     </div>
 </div>
+
+<script>
+function carregarCamposConfigurados() {
+    var categoria = document.getElementById('id_categoria');
+    var container = document.getElementById('campos-dinamicos-container');
+    if (!categoria || !container || !categoria.value) {
+        if (container) container.innerHTML = '';
+        return;
+    }
+
+    var idLocal = <?php echo isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : 0; ?>;
+    container.innerHTML = '<div class="text-muted small py-2"><span class="spinner-border spinner-border-sm me-2"></span>Carregando campos...</div>';
+
+    fetch('index.php?modulo=documentos_campos_ajax&id_categoria=' + encodeURIComponent(categoria.value) + '&id_local=' + idLocal)
+        .then(function (response) { return response.json(); })
+        .then(function (resultado) {
+            if (!resultado.sucesso) throw new Error('Falha ao carregar campos');
+            var campos = resultado.campos || [];
+            var mapa = {
+                'codigo_documento': 'div-codigo', 'nome_documento': 'div-nome',
+                'autor_documento': 'div-autor', 'revisao_documento': 'div-revisao',
+                'sufixo_documento': 'div-sufixo', 'sufixo': 'div-sufixo',
+                'ano_documento': 'div-ano', 'data_vigor_documento': 'div-vigor',
+                'data_analise_documento': 'div-analise', 'arquivo_documento': 'div-arquivo',
+                'distribuicao': 'div-distribuicao', 'controle_documento': 'div-tipo_manual'
+            };
+            var htmlExtra = '';
+            campos.forEach(function (campo) {
+                var nome = campo.nome_campo_interno;
+                var blocoId = mapa[nome];
+                var bloco = blocoId ? document.getElementById(blocoId) : null;
+                var visivel = parseInt(campo.visivel, 10) === 1;
+                var obrigatorio = parseInt(campo.obrigatorio, 10) === 1;
+                if (bloco) {
+                    bloco.style.display = visivel ? '' : 'none';
+                    bloco.querySelectorAll('input, select, textarea').forEach(function (input) {
+                        input.disabled = !visivel;
+                        input.required = visivel && obrigatorio;
+                    });
+                    var label = bloco.querySelector('label');
+                    if (label && visivel) label.innerHTML = escapeCamposHtml(campo.rotulo_personalizado || nome) + (obrigatorio ? ' <span class="text-danger">*</span>' : '');
+                } else if (visivel && nome !== 'id_local') {
+                    var tipo = campo.tipo_campo || 'text';
+                    if (['text', 'number', 'date', 'email', 'file'].indexOf(tipo) === -1) tipo = 'text';
+                    htmlExtra += '<div class="col-md-6 mb-3"><label class="form-label" for="metadado_' + escapeCamposHtml(nome) + '">' + escapeCamposHtml(campo.rotulo_personalizado || nome) + (obrigatorio ? ' <span class="text-danger">*</span>' : '') + '</label><input type="' + tipo + '" class="form-control" id="metadado_' + escapeCamposHtml(nome) + '" name="metadados[' + escapeCamposHtml(nome) + ']"' + (obrigatorio ? ' required' : '') + '></div>';
+                }
+            });
+            container.innerHTML = htmlExtra;
+            if (!htmlExtra) container.innerHTML = '<div class="text-muted small">Nenhum campo personalizado adicional.</div>';
+        })
+        .catch(function () {
+            container.innerHTML = '<div class="alert alert-warning py-2">Não foi possível carregar a configuração dos campos.</div>';
+        });
+}
+
+function escapeCamposHtml(valor) {
+    return String(valor).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var categoria = document.getElementById('id_categoria');
+    if (categoria) {
+        categoria.addEventListener('change', carregarCamposConfigurados);
+        if (categoria.value) carregarCamposConfigurados();
+    }
+});
+</script>
 
 <?php if ($is_edit): ?>
 <!-- Modal Tornar Obsoleto -->

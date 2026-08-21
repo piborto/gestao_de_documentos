@@ -26,6 +26,12 @@ $query_params_string = http_build_query(array_filter(array(
     </div>
 </div>
 
+<div class="d-flex justify-content-end mb-2">
+    <span class="badge bg-primary rounded-pill px-3 py-2">
+        <?php echo isset($total_siglas_vigor) ? $total_siglas_vigor : '0'; ?> Sigla(s) em Vigor
+    </span>
+</div>
+
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-3">
         <form id="form-filtros" method="GET" action="index.php" class="row g-2 align-items-end">

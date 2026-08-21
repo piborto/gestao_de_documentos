@@ -40,6 +40,13 @@ class SiglasController {
         return array('sigla' => $sigla);
     }
 
+    /**
+     * Retorna o total de siglas em vigor.
+     */
+    public function getTotalSiglasEmVigor() {
+        return $this->model->getTotalSiglasEmVigor();
+    }
+
     public function salvarNovaSigla($postData) {
         $hoje = date('Y-m-d');
         $data_sigla = $postData['data_sigla'];

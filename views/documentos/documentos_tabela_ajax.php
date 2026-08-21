@@ -6,6 +6,11 @@
 require_once dirname(__FILE__) . '/../../config/conexao.php';
 require_once dirname(__FILE__) . '/../../models/DocumentosModel.php';
 
+// Inicia a sessão para obter os dados do usuário, se não estiver iniciada
+if (session_id() == "") {
+    session_start();
+}
+
 // --- Lógica de busca (semelhante ao DocumentosController) ---
 $model = new DocumentosModel($conexao);
 
@@ -13,6 +18,10 @@ $filtro_status    = isset($_GET['status']) ? intval($_GET['status']) : 1;
 $filtro_categoria = (isset($_GET['categoria']) && $_GET['categoria'] !== '') ? intval($_GET['categoria']) : null;
 $filtro_busca     = isset($_GET['busca']) ? trim($_GET['busca']) : null;
 $filtro_distribuicao = (isset($_GET['distribuicao']) && $_GET['distribuicao'] !== '') ? intval($_GET['distribuicao']) : null;
+
+// Captura o perfil e local do usuário logado para aplicar as regras de visibilidade
+$id_perfil_usuario = isset($_SESSION['id_perfil']) ? intval($_SESSION['id_perfil']) : null;
+$id_local_usuario = isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : null;
 
 $ids_para_busca = array();
 if ($filtro_categoria !== null) {
@@ -23,7 +32,7 @@ if ($filtro_categoria !== null) {
     }
 }
 
-$listaDocumentos = $model->listarDocumentos($filtro_status, $ids_para_busca, $filtro_busca, $filtro_distribuicao);
+$listaDocumentos = $model->listarDocumentos($filtro_status, $ids_para_busca, $filtro_busca, $filtro_distribuicao, $id_perfil_usuario, $id_local_usuario);
 
 ?>
 <div class="table-responsive">

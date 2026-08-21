@@ -9,11 +9,11 @@ class UsuariosController {
         $this->model = new UsuariosModel($conexao);
     }
 
-    /**
+    /** 
      * Gerencia a listagem de usuários.
      */
     public function gerenciarListagem() {
-        return $this->model->listarUsuarios();
+        return $this->model->listarUsuarios($this->getLocalEscopo());
     }
 
     private function getUsuarioId() {
@@ -21,9 +21,19 @@ class UsuariosController {
     }
 
     public function exibirFormulario() {
+        $listaPerfis = $this->model->listarPerfis();
+        if ($this->isRq()) {
+            $perfisLocais = array();
+            foreach ($listaPerfis as $perfil) {
+                if (in_array((int)$perfil['id_perfil'], array(2, 3))) {
+                    $perfisLocais[] = $perfil;
+                }
+            }
+            $listaPerfis = $perfisLocais;
+        }
         return array(
-            'listaPerfis' => $this->model->listarPerfis(),
-            'listaLocais' => $this->model->listarLocais()
+            'listaPerfis' => $listaPerfis,
+            'listaLocais' => $this->isRq() ? $this->model->listarLocais($this->getLocalEscopo()) : $this->model->listarLocais()
         );
     }
 
@@ -32,7 +42,7 @@ class UsuariosController {
             header('Location: index.php?modulo=usuarios&erro=id_invalido');
             exit();
         }
-        $usuario = $this->model->getUsuarioPorId($id);
+        $usuario = $this->model->getUsuarioPorId($id, $this->getLocalEscopo());
         if (!$usuario) {
             header('Location: index.php?modulo=usuarios&erro=nao_encontrado');
             exit();
@@ -43,7 +53,14 @@ class UsuariosController {
     }
 
     public function salvarNovoUsuario($postData) {
-        $sucesso = $this->model->salvarUsuario($postData);
+        if ($this->isRq()) {
+            if (!isset($postData['id_perfil']) || !in_array((int)$postData['id_perfil'], array(2, 3))) {
+                header('Location: index.php?modulo=usuarios_cadastrar&erro=perfil_invalido');
+                exit();
+            }
+            $postData['id_local'] = $this->getLocalEscopo();
+        }
+        $sucesso = $this->model->salvarUsuario($postData, $this->getLocalEscopo());
         if ($sucesso) {
             header('Location: index.php?modulo=usuarios&sucesso=cadastro');
         } else {
@@ -61,7 +78,14 @@ class UsuariosController {
             exit();
         }
 
-        $sucesso = $this->model->atualizarUsuario($id_usuario, $postData);
+        if ($this->isRq()) {
+            if (!isset($postData['id_perfil']) || !in_array((int)$postData['id_perfil'], array(2, 3))) {
+                header('Location: index.php?modulo=usuarios_editar&id=' . $id_usuario . '&erro=perfil_invalido');
+                exit();
+            }
+            $postData['id_local'] = $this->getLocalEscopo();
+        }
+        $sucesso = $this->model->atualizarUsuario($id_usuario, $postData, $this->getLocalEscopo());
 
         if ($sucesso) {
             $docsModel = new DocumentosModel($this->model->getDb());
@@ -80,7 +104,7 @@ class UsuariosController {
             $justificativa = isset($_POST['justificativa']) ? trim($_POST['justificativa']) : '';
 
             if ($id_usuario > 0 && ($novo_status === 0 || $novo_status === 1)) {
-                $sucesso = $this->model->alterarStatusUsuario($id_usuario, $novo_status);
+                $sucesso = $this->model->alterarStatusUsuario($id_usuario, $novo_status, $this->getLocalEscopo());
                 if ($sucesso) {
                     if ($novo_status === 0 && !empty($justificativa)) { // Log apenas na desativação
                         $docsModel = new DocumentosModel($this->model->getDb());
@@ -104,7 +128,7 @@ class UsuariosController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_usuario = isset($_POST['id_usuario']) ? intval($_POST['id_usuario']) : 0;
             if ($id_usuario > 0) {
-                $sucesso = $this->model->excluirUsuario($id_usuario);
+                $sucesso = $this->model->excluirUsuario($id_usuario, $this->getLocalEscopo());
                 if ($sucesso) {
                     header('Location: index.php?modulo=usuarios&sucesso=excluido');
                 } else {
@@ -115,6 +139,14 @@ class UsuariosController {
             }
             exit();
         }
+    }
+
+    private function isRq() {
+        return isset($_SESSION['id_perfil']) && (int)$_SESSION['id_perfil'] === 2;
+    }
+
+    private function getLocalEscopo() {
+        return $this->isRq() && isset($_SESSION['id_local']) ? intval($_SESSION['id_local']) : null;
     }
 }
 ?>
