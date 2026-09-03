@@ -165,7 +165,7 @@ $query_params_string = http_build_query(array_filter(array('status' => $filtro_s
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm">
                                         <?php if (!empty($doc['arquivo_documento'])): ?>
-                                            <a href="uploads/documentos/<?php echo htmlspecialchars($doc['sigla_categoria']); ?>/<?php echo urlencode($doc['arquivo_documento']); ?>" target="_blank" class="btn btn-outline-secondary" title="Visualizar"><i class="bi bi-eye"></i></a>
+                                            <a href="index.php?modulo=visualizar_documento&id=<?php echo (int)$doc['id_documento']; ?>" target="_blank" class="btn btn-outline-secondary" title="Visualizar"><i class="bi bi-eye"></i></a>
                                         <?php else: ?>
                                             <button class="btn btn-sm btn-outline-secondary disabled" style="opacity: 0.3;"><i class="bi bi-eye-slash"></i></button>
                                         <?php endif; ?>

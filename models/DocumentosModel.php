@@ -277,15 +277,17 @@ class DocumentosModel {
     }
 
     public function getDocumentoPorId($id_documento, $idPerfil = null, $idLocal = null) {
-        $stmt = $this->db->prepare("SELECT d.*, c.sigla_categoria 
+        $stmt = $this->db->prepare("SELECT d.*, l.nome_local, c.sigla_categoria, c.escopo_categoria, c.id_local AS id_local_categoria 
                                     FROM t_documento d
                                     JOIN t_categoria c ON d.id_categoria = c.id_categoria
+                        LEFT JOIN t_local l ON d.id_local = l.id_local
                                     WHERE d.id_documento = :id");
         $params = array(':id' => $id_documento);
         if ((int)$idPerfil === 2 && $idLocal !== null) {
-            $stmt = $this->db->prepare("SELECT d.*, c.sigla_categoria
+            $stmt = $this->db->prepare("SELECT d.*, l.nome_local, c.sigla_categoria, c.escopo_categoria, c.id_local AS id_local_categoria
                                         FROM t_documento d
                                         JOIN t_categoria c ON d.id_categoria = c.id_categoria
+                                        LEFT JOIN t_local l ON d.id_local = l.id_local
                                                                                 WHERE d.id_documento = :id
                                                                                     AND d.id_local = :id_local
                                                                                     AND c.escopo_categoria = 'SGQ UNIDADE'");
@@ -302,6 +304,9 @@ class DocumentosModel {
             $documento['nome_documento'] = utf8_encode($documento['nome_documento']);
             $documento['autor_documento'] = utf8_encode($documento['autor_documento']);
             $documento['sufixo_documento'] = utf8_encode($documento['sufixo_documento']);
+            if (isset($documento['nome_local'])) {
+                $documento['nome_local'] = utf8_encode($documento['nome_local']);
+            }
 
             // Busca os locais de distribuição vinculados
             $stmt_locais = $this->db->prepare("SELECT id_local, numero_copia FROM t_documento_local WHERE id_documento = :id");
@@ -331,11 +336,12 @@ class DocumentosModel {
             return false;
         }
         // CORREÇÃO: Adicionado campos essenciais para a geração do nome do arquivo.
-        $stmt = $this->db->prepare("SELECT d.id_documento, d.codigo_documento, d.nome_documento, 
+        $stmt = $this->db->prepare("SELECT d.id_documento, d.codigo_documento, d.nome_documento, l.nome_local,
                                            d.revisao_documento, d.data_vigor_documento, d.sufixo_documento,
-                                           c.sigla_categoria 
+                                           d.id_local, c.sigla_categoria, c.escopo_categoria, c.id_local AS id_local_categoria
                                     FROM t_documento d
                                     JOIN t_categoria c ON d.id_categoria = c.id_categoria
+                        LEFT JOIN t_local l ON d.id_local = l.id_local
                                     WHERE d.codigo_documento = :codigo_documento
                                     LIMIT 1");
         $stmt->execute(array(':codigo_documento' => $codigo_documento));
@@ -370,6 +376,23 @@ class DocumentosModel {
     }
 
     public function atualizarDocumento($id_documento, $dados) {
+        // Validações CRÍTICAS
+        if ($id_documento <= 0) {
+            error_log("Erro ao atualizar documento: ID inválido ($id_documento)");
+            throw new Exception("ID do documento é inválido.");
+        }
+        if (empty($dados['nome_documento'])) {
+            error_log("Erro ao atualizar documento: Nome do documento vazio");
+            throw new Exception("Nome do documento é obrigatório.");
+        }
+        if (empty($dados['id_categoria'])) {
+            error_log("Erro ao atualizar documento: Categoria vazia");
+            throw new Exception("Categoria do documento é obrigatória.");
+        }
+        
+        // NOTA: Campos como codigo_documento, data_vigor_documento, etc. são validados
+        // no Controller baseado em t_config_campos_unidade. O Model aceita valores NULL.
+        
         $params = array(
             ':id_documento' => $id_documento,
             ':id_categoria' => isset($dados['id_categoria']) ? $dados['id_categoria'] : null,
@@ -401,10 +424,13 @@ class DocumentosModel {
 
         try {
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute($params);
+            if (!$stmt->execute($params)) {
+                throw new Exception('Falha ao executar atualização no banco de dados.');
+            }
+            return true;
         } catch (PDOException $e) {
             error_log("Erro ao atualizar documento: " . $e->getMessage());
-            return false;
+            throw new Exception('Erro de base de dados ao atualizar documento: ' . $e->getMessage());
         }
     }
 
@@ -412,6 +438,26 @@ class DocumentosModel {
      * Salva um novo documento no banco de dados
      */
     public function salvarDocumento($dados) {
+        // Validações CRÍTICAS - Campos que SEMPRE são obrigatórios
+        if (empty($dados['nome_documento'])) {
+            $mensagem = "Nome do documento é obrigatório.";
+            error_log("Erro ao salvar documento: " . $mensagem);
+            throw new Exception($mensagem);
+        }
+        if (empty($dados['id_categoria'])) {
+            $mensagem = "Categoria do documento é obrigatória.";
+            error_log("Erro ao salvar documento: " . $mensagem);
+            throw new Exception($mensagem);
+        }
+        if (empty($dados['arquivo_documento'])) {
+            $mensagem = "Arquivo do documento é obrigatório.";
+            error_log("Erro ao salvar documento: " . $mensagem);
+            throw new Exception($mensagem);
+        }
+        
+        // NOTA: Campos como codigo_documento, data_vigor_documento, etc. são validados
+        // no Controller baseado em t_config_campos_unidade. O Model aceita valores NULL.
+
         // Mapeia os dados do formulário para as colunas do banco
         // Usando 'isset' para lidar com campos que podem não ser enviados
         $params = array(
@@ -442,18 +488,33 @@ class DocumentosModel {
 
         try {
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            return $this->db->lastInsertId(); // Retorna o ID do documento inserido
+            if (!$stmt->execute($params)) {
+                throw new Exception('Falha ao executar inserção no banco de dados.');
+            }
+            
+            $id_novo = $this->db->lastInsertId();
+            if (!$id_novo || $id_novo <= 0) {
+                throw new Exception('Falha ao obter ID após inserção. Verifique as configurações do banco de dados.');
+            }
+            
+            error_log("Documento inserido com sucesso: ID=$id_novo, Código={$dados['codigo_documento']}, Nome={$dados['nome_documento']}");
+            return $id_novo;
         } catch (PDOException $e) {
             // Em um ambiente de produção, seria bom logar o erro em vez de exibi-lo
-            error_log("Erro ao salvar documento: " . $e->getMessage());
-            return false;
+            error_log("Erro ao salvar documento: " . $e->getMessage() . " - SQL: " . $sql);
+            throw new Exception('Erro de base de dados ao salvar documento: ' . $e->getMessage());
         }
     }
 
     public function salvarMetadadosDocumento($id_documento, $metadados) {
         if ($id_documento <= 0 || !is_array($metadados)) {
+            error_log("Erro ao salvar metadados: ID inválido ($id_documento) ou metadados não é array");
             return false;
+        }
+
+        if (empty($metadados)) {
+            // Sem metadados para salvar, retorna sucesso
+            return true;
         }
 
         try {
@@ -472,11 +533,14 @@ class DocumentosModel {
         }
 
         $tipoColumn = $this->primeiraColuna($estrutura, array('tipo_campo', 'tipo_metadado', 'tipo'));
+        
         $this->db->beginTransaction();
         try {
+            // Limpa os metadados antigos
             $stmtDelete = $this->db->prepare('DELETE FROM t_documento_metadados WHERE `' . $idColumn . '` = :id_documento');
             $stmtDelete->execute(array(':id_documento' => $id_documento));
 
+            // Prepara a inserção de novos metadados
             $columns = array('`' . $idColumn . '`', '`' . $nomeColumn . '`', '`' . $valorColumn . '`');
             if ($tipoColumn) $columns[] = '`' . $tipoColumn . '`';
             $placeholders = array(':id_documento', ':nome_campo', ':valor');
@@ -484,17 +548,31 @@ class DocumentosModel {
             $sql = 'INSERT INTO t_documento_metadados (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ')';
             $stmt = $this->db->prepare($sql);
 
+            $contador_salvo = 0;
             foreach ($metadados as $nome => $valor) {
-                if (is_array($valor) || trim((string)$valor) === '') continue;
-                $params = array(':id_documento' => $id_documento, ':nome_campo' => $nome, ':valor' => utf8_decode((string)$valor));
+                // Pula campos vazios ou arrays
+                if (is_array($valor)) continue;
+                $valor_trim = trim((string)$valor);
+                if ($valor_trim === '') continue;
+                
+                $params = array(':id_documento' => $id_documento, ':nome_campo' => $nome, ':valor' => utf8_decode($valor_trim));
                 if ($tipoColumn) $params[':tipo'] = 'text';
-                $stmt->execute($params);
+                
+                if (!$stmt->execute($params)) {
+                    throw new PDOException('Falha ao inserir metadado: ' . $nome);
+                }
+                $contador_salvo++;
             }
+            
             $this->db->commit();
+            if ($contador_salvo > 0) {
+                error_log("Metadados salvos com sucesso para documento $id_documento ($contador_salvo campos)");
+            }
             return true;
+            
         } catch (PDOException $e) {
             $this->db->rollBack();
-            error_log('Erro ao salvar metadados do documento: ' . $e->getMessage());
+            error_log('Erro ao salvar metadados do documento ' . $id_documento . ': ' . $e->getMessage());
             return false;
         }
     }
@@ -548,20 +626,34 @@ class DocumentosModel {
      * Vincula um documento aos locais de distribuição
      */
     public function vincularLocais($id_documento, $locais, $numeros_copia) {
-        // Primeiro, remove todos os vínculos existentes para este documento para evitar duplicatas
-        $stmt_delete = $this->db->prepare("DELETE FROM t_documento_local WHERE id_documento = :id_documento");
-        $stmt_delete->execute(array(':id_documento' => $id_documento));
+        if ($id_documento <= 0 || empty($locais)) {
+            error_log("Aviso: Tentativa de vincular locais inválidos. ID=$id_documento, Locais=" . count($locais));
+            return false;
+        }
 
-        $sql = "INSERT INTO t_documento_local (id_documento, id_local, numero_copia) VALUES (:id_documento, :id_local, :numero_copia)";
-        $stmt = $this->db->prepare($sql);
+        try {
+            // Primeiro, remove todos os vínculos existentes para este documento para evitar duplicatas
+            $stmt_delete = $this->db->prepare("DELETE FROM t_documento_local WHERE id_documento = :id_documento");
+            $stmt_delete->execute(array(':id_documento' => $id_documento));
 
-        foreach ($locais as $id_local) {
-            $stmt->execute(array(
-                ':id_documento' => $id_documento,
-                ':id_local' => $id_local,
-                // Pega o número da cópia se for um manual, senão insere NULL
-                ':numero_copia' => isset($numeros_copia[$id_local]) ? $numeros_copia[$id_local] : null
-            ));
+            $sql = "INSERT INTO t_documento_local (id_documento, id_local, numero_copia) VALUES (:id_documento, :id_local, :numero_copia)";
+            $stmt = $this->db->prepare($sql);
+
+            $contador = 0;
+            foreach ($locais as $id_local) {
+                $stmt->execute(array(
+                    ':id_documento' => $id_documento,
+                    ':id_local' => $id_local,
+                    // Pega o número da cópia se for um manual, senão insere NULL
+                    ':numero_copia' => isset($numeros_copia[$id_local]) ? $numeros_copia[$id_local] : null
+                ));
+                $contador++;
+            }
+            error_log("Documento $id_documento vinculado a $contador local(is)");
+            return true;
+        } catch (PDOException $e) {
+            error_log("Erro ao vincular locais do documento $id_documento: " . $e->getMessage());
+            return false;
         }
     }
 

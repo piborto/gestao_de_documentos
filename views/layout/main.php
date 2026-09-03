@@ -188,6 +188,11 @@ if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true)
                                 <li class="nav-item">
                                     <a class="nav-link <?php echo ($modulo == 'configurar_campos') ? 'active' : ''; ?>" href="index.php?modulo=configurar_campos"><i class="bi bi-sliders me-2"></i>Configurar Campos</a>
                                 </li>
+                                <?php if (isset($_SESSION['id_perfil']) && (int)$_SESSION['id_perfil'] === 4): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($modulo == 'ftp_explorer') ? 'active' : ''; ?>" href="index.php?modulo=ftp_explorer"><i class="bi bi-hdd-network me-2"></i>Explorador FTP</a>
+                                </li>
+                                <?php endif; ?>
                                 <?php if ($_SESSION['id_perfil'] != 2): ?>
                                 <li class="nav-item">
                                     <a class="nav-link <?php echo (strpos($modulo, 'categorias') === 0) ? 'active' : ''; ?>" href="index.php?modulo=categorias">Categorias</a>

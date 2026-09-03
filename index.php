@@ -42,6 +42,16 @@ switch ($modulo) {
         $documentosCtrl->obterCamposConfiguradosAjax();
         exit();
 
+    case 'visualizar_documento':
+        if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) {
+            header('Location: index.php?acesso=negado');
+            exit();
+        }
+        require_once dirname(__FILE__) . '/controllers/DocumentosController.php';
+        $documentosCtrl = new DocumentosController($conexao);
+        $documentosCtrl->visualizarDocumento(isset($_GET['id']) ? intval($_GET['id']) : 0);
+        exit();
+
     case 'documentos_cadastrar':
         require_once dirname(__FILE__) . '/controllers/DocumentosController.php';
         $documentosCtrl = new DocumentosController($conexao);
@@ -316,10 +326,43 @@ switch ($modulo) {
         $listaUnidades = $dados['listaUnidades'];
         $listaCategorias = $dados['listaCategorias'];
         $configsAtuais = $dados['configsAtuais'];
+        $todasConfiguracoes = $dados['todasConfiguracoes'];
         $idLocalSelecionado = $dados['idLocalSelecionado'];
         $idCategoriaSelecionada = $dados['idCategoriaSelecionada'];
         $page_title = 'SGQ - Configuração de Campos e Categorias';
         $page_content_file = dirname(__FILE__) . '/views/config/config_campos_content.php';
+        break;
+
+    case 'ftp_explorer':
+        if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true || !isset($_SESSION['id_perfil']) || (int)$_SESSION['id_perfil'] !== 4) {
+            header('Location: index.php?acesso=negado');
+            exit();
+        }
+        require_once dirname(__FILE__) . '/helpers/ftp_helper.php';
+        $pastaFtp = isset($_GET['pasta']) ? $_GET['pasta'] : '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $acaoFtp = isset($_POST['acao_ftp']) ? $_POST['acao_ftp'] : '';
+            $pastaFtpPost = isset($_POST['pasta_ftp']) ? $_POST['pasta_ftp'] : '';
+            $resultadoFtp = false;
+            if ($acaoFtp === 'criar_pasta') {
+                $resultadoFtp = criarPastaFtp($pastaFtpPost, isset($_POST['nome_pasta']) ? $_POST['nome_pasta'] : '');
+            } elseif ($acaoFtp === 'apagar') {
+                $resultadoFtp = apagarItemFtp(isset($_POST['caminho_ftp']) ? $_POST['caminho_ftp'] : '');
+            } elseif ($acaoFtp === 'renomear') {
+                $resultadoFtp = renomearItemFtp(isset($_POST['caminho_ftp']) ? $_POST['caminho_ftp'] : '', isset($_POST['novo_nome']) ? $_POST['novo_nome'] : '');
+            }
+            $pastaFtp = $pastaFtpPost;
+            header('Location: index.php?modulo=ftp_explorer&pasta=' . urlencode($pastaFtp) . '&' . ($resultadoFtp ? 'sucesso=1' : 'erro=1'));
+            exit();
+        }
+        $pastaFtp = normalizarCaminhoFtp($pastaFtp);
+        if ($pastaFtp === false) {
+            header('Location: index.php?modulo=ftp_explorer&erro=1');
+            exit();
+        }
+        $conteudoFtp = listarConteudoFtp($pastaFtp);
+        $page_title = 'SGQ - Explorador FTP';
+        $page_content_file = dirname(__FILE__) . '/views/config/ftp_explorer.php';
         break;
 
     case 'alertas':

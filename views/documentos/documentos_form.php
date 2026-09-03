@@ -22,6 +22,22 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
     </div>
 </div>
 
+<?php if (isset($_SESSION['erro_cadastro'])): ?>
+<div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+    <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Erro ao Cadastrar:</strong>
+    <div><?php echo $_SESSION['erro_cadastro']; ?></div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php unset($_SESSION['erro_cadastro']); endif; ?>
+
+<?php if (isset($_SESSION['sucesso_cadastro'])): ?>
+<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+    <strong><i class="bi bi-check-circle me-2"></i>Sucesso:</strong>
+    <?php echo $_SESSION['sucesso_cadastro']; ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php unset($_SESSION['sucesso_cadastro']); endif; ?>
+
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
         <form id="form-documento" method="POST" action="index.php?modulo=<?php echo $form_action; ?><?php echo $is_edit ? '&id=' . $documento['id_documento'] : ''; ?>" enctype="multipart/form-data">
@@ -113,7 +129,7 @@ $page_subtitle = $is_edit ? 'Editar Documento' : 'Cadastrar Documento';
                     <input class="form-control" type="file" id="arquivo_documento" name="arquivo_documento" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" <?php if (!$is_edit) echo 'required'; ?>>
                     <?php if ($is_edit && !empty($documento['arquivo_documento'])): ?>
                         <div class="form-text text-muted">
-                            Arquivo atual: <a href="uploads/documentos/<?php echo htmlspecialchars($documento['sigla_categoria']); ?>/<?php echo urlencode($documento['arquivo_documento']); ?>" target="_blank"><?php echo htmlspecialchars($documento['arquivo_documento']); ?></a>.
+                            Arquivo atual: <a href="index.php?modulo=visualizar_documento&id=<?php echo (int)$documento['id_documento']; ?>" target="_blank"><?php echo htmlspecialchars($documento['arquivo_documento']); ?></a>.
                             <div class="form-check form-switch mt-2">
                                 <input class="form-check-input" type="checkbox" role="switch" id="remover_arquivo" name="remover_arquivo" value="1">
                                 <label class="form-check-label text-danger" for="remover_arquivo">Remover arquivo atual</label>

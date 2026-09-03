@@ -146,6 +146,42 @@ if (!function_exists('configCamposEsc')) {
     </div>
 </div>
 
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0"><i class="bi bi-list-check me-2 text-primary"></i>Listagem de Configurações de Campos Ativas</h5>
+        </div>
+        <?php if (!empty($todasConfiguracoes)): ?>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="thead-custom"><tr><th>Unidade</th><th>Categoria</th><th class="text-center">Quantidade de Campos Personalizados</th><th>Resumo</th><th class="text-end">Ações</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($todasConfiguracoes as $configuracao): ?>
+                        <tr>
+                            <td><?php echo configCamposEsc($configuracao['nome_local']); ?></td>
+                            <td><strong><?php echo configCamposEsc($configuracao['sigla_categoria']); ?></strong> - <?php echo configCamposEsc($configuracao['nome_categoria']); ?></td>
+                            <td class="text-center"><span class="badge bg-success"><?php echo intval($configuracao['total_configurados']); ?></span></td>
+                            <td class="small text-muted"><?php echo intval($configuracao['total_visiveis']); ?> visíveis, <?php echo intval($configuracao['total_obrigatorios']); ?> obrigatórios</td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-outline-primary btn-sm" title="Editar configuração" href="index.php?modulo=configurar_campos&amp;id_local=<?php echo intval($configuracao['id_local']); ?>&amp;id_categoria=<?php echo intval($configuracao['id_categoria']); ?>"><i class="bi bi-pencil"></i></a>
+                                <form method="POST" action="index.php?modulo=configurar_campos&amp;acao=excluir_config" class="d-inline" onsubmit="return confirm('Remover esta configuração e voltar ao padrão?');">
+                                    <input type="hidden" name="acao" value="excluir_config">
+                                    <input type="hidden" name="id_local" value="<?php echo intval($configuracao['id_local']); ?>">
+                                    <input type="hidden" name="id_categoria" value="<?php echo intval($configuracao['id_categoria']); ?>">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Remover configuração"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-light border mb-0">Nenhuma configuração personalizada de campos foi encontrada.</div>
+        <?php endif; ?>
+    </div>
+</div>
+
 <?php if (isset($_SESSION['id_perfil']) && (int)$_SESSION['id_perfil'] === 2): ?>
 <div class="modal fade" id="modalEditarCategoria" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">

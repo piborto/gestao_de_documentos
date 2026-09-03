@@ -198,6 +198,42 @@ class ConfigCamposModel {
         return $campos;
     }
 
+    public function listarTodasConfiguracoes($idLocal = null) {
+        $sql = "SELECT l.id_local, l.nome_local, c.id_categoria, c.nome_categoria, c.sigla_categoria,
+                    COUNT(cc.nome_campo_interno) AS total_configurados,
+                    SUM(CASE WHEN cc.visivel = 1 THEN 1 ELSE 0 END) AS total_visiveis,
+                    SUM(CASE WHEN cc.obrigatorio = 1 THEN 1 ELSE 0 END) AS total_obrigatorios
+                FROM t_config_campos_unidade cc
+                INNER JOIN t_local l ON l.id_local = cc.id_local
+                INNER JOIN t_categoria c ON c.id_categoria = cc.id_categoria
+                WHERE cc.nome_campo_interno <> '__categoria_owner__'";
+        $params = array();
+        if ($idLocal !== null) {
+            $sql .= " AND cc.id_local = :id_local";
+            $params[':id_local'] = $idLocal;
+        }
+        $sql .= " GROUP BY l.id_local, l.nome_local, c.id_categoria, c.nome_categoria, c.sigla_categoria
+                  ORDER BY l.nome_local ASC, c.nome_categoria ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $configuracoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($configuracoes as &$configuracao) {
+            $configuracao['nome_local'] = utf8_encode($configuracao['nome_local']);
+            $configuracao['nome_categoria'] = utf8_encode($configuracao['nome_categoria']);
+        }
+        return $configuracoes;
+    }
+
+    public function excluirConfiguracao($idLocal, $idCategoria) {
+        $stmt = $this->db->prepare("DELETE FROM t_config_campos_unidade WHERE id_local = :id_local AND id_categoria = :id_categoria");
+        try {
+            return $stmt->execute(array(':id_local' => $idLocal, ':id_categoria' => $idCategoria));
+        } catch (PDOException $e) {
+            error_log('Erro ao remover configuração de campos: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public function getCategoriaDaUnidade($idCategoria, $idLocal) {
         $stmt = $this->db->prepare("SELECT id_categoria, nome_categoria, sigla_categoria FROM t_categoria WHERE id_categoria = :id_categoria AND escopo_categoria = 'SGQ UNIDADE' AND id_local = :id_local");
         $stmt->execute(array(':id_categoria' => $idCategoria, ':id_local' => $idLocal));

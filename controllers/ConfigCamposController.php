@@ -18,6 +18,9 @@ class ConfigCamposController {
             }
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['acao']) && $_POST['acao'] === 'excluir_config') {
+                $this->excluirConfiguracao($_POST);
+            }
             if (isset($_POST['acao']) && $_POST['acao'] === 'categoria') {
                 $this->criarCategoria($_POST);
             }
@@ -53,6 +56,7 @@ class ConfigCamposController {
             'categoriasDaUnidade' => $localSelecionado > 0 ? $this->model->listarCategoriasDaUnidade($localSelecionado) : array(),
             'categoriasComConfiguracao' => $categoriasComConfiguracao,
             'camposSalvosPorCategoria' => $camposSalvosPorCategoria,
+            'todasConfiguracoes' => $this->model->listarTodasConfiguracoes($this->isRq() ? $this->getLocalRq() : null),
             'idLocalSelecionado' => $idLocal, 'idCategoriaSelecionada' => $idCategoria);
     }
 
@@ -72,7 +76,7 @@ class ConfigCamposController {
             $idLocal = $this->getLocalRq();
         }
         $sucesso = $this->model->salvarConfiguracao($idLocal, $idCategoria, $campos);
-        header('Location: index.php?modulo=configurar_campos&id_local=' . $idLocal . '&id_categoria=' . $idCategoria . '&' . ($sucesso ? 'sucesso=campos' : 'erro=campos'));
+        header('Location: index.php?modulo=configurar_campos' . ($sucesso ? '&sucesso=1' : '&erro=campos'));
         exit();
     }
 
@@ -94,6 +98,21 @@ class ConfigCamposController {
         }
         $ok = $this->model->excluirCategoriaDaUnidade($id, $local);
         header('Location: index.php?modulo=configurar_campos&' . ($ok ? 'sucesso=categoria' : 'erro=categoria')); exit();
+    }
+
+    private function excluirConfiguracao($dados) {
+        $idLocal = isset($dados['id_local']) ? intval($dados['id_local']) : 0;
+        $idCategoria = isset($dados['id_categoria']) ? intval($dados['id_categoria']) : 0;
+        if ($this->isRq()) {
+            $idLocal = $this->getLocalRq();
+        }
+        if ($idLocal <= 0 || $idCategoria <= 0 || ($this->isRq() && !$this->model->categoriaDisponivelParaLocal($idCategoria, $idLocal))) {
+            header('Location: index.php?modulo=configurar_campos&erro=dados_invalidos');
+            exit();
+        }
+        $ok = $this->model->excluirConfiguracao($idLocal, $idCategoria);
+        header('Location: index.php?modulo=configurar_campos&' . ($ok ? 'sucesso=config' : 'erro=config'));
+        exit();
     }
 
     private function isRq() {
