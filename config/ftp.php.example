@@ -1,0 +1,10 @@
+<?php
+
+// Copie este arquivo para ftp.php e informe os valores apenas no ambiente local.
+return array(
+    'host' => 'ftp.example.invalid',
+    'user' => 'change-me',
+    'pass' => 'change-me',
+    'base_path' => 'documents/',
+    'debug' => false
+);

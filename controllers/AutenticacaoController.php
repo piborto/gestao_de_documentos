@@ -111,9 +111,14 @@ class AutenticacaoController {
         // $mail->SMTPSecure = 'tls';
         // $mail->Port = 587;
 
-        $mail->setFrom('nao-responda@ital.sp.gov.br', 'SGQ ITAL');
+        $mailFrom = getenv('MAIL_FROM_ADDRESS');
+        $mailFromName = getenv('MAIL_FROM_NAME');
+        $mail->setFrom(
+            ($mailFrom !== false && trim($mailFrom) !== '') ? $mailFrom : 'no-reply@example.invalid',
+            ($mailFromName !== false && trim($mailFromName) !== '') ? $mailFromName : 'Document Management'
+        );
         $mail->addAddress($email, $usuario['nome_usuario']);
-        $mail->Subject = 'Redefinição de Senha - SGQ ITAL';
+        $mail->Subject = 'Redefinição de Senha - Sistema de Documentos';
 
         $link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/../views/login/redefinir_senha.php?token=" . $token;
         $mail->Body = "Olá, " . $usuario['nome_usuario'] . ".\n\n";
@@ -121,7 +126,7 @@ class AutenticacaoController {
         $mail->Body .= $link . "\n\n";
         $mail->Body .= "Se você não solicitou isso, por favor, ignore este e-mail.\n";
         $mail->Body .= "Este link é válido por 1 hora.\n\n";
-        $mail->Body .= "Atenciosamente,\nEquipe SGQ ITAL";
+        $mail->Body .= "Atenciosamente,\nEquipe de Documentos";
 
         if (!$mail->send()) {
             // Em um ambiente de produção, seria bom logar o erro: error_log('Mailer Error: ' . $mail->ErrorInfo);

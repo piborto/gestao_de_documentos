@@ -1,11 +1,26 @@
 <?php
 
 if (!defined('FTP_HOST')) {
-    define('FTP_HOST', '192.168.89.2');
-    define('FTP_USER', 'relatorio');
-    define('FTP_PASS', '@dms!83');
-    define('FTP_BASE_PATH', 'sistema_documentos/');
-    define('FTP_DEBUG', true);
+    $ftpConfig = array();
+    $ftpConfigPath = dirname(__FILE__) . '/../config/ftp.php';
+    if (is_file($ftpConfigPath)) {
+        $configuracaoLocal = require $ftpConfigPath;
+        if (is_array($configuracaoLocal)) {
+            $ftpConfig = $configuracaoLocal;
+        }
+    }
+
+    $ftpHost = getenv('FTP_HOST');
+    $ftpUser = getenv('FTP_USER');
+    $ftpPass = getenv('FTP_PASS');
+    $ftpBasePath = getenv('FTP_BASE_PATH');
+    $ftpDebug = getenv('FTP_DEBUG');
+
+    define('FTP_HOST', ($ftpHost !== false && trim($ftpHost) !== '') ? $ftpHost : (isset($ftpConfig['host']) ? $ftpConfig['host'] : 'ftp.example.invalid'));
+    define('FTP_USER', ($ftpUser !== false && trim($ftpUser) !== '') ? $ftpUser : (isset($ftpConfig['user']) ? $ftpConfig['user'] : 'change-me'));
+    define('FTP_PASS', ($ftpPass !== false) ? $ftpPass : (isset($ftpConfig['pass']) ? $ftpConfig['pass'] : 'change-me'));
+    define('FTP_BASE_PATH', ($ftpBasePath !== false && trim($ftpBasePath) !== '') ? $ftpBasePath : (isset($ftpConfig['base_path']) ? $ftpConfig['base_path'] : 'documents/'));
+    define('FTP_DEBUG', ($ftpDebug !== false) ? filter_var($ftpDebug, FILTER_VALIDATE_BOOLEAN) : (isset($ftpConfig['debug']) ? (bool)$ftpConfig['debug'] : false));
 }
 
 function registrarDebugFtp($mensagem) {
