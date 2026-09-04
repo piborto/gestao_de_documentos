@@ -1,0 +1,14 @@
+@"
+# Configurações sensíveis e de ambiente
+config/ftp.php
+.env
+*.log
+helpers/ftp_debug.log
+
+# Bancos de dados e dumps de teste
+*.sql
+dump*.sql
+
+# Uploads e documentos institucionais
+uploads/documentos/
+"@ | Out-File -Encoding utf8 .gitignore
